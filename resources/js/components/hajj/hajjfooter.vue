@@ -17,7 +17,7 @@ import { Mail, Phone } from 'lucide-vue-next';
                         Tawaf
                     </div>
                 </div>
-                
+
                 <p class="text-sm text-gray-400">
                     Powered by <span class="text-[#D3A762]">SocioLib.</span>
                 </p>
@@ -26,7 +26,7 @@ import { Mail, Phone } from 'lucide-vue-next';
             <!-- Office Section -->
             <div class="flex flex-col gap-6">
                 <h3 class="text-sm font-semibold tracking-wider text-gray-400 uppercase">OFFICE</h3>
-                
+
                 <div class="text-sm text-white leading-relaxed">
                     Tawaf Corp, Amphitheatre Parkway,<br>
                     Mountain View, California, 94043
@@ -64,6 +64,7 @@ import { Mail, Phone } from 'lucide-vue-next';
                     <a href="#" class="hover:text-gray-300 transition-colors">Contact</a>
                     <a href="#" class="hover:text-gray-300 transition-colors">Help Center</a>
                     <a href="#" class="hover:text-gray-300 transition-colors">Career</a>
+                    <a href="/admin/login" class="hover:text-[#D3A762] transition-colors text-gray-500 text-xs mt-2">Admin Login</a>
                 </nav>
             </div>
         </div>
