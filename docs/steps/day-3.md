@@ -1,699 +1,1013 @@
-# Day 3: Completion & Polish
+# Day 3: Remaining Modules & Polish
 # Hajj Admin Panel Development
 
 **Date:** Day 3 of 3  
-**Focus:** Remaining Features, Dashboard, Testing, Integration
+**Focus:** Team, Testimonials, Inquiries, Settings, Dashboard, Polish  
+**Stack:** Laravel 12 + Blade + Alpine.js + Tailwind CSS v4
 
 ---
 
 ## Overview
 
-Day 3 completes the admin panel with team management, testimonials, inquiries, settings, dashboard, and final testing/polish.
+Day 3 completes all remaining CRUD modules, implements the dashboard with real statistics, site settings management, and final polish for a production-ready admin panel.
+
+---
+
+## Prerequisites from Day 2
+
+Before starting Day 3, verify:
+- [ ] Package CRUD fully functional
+- [ ] Article CRUD fully functional
+- [ ] All Blade components working
+- [ ] Image upload working
+- [ ] Services implemented
 
 ---
 
 ## Tasks Checklist
 
-### Phase 1: Team Management (1.5-2 hours)
+### Phase 1: Team Members Module (2-2.5 hours)
 
-#### Task 1.1: Create Team Controllers
-- [ ] Create `TeamMemberController`
-- [ ] Implement CRUD operations
-- [ ] Implement reorder functionality
+#### Task 1.1: Create Controller
 
-**Command:**
 ```bash
-php artisan make:controller Admin/Hajj/TeamMemberController --resource
+php artisan make:controller Admin/Hajj/TeamMemberController
 ```
 
-#### Task 1.2: Create TeamMember Form Request
-- [ ] Create validation request
+#### Task 1.2: Implement Controller Methods
 
-**Command:**
+| Method | Route | Purpose |
+|--------|-------|---------|
+| index | GET /admin/team | List team members |
+| create | GET /admin/team/create | Show create form |
+| store | POST /admin/team | Save team member |
+| edit | GET /admin/team/{id}/edit | Show edit form |
+| update | PUT /admin/team/{id} | Update team member |
+| destroy | DELETE /admin/team/{id} | Delete team member |
+| toggleActive | PATCH /admin/team/{id}/toggle | Toggle active |
+| reorder | POST /admin/team/reorder | Reorder members |
+
+#### Task 1.3: Create Form Request
+
 ```bash
-php artisan make:request Admin/Hajj/TeamMemberRequest
+php artisan make:request Admin/TeamMemberRequest
 ```
 
-#### Task 1.3: Register Team Routes
+**Validation Rules:**
 ```php
-Route::resource('team', TeamMemberController::class);
-Route::post('team/reorder', [TeamMemberController::class, 'reorder'])->name('team.reorder');
+return [
+    'name' => ['required', 'string', 'max:255'],
+    'designation' => ['required', 'string', 'max:255'],
+    'email' => ['nullable', 'email', 'max:255'],
+    'phone' => ['nullable', 'string', 'max:50'],
+    'bio' => ['nullable', 'string', 'max:1000'],
+    'photo' => ['nullable', 'image', 'max:2048'],
+    'social_links' => ['nullable', 'array'],
+    'social_links.*.platform' => ['required_with:social_links.*.url', 'string'],
+    'social_links.*.url' => ['required_with:social_links.*.platform', 'url'],
+    'sort_order' => ['nullable', 'integer', 'min:0'],
+    'is_active' => ['boolean'],
+];
 ```
 
-#### Task 1.4: Create Team Frontend Pages
-- [ ] Create `resources/js/pages/admin/hajj/team/Index.vue`
-- [ ] Create `resources/js/pages/admin/hajj/team/Create.vue`
-- [ ] Create `resources/js/pages/admin/hajj/team/Edit.vue`
-- [ ] Implement drag-to-reorder functionality
+#### Task 1.4: Create Views
 
-**Features:**
-- Drag and drop ordering
+```
+resources/views/admin/pages/team/
+├── index.blade.php
+├── create.blade.php
+└── edit.blade.php
+```
+
+**index.blade.php features:**
+- Drag-to-reorder cards
+- Grid layout (3-4 columns)
+- Member cards with:
+  - Photo (circular)
+  - Name
+  - Designation
+  - Active status badge
+  - Quick actions (edit, toggle, delete)
+- Add new member button
+- Empty state
+
+**create.blade.php / edit.blade.php features:**
 - Photo upload with preview
-- Social links management
-- Active/inactive toggle
+- Name, designation inputs
+- Email, phone inputs
+- Bio textarea
+- Social links builder (Alpine.js)
+  - Platform select (LinkedIn, Twitter, Instagram, etc.)
+  - URL input
+  - Add/remove
+- Sort order input
+- Active toggle
+
+#### Task 1.5: Implement TeamService
+
+```php
+class TeamService
+{
+    public function list(): Collection
+    public function getById(int $id): TeamMember
+    public function create(array $data): TeamMember
+    public function update(TeamMember $member, array $data): TeamMember
+    public function delete(TeamMember $member): bool
+    public function toggleActive(TeamMember $member): TeamMember
+    public function reorder(array $order): void
+}
+```
 
 ---
 
-### Phase 2: Testimonial Management (1-1.5 hours)
+### Phase 2: Testimonials Module (2 hours)
 
-#### Task 2.1: Create Testimonial Controller
-- [ ] Create `TestimonialController`
-- [ ] CRUD operations
-- [ ] Approve/reject functionality
+#### Task 2.1: Create Controller
 
-**Command:**
 ```bash
-php artisan make:controller Admin/Hajj/TestimonialController --resource
+php artisan make:controller Admin/Hajj/TestimonialController
 ```
 
-#### Task 2.2: Create Form Request
-- [ ] Create `TestimonialRequest`
+#### Task 2.2: Implement Controller Methods
 
-**Command:**
+| Method | Route | Purpose |
+|--------|-------|---------|
+| index | GET /admin/testimonials | List testimonials |
+| create | GET /admin/testimonials/create | Show create form |
+| store | POST /admin/testimonials | Save testimonial |
+| edit | GET /admin/testimonials/{id}/edit | Show edit form |
+| update | PUT /admin/testimonials/{id} | Update testimonial |
+| destroy | DELETE /admin/testimonials/{id} | Delete testimonial |
+| approve | PATCH /admin/testimonials/{id}/approve | Approve testimonial |
+| toggleFeatured | PATCH /admin/testimonials/{id}/featured | Toggle featured |
+
+#### Task 2.3: Create Form Request
+
 ```bash
-php artisan make:request Admin/Hajj/TestimonialRequest
+php artisan make:request Admin/TestimonialRequest
 ```
 
-#### Task 2.3: Register Routes
+**Validation Rules:**
 ```php
-Route::resource('testimonials', TestimonialController::class);
-Route::put('testimonials/{testimonial}/approve', [TestimonialController::class, 'approve'])->name('testimonials.approve');
-Route::put('testimonials/{testimonial}/reject', [TestimonialController::class, 'reject'])->name('testimonials.reject');
+return [
+    'client_name' => ['required', 'string', 'max:255'],
+    'client_location' => ['nullable', 'string', 'max:255'],
+    'client_photo' => ['nullable', 'image', 'max:2048'],
+    'package_id' => ['nullable', 'exists:packages,id'],
+    'content' => ['required', 'string', 'max:1000'],
+    'rating' => ['required', 'integer', 'min:1', 'max:5'],
+    'travel_date' => ['nullable', 'date'],
+    'is_approved' => ['boolean'],
+    'is_featured' => ['boolean'],
+];
 ```
 
-#### Task 2.4: Create Testimonial Frontend Pages
-- [ ] Create `resources/js/pages/admin/hajj/testimonials/Index.vue`
-- [ ] Create `resources/js/pages/admin/hajj/testimonials/Create.vue`
-- [ ] Create `resources/js/pages/admin/hajj/testimonials/Edit.vue`
+#### Task 2.4: Create Views
+
+```
+resources/views/admin/pages/testimonials/
+├── index.blade.php
+├── create.blade.php
+└── edit.blade.php
+```
+
+**index.blade.php features:**
+- Filter tabs (All, Pending, Approved, Featured)
+- Package filter dropdown
+- Data table with:
+  - Client photo
+  - Client name
+  - Package name
+  - Rating stars
+  - Content preview (truncated)
+  - Status badges (Approved, Featured)
+  - Actions
+- Bulk approve action
+- Pagination
+
+**create.blade.php / edit.blade.php features:**
+- Client name input
+- Client location input
+- Client photo upload
+- Package select (optional)
+- Content textarea
+- Star rating selector (Alpine.js)
+- Travel date picker
+- Approved toggle
+- Featured toggle
+
+#### Task 2.5: Star Rating Component
+
+```
+resources/views/admin/components/form/star-rating.blade.php
+```
 
 **Features:**
-- Star rating display/edit
-- Package association
-- Approval status badge
-- Quick approve/reject actions
+- 5 clickable stars
+- Hover preview
+- Alpine.js state
+- Hidden input for form
+
+#### Task 2.6: Implement TestimonialService
+
+```php
+class TestimonialService
+{
+    public function list(array $filters = []): LengthAwarePaginator
+    public function getById(int $id): Testimonial
+    public function create(array $data): Testimonial
+    public function update(Testimonial $testimonial, array $data): Testimonial
+    public function delete(Testimonial $testimonial): bool
+    public function approve(Testimonial $testimonial): Testimonial
+    public function toggleFeatured(Testimonial $testimonial): Testimonial
+    public function getPending(): Collection
+}
+```
 
 ---
 
-### Phase 3: Inquiry Management (1-1.5 hours)
+### Phase 3: Contact Inquiries Module (1.5-2 hours)
 
-#### Task 3.1: Create Inquiry Controller
-- [ ] Create `InquiryController`
-- [ ] List with filters
-- [ ] View details
-- [ ] Mark as read/responded
-- [ ] Delete
+#### Task 3.1: Create Controller
 
-**Command:**
 ```bash
 php artisan make:controller Admin/Hajj/InquiryController
 ```
 
-#### Task 3.2: Register Routes
-```php
-Route::get('inquiries', [InquiryController::class, 'index'])->name('inquiries.index');
-Route::get('inquiries/{inquiry}', [InquiryController::class, 'show'])->name('inquiries.show');
-Route::put('inquiries/{inquiry}/read', [InquiryController::class, 'markAsRead'])->name('inquiries.read');
-Route::put('inquiries/{inquiry}/respond', [InquiryController::class, 'markAsResponded'])->name('inquiries.respond');
-Route::delete('inquiries/{inquiry}', [InquiryController::class, 'destroy'])->name('inquiries.destroy');
+#### Task 3.2: Implement Controller Methods
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| index | GET /admin/inquiries | List inquiries |
+| show | GET /admin/inquiries/{id} | View inquiry |
+| markAsRead | PATCH /admin/inquiries/{id}/read | Mark as read |
+| respond | POST /admin/inquiries/{id}/respond | Send response |
+| updateStatus | PATCH /admin/inquiries/{id}/status | Update status |
+| destroy | DELETE /admin/inquiries/{id} | Delete inquiry |
+| bulkDelete | POST /admin/inquiries/bulk-delete | Bulk delete |
+
+#### Task 3.3: Create Views
+
+```
+resources/views/admin/pages/inquiries/
+├── index.blade.php
+└── show.blade.php
 ```
 
-#### Task 3.3: Create Inquiry Frontend Pages
-- [ ] Create `resources/js/pages/admin/hajj/inquiries/Index.vue`
-- [ ] Create `resources/js/pages/admin/hajj/inquiries/Show.vue`
+**index.blade.php features:**
+- Status filter tabs (All, New, Read, Responded, Closed)
+- Package filter dropdown
+- Date range filter
+- Search by name/email
+- Data table with:
+  - Status indicator (colored dot)
+  - Name
+  - Email
+  - Package name
+  - Subject/Message preview
+  - Date submitted
+  - Actions (View, Delete)
+- Bulk selection for delete
+- New inquiry count badge
+- Pagination
+
+**show.blade.php features:**
+- Inquiry details card:
+  - Client info (name, email, phone)
+  - Package info (if selected)
+  - Message content (full)
+  - Submitted date/time
+  - Status badge
+- Response section:
+  - Previous responses (if any)
+  - Response textarea
+  - Send response button
+  - Email preview toggle
+- Status change dropdown
+- Delete button with confirmation
+- Back to list button
+
+#### Task 3.4: Email Response
+
+**Create Mailable:**
+```bash
+php artisan make:mail InquiryResponse
+```
 
 **Features:**
-- Unread indicator badge
-- Filter by status (new, read, responded)
-- View inquiry details in modal or page
-- One-click mark as read/responded
-- Bulk mark as read
+- Personalized greeting
+- Response content
+- Company signature
+- Contact information
 
----
+#### Task 3.5: Implement InquiryService
 
-### Phase 4: Settings Management (1.5-2 hours)
-
-#### Task 4.1: Create Settings Controller
-- [ ] Create `SettingsController`
-- [ ] Load settings by groups
-- [ ] Save settings
-
-**Command:**
-```bash
-php artisan make:controller Admin/Hajj/SettingsController
-```
-
-#### Task 4.2: Create Settings Form Request
-- [ ] Create `SettingsRequest`
-
-**Command:**
-```bash
-php artisan make:request Admin/Hajj/SettingsRequest
-```
-
-#### Task 4.3: Register Routes
 ```php
-Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
-Route::post('settings', [SettingsController::class, 'update'])->name('settings.update');
-Route::get('settings/{group}', [SettingsController::class, 'show'])->name('settings.show');
-```
-
-#### Task 4.4: Create Settings Frontend Page
-- [ ] Create `resources/js/pages/admin/hajj/settings/Index.vue`
-
-**Settings Groups:**
-
-1. **General Settings**
-   - Site name
-   - Logo upload
-   - Contact email
-   - Contact phone
-   - Address
-
-2. **Social Media**
-   - Facebook URL
-   - Instagram URL
-   - Twitter URL
-   - YouTube URL
-   - WhatsApp number
-
-3. **SEO Settings**
-   - Default meta title
-   - Default meta description
-   - Meta keywords
-   - Google Analytics ID
-
-4. **Appearance**
-   - Primary color
-   - Hero banner image
-   - Hero text
-
-**Implementation:**
-```vue
-<template>
-  <AdminLayout>
-    <div class="flex gap-6">
-      <!-- Settings Navigation -->
-      <aside class="w-48">
-        <nav class="space-y-1">
-          <button
-            v-for="group in groups"
-            :key="group.key"
-            @click="activeGroup = group.key"
-            :class="[
-              'w-full text-left px-3 py-2 rounded',
-              activeGroup === group.key
-                ? 'bg-amber-100 text-amber-800'
-                : 'hover:bg-gray-100'
-            ]"
-          >
-            {{ group.label }}
-          </button>
-        </nav>
-      </aside>
-
-      <!-- Settings Form -->
-      <div class="flex-1">
-        <form @submit.prevent="save">
-          <GeneralSettings v-if="activeGroup === 'general'" v-model="form.general" />
-          <SocialSettings v-if="activeGroup === 'social'" v-model="form.social" />
-          <!-- ... other groups -->
-          
-          <div class="mt-6">
-            <Button type="submit" :loading="form.processing">
-              Save Settings
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </AdminLayout>
-</template>
+class InquiryService
+{
+    public function list(array $filters = []): LengthAwarePaginator
+    public function getById(int $id): ContactInquiry
+    public function markAsRead(ContactInquiry $inquiry): ContactInquiry
+    public function updateStatus(ContactInquiry $inquiry, InquiryStatus $status): ContactInquiry
+    public function respond(ContactInquiry $inquiry, string $response): ContactInquiry
+    public function delete(ContactInquiry $inquiry): bool
+    public function bulkDelete(array $ids): int
+    public function getNewCount(): int
+    public function getByDateRange(Carbon $start, Carbon $end): Collection
+}
 ```
 
 ---
 
-### Phase 5: Dashboard (1.5-2 hours)
+### Phase 4: Site Settings Module (2-2.5 hours)
 
-#### Task 5.1: Create Dashboard Controller
-- [ ] Create `DashboardController`
-- [ ] Gather statistics
-- [ ] Recent activity
+#### Task 4.1: Create Controller
 
-**Command:**
 ```bash
-php artisan make:controller Admin/Hajj/DashboardController
+php artisan make:controller Admin/Hajj/SettingController
 ```
 
-**File:** `app/Http/Controllers/Admin/Hajj/DashboardController.php`
+#### Task 4.2: Implement Controller Methods
 
-#### Task 5.2: Register Route
+| Method | Route | Purpose |
+|--------|-------|---------|
+| index | GET /admin/settings | Show all settings |
+| updateGeneral | PUT /admin/settings/general | Update general |
+| updateContact | PUT /admin/settings/contact | Update contact |
+| updateSocial | PUT /admin/settings/social | Update social |
+| updateSeo | PUT /admin/settings/seo | Update SEO |
+| updateBranding | PUT /admin/settings/branding | Update branding |
+
+#### Task 4.3: Create Settings View
+
+```
+resources/views/admin/pages/settings/
+└── index.blade.php
+```
+
+**Tabbed interface:**
+
+**Tab 1: General Settings**
+- Site name
+- Site tagline
+- Admin email
+- Timezone select
+- Date format
+- Currency
+
+**Tab 2: Contact Information**
+- Main phone
+- WhatsApp number
+- Main email
+- Inquiry email
+- Address textarea
+- Map embed code
+
+**Tab 3: Social Media**
+- Facebook URL
+- Instagram URL
+- Twitter URL
+- YouTube URL
+- LinkedIn URL
+- TikTok URL
+
+**Tab 4: SEO Settings**
+- Default meta title
+- Default meta description
+- Meta keywords
+- Google Analytics ID
+- Facebook Pixel ID
+- Schema markup
+
+**Tab 5: Branding**
+- Logo upload (light)
+- Logo upload (dark)
+- Favicon upload
+- Primary color picker
+- Secondary color picker
+- Font selection
+
+**Each tab:**
+- Save button
+- Reset to defaults option
+- Unsaved changes warning (Alpine.js)
+
+#### Task 4.4: Implement SettingService
+
 ```php
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+class SettingService
+{
+    public function get(string $key, mixed $default = null): mixed
+    public function set(string $key, mixed $value, string $type = 'string'): SiteSetting
+    public function getByGroup(string $group): array
+    public function setMany(array $settings): void
+    
+    // Convenience methods
+    public function getSiteName(): string
+    public function getLogo(): ?string
+    public function getSocialLinks(): array
+    public function getSeoDefaults(): array
+}
 ```
 
-#### Task 5.3: Create Stats Card Component
-- [ ] Create `StatsCard.vue`
+#### Task 4.5: Settings Caching
 
-**File:** `resources/js/components/admin/dashboard/StatsCard.vue`
+```php
+// Cache settings for performance
+public function getCached(string $key, mixed $default = null): mixed
+{
+    return Cache::rememberForever("setting:{$key}", function () use ($key, $default) {
+        return $this->get($key, $default);
+    });
+}
 
-```vue
-<template>
-  <div class="bg-white rounded-lg shadow p-6">
-    <div class="flex items-center justify-between">
-      <div>
-        <p class="text-sm text-gray-500">{{ label }}</p>
-        <p class="text-2xl font-bold">{{ value }}</p>
-        <p v-if="change" :class="changeClass" class="text-sm">
-          {{ change > 0 ? '+' : '' }}{{ change }}% from last month
-        </p>
-      </div>
-      <div :class="iconClass" class="p-3 rounded-full">
-        <component :is="icon" class="w-6 h-6" />
-      </div>
-    </div>
-  </div>
-</template>
-```
-
-#### Task 5.4: Create Dashboard Page
-- [ ] Create `resources/js/pages/admin/hajj/Dashboard.vue`
-
-**Dashboard Content:**
-
-1. **Stats Cards Row**
-   - Total Packages (with Hajj/Umrah breakdown)
-   - Total Articles
-   - New Inquiries (unread count)
-   - Total Testimonials
-
-2. **Charts Row**
-   - Inquiries per month (line/bar chart)
-   - Popular packages (pie chart)
-
-3. **Recent Activity**
-   - Recent inquiries list
-   - Recently updated packages
-
-4. **Quick Actions**
-   - Add new package
-   - Add new article
-   - View inquiries
-
-**Dashboard Layout:**
-```vue
-<template>
-  <AdminLayout title="Dashboard">
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <StatsCard
-        v-for="stat in stats"
-        :key="stat.key"
-        :label="stat.label"
-        :value="stat.value"
-        :icon="stat.icon"
-        :change="stat.change"
-        :color="stat.color"
-      />
-    </div>
-
-    <!-- Two Column Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Recent Inquiries -->
-      <div class="lg:col-span-2 bg-white rounded-lg shadow">
-        <div class="px-6 py-4 border-b flex items-center justify-between">
-          <h3 class="font-semibold">Recent Inquiries</h3>
-          <Link :href="route('admin.hajj.inquiries.index')" class="text-amber-600 text-sm">
-            View All
-          </Link>
-        </div>
-        <div class="p-6">
-          <RecentInquiriesList :inquiries="recentInquiries" />
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div class="bg-white rounded-lg shadow">
-        <div class="px-6 py-4 border-b">
-          <h3 class="font-semibold">Quick Actions</h3>
-        </div>
-        <div class="p-6 space-y-3">
-          <QuickActionButton
-            v-for="action in quickActions"
-            :key="action.route"
-            :label="action.label"
-            :icon="action.icon"
-            :href="action.route"
-          />
-        </div>
-      </div>
-    </div>
-  </AdminLayout>
-</template>
+public function clearCache(?string $key = null): void
+{
+    if ($key) {
+        Cache::forget("setting:{$key}");
+    } else {
+        // Clear all settings cache
+        Cache::flush();
+    }
+}
 ```
 
 ---
 
-### Phase 6: FAQ Management (30-45 min)
+### Phase 5: FAQs Module (Optional - 1 hour)
 
-#### Task 6.1: Create FAQ Controller
-- [ ] Create `FaqController`
-- [ ] CRUD with ordering
+#### Task 5.1: Create Controller
 
-**Command:**
 ```bash
-php artisan make:controller Admin/Hajj/FaqController --resource
+php artisan make:controller Admin/Hajj/FaqController
 ```
 
-#### Task 6.2: Register Routes
-```php
-Route::resource('faqs', FaqController::class);
-Route::post('faqs/reorder', [FaqController::class, 'reorder'])->name('faqs.reorder');
+#### Task 5.2: Create Views
+
+```
+resources/views/admin/pages/faqs/
+└── index.blade.php
 ```
 
-#### Task 6.3: Create FAQ Frontend
-- [ ] Create `resources/js/pages/admin/hajj/faqs/Index.vue`
-- [ ] Inline edit capability
-- [ ] Drag to reorder
+**Features:**
+- Inline editing
+- Drag-to-reorder
+- Category grouping
+- Accordion preview
+- Add/Edit modal
 
 ---
 
-### Phase 7: Public API Integration (1 hour)
+### Phase 6: Dashboard Statistics (1.5-2 hours)
 
-#### Task 7.1: Create Public Controllers
-- [ ] Update frontend pages to use database data
-- [ ] Create public data endpoints or Inertia props
+#### Task 6.1: Enhance DashboardController
 
-**Update existing pages:**
-- `hajjhome.vue` - Load packages, articles, testimonials from props
-- `hajjpackage.vue` - Load packages from props
-- `umrahpackage.vue` - Load packages from props
-- `articles.vue` - Load articles from props
-- `article_detail.vue` - Load single article
-- `team.vue` - Load team and FAQs from props
-- `contactus.vue` - Submit inquiry to database
-
-#### Task 7.2: Update Web Routes
 ```php
-// routes/web.php
+public function index()
+{
+    return view('admin.pages.dashboard', [
+        'stats' => $this->getStats(),
+        'recentInquiries' => $this->getRecentInquiries(),
+        'popularPackages' => $this->getPopularPackages(),
+        'recentTestimonials' => $this->getRecentTestimonials(),
+        'chartData' => $this->getChartData(),
+    ]);
+}
 
-use App\Http\Controllers\Hajj\HomeController;
-use App\Http\Controllers\Hajj\PackageController;
-use App\Http\Controllers\Hajj\ArticleController;
-use App\Http\Controllers\Hajj\TeamController;
-use App\Http\Controllers\Hajj\InquiryController;
+private function getStats(): array
+{
+    return [
+        'packages' => Package::count(),
+        'active_packages' => Package::active()->count(),
+        'articles' => Article::count(),
+        'published_articles' => Article::published()->count(),
+        'testimonials' => Testimonial::count(),
+        'pending_testimonials' => Testimonial::where('is_approved', false)->count(),
+        'inquiries' => ContactInquiry::count(),
+        'new_inquiries' => ContactInquiry::where('status', InquiryStatus::NEW)->count(),
+        'team_members' => TeamMember::active()->count(),
+    ];
+}
+```
 
-Route::prefix('hajj')->name('hajj.')->group(function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::get('/packages', [PackageController::class, 'hajj'])->name('packages');
-    Route::get('/umrah-packages', [PackageController::class, 'umrah'])->name('umrah');
-    Route::get('/packages/{package:slug}', [PackageController::class, 'show'])->name('packages.show');
-    Route::get('/articles', [ArticleController::class, 'index'])->name('articles');
-    Route::get('/articles/{article:slug}', [ArticleController::class, 'show'])->name('articles.show');
-    Route::get('/team', [TeamController::class, 'index'])->name('team');
-    Route::get('/contact', [InquiryController::class, 'create'])->name('contact');
-    Route::post('/contact', [InquiryController::class, 'store'])->name('contact.store');
+#### Task 6.2: Enhance Dashboard View
+
+**dashboard.blade.php sections:**
+
+**Stats Grid (4 columns):**
+- Total Packages (active count)
+- Total Articles (published count)
+- Testimonials (pending count)
+- Inquiries (new count highlight)
+
+**Recent Inquiries Card:**
+- Last 5 new inquiries
+- Name, package, date
+- Quick view link
+- View all link
+
+**Popular Packages Card:**
+- Top 5 by inquiry count
+- Package name, type, inquiries
+- Edit link
+
+**Chart Section (Optional):**
+- Inquiries over time (Chart.js)
+- Monthly breakdown
+- Line or bar chart
+
+**Recent Testimonials Card:**
+- Last 5 pending
+- Client name, rating, preview
+- Quick approve button
+- View all link
+
+**Quick Actions Panel:**
+- Add Package
+- Add Article
+- Add Team Member
+- View Inquiries
+
+---
+
+### Phase 7: Notifications & Alerts (1 hour)
+
+#### Task 7.1: Toast Notification System
+
+**Create toast component:**
+```
+resources/views/admin/components/ui/toast.blade.php
+```
+
+**Alpine.js Toast Store:**
+```javascript
+Alpine.store('toast', {
+    messages: [],
+    add(message, type = 'success') {
+        const id = Date.now();
+        this.messages.push({ id, message, type });
+        setTimeout(() => this.remove(id), 5000);
+    },
+    remove(id) {
+        this.messages = this.messages.filter(m => m.id !== id);
+    }
 });
 ```
 
+**Types:**
+- success (green)
+- error (red)
+- warning (yellow)
+- info (blue)
+
+#### Task 7.2: Flash Messages
+
+```php
+// In controllers
+return redirect()->route('admin.packages.index')
+    ->with('success', 'Package created successfully');
+
+return redirect()->back()
+    ->with('error', 'Failed to save changes');
+```
+
+**View handling:**
+```blade
+@if(session('success'))
+    <div x-data x-init="$store.toast.add('{{ session('success') }}', 'success')"></div>
+@endif
+```
+
+#### Task 7.3: Confirmation Modals
+
+**Delete confirmation modal (Alpine.js):**
+- Warning icon
+- Confirmation message
+- Cancel/Delete buttons
+- Form submission
+
 ---
 
-### Phase 8: Testing (1-1.5 hours)
+### Phase 8: Activity Log (Optional - 1 hour)
 
-#### Task 8.1: Write Feature Tests
-- [ ] Create package CRUD tests
-- [ ] Create article CRUD tests
-- [ ] Create inquiry submission test
+#### Task 8.1: Create Activity Log Table
 
-**Test Files:**
-- `tests/Feature/Admin/PackageTest.php`
-- `tests/Feature/Admin/ArticleTest.php`
-- `tests/Feature/ContactFormTest.php`
+```bash
+php artisan make:migration create_activity_logs_table
+```
 
-**Example Test:**
+**Schema:**
+- id
+- user_id (foreign)
+- action (string)
+- model_type (string)
+- model_id (integer)
+- description (text)
+- ip_address (string)
+- created_at
+
+#### Task 8.2: Create ActivityLog Model & Service
+
 ```php
-// tests/Feature/Admin/PackageTest.php
+class ActivityLogService
+{
+    public function log(string $action, Model $model, string $description = null): ActivityLog
+    {
+        return ActivityLog::create([
+            'user_id' => auth()->id(),
+            'action' => $action,
+            'model_type' => get_class($model),
+            'model_id' => $model->id,
+            'description' => $description ?? $this->generateDescription($action, $model),
+            'ip_address' => request()->ip(),
+        ]);
+    }
+}
+```
+
+#### Task 8.3: Dashboard Activity Feed
+
+Show recent activities on dashboard:
+- User name
+- Action description
+- Time ago
+- Model link
+
+---
+
+### Phase 9: Polish & UX Improvements (1.5-2 hours)
+
+#### Task 9.1: Loading States
+
+- Button loading spinners
+- Form submission overlay
+- Table loading skeleton
+- Page transition loading
+
+#### Task 9.2: Empty States
+
+Consistent empty states for:
+- No packages
+- No articles
+- No testimonials
+- No inquiries
+- No search results
+
+#### Task 9.3: Responsive Testing
+
+Test and fix on:
+- Mobile (320px-480px)
+- Tablet (768px)
+- Desktop (1024px+)
+- Large screens (1440px+)
+
+**Focus areas:**
+- Sidebar collapse on mobile
+- Form layouts on mobile
+- Tables horizontal scroll
+- Modal sizes
+- Card layouts
+
+#### Task 9.4: Keyboard Shortcuts
+
+```javascript
+// Alpine.js keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        // Close modals
+    }
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        // Save current form
+    }
+});
+```
+
+#### Task 9.5: Form Improvements
+
+- Autosave drafts (localStorage)
+- Unsaved changes warning
+- Form reset option
+- Required field indicators
+
+---
+
+### Phase 10: Routes Finalization (30 min)
+
+#### Task 10.1: Complete routes/admin.php
+
+```php
 <?php
 
-use App\Models\Package;
-use App\Models\User;
+use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\Hajj\DashboardController;
+use App\Http\Controllers\Admin\Hajj\PackageController;
+use App\Http\Controllers\Admin\Hajj\ArticleController;
+use App\Http\Controllers\Admin\Hajj\ArticleCategoryController;
+use App\Http\Controllers\Admin\Hajj\TeamMemberController;
+use App\Http\Controllers\Admin\Hajj\TestimonialController;
+use App\Http\Controllers\Admin\Hajj\InquiryController;
+use App\Http\Controllers\Admin\Hajj\SettingController;
+use App\Http\Controllers\Admin\Hajj\FaqController;
 
-beforeEach(function () {
-    $this->user = User::factory()->create();
+// Auth routes (no auth middleware)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 });
 
-test('admin can view packages list', function () {
-    Package::factory()->count(3)->create();
-
-    $response = $this->actingAs($this->user)
-        ->get(route('admin.hajj.packages.index'));
-
-    $response->assertOk();
-    $response->assertInertia(fn ($page) => $page
-        ->component('admin/hajj/packages/Index')
-        ->has('packages.data', 3)
-    );
+// Protected routes
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // All resource routes as defined in Day 2 and today
+    // ... packages, articles, team, testimonials, inquiries, settings, faqs
 });
-
-test('admin can create a package', function () {
-    $packageData = [
-        'title' => 'Premium Hajj 2025',
-        'type' => 'hajj',
-        'price' => 5000,
-        'currency' => 'AED',
-        'duration_days' => 21,
-        'description' => 'A premium hajj package',
-        'is_active' => true,
-    ];
-
-    $response = $this->actingAs($this->user)
-        ->post(route('admin.hajj.packages.store'), $packageData);
-
-    $response->assertRedirect(route('admin.hajj.packages.index'));
-    $this->assertDatabaseHas('packages', ['title' => 'Premium Hajj 2025']);
-});
-
-test('admin can update a package', function () {
-    $package = Package::factory()->create();
-
-    $response = $this->actingAs($this->user)
-        ->put(route('admin.hajj.packages.update', $package), [
-            'title' => 'Updated Title',
-            'type' => $package->type,
-            'price' => $package->price,
-            'currency' => $package->currency,
-        ]);
-
-    $response->assertRedirect();
-    $this->assertDatabaseHas('packages', ['id' => $package->id, 'title' => 'Updated Title']);
-});
-
-test('admin can delete a package', function () {
-    $package = Package::factory()->create();
-
-    $response = $this->actingAs($this->user)
-        ->delete(route('admin.hajj.packages.destroy', $package));
-
-    $response->assertRedirect();
-    $this->assertSoftDeleted('packages', ['id' => $package->id]);
-});
-```
-
-#### Task 8.2: Run All Tests
-```bash
-php artisan test
 ```
 
 ---
 
-### Phase 9: Final Polish (1 hour)
+### Phase 11: Testing & Bug Fixes (1.5-2 hours)
 
-#### Task 9.1: Form Validation Messages
-- [ ] Review all form error messages
-- [ ] Ensure consistent formatting
-- [ ] Add helpful validation hints
+#### Task 11.1: Manual Testing Checklist
 
-#### Task 9.2: Loading States
-- [ ] Add loading spinners to buttons
-- [ ] Add skeleton loaders to lists
-- [ ] Disable buttons during submission
+**Authentication:**
+- [ ] Login works
+- [ ] Logout works
+- [ ] Session persists
+- [ ] Redirect after login
 
-#### Task 9.3: Empty States
-- [ ] Design empty state for no packages
-- [ ] Design empty state for no articles
-- [ ] Design empty state for no inquiries
+**Dashboard:**
+- [ ] Stats display correctly
+- [ ] Recent items show
+- [ ] Quick actions work
+- [ ] Charts render (if applicable)
 
-**Example Empty State:**
-```vue
-<template>
-  <div v-if="!items.length" class="text-center py-12">
-    <Package class="w-12 h-12 mx-auto text-gray-400 mb-4" />
-    <h3 class="text-lg font-medium text-gray-900 mb-2">No packages yet</h3>
-    <p class="text-gray-500 mb-4">Get started by creating your first package.</p>
-    <Button :href="route('admin.hajj.packages.create')">
-      <Plus class="w-4 h-4 mr-2" />
-      Add Package
-    </Button>
-  </div>
-</template>
-```
+**Packages:**
+- [ ] Create with all fields
+- [ ] Edit updates correctly
+- [ ] Image upload works
+- [ ] Gallery works
+- [ ] Toggle states work
+- [ ] Delete works
+- [ ] Filters work
+- [ ] Pagination works
 
-#### Task 9.4: Breadcrumbs
-- [ ] Add breadcrumbs to all pages
-- [ ] Ensure consistent navigation
+**Articles:**
+- [ ] Create with rich editor
+- [ ] Categories manageable
+- [ ] Publish/unpublish works
+- [ ] Preview works
+- [ ] SEO fields save
 
-#### Task 9.5: Responsive Design Check
-- [ ] Test admin panel on tablet (1024px)
-- [ ] Ensure sidebar collapses properly
-- [ ] Ensure tables are scrollable
-- [ ] Ensure forms stack properly
+**Team:**
+- [ ] Create with photo
+- [ ] Reorder works
+- [ ] Social links work
+- [ ] Toggle active works
 
-#### Task 9.6: Documentation
-- [ ] Update README with admin panel info
-- [ ] Document new routes
-- [ ] Document environment variables
+**Testimonials:**
+- [ ] Create with rating
+- [ ] Approve works
+- [ ] Featured toggle works
+- [ ] Package link works
+
+**Inquiries:**
+- [ ] List displays
+- [ ] View details works
+- [ ] Mark as read works
+- [ ] Respond sends email
+- [ ] Status update works
+
+**Settings:**
+- [ ] All tabs load
+- [ ] Settings save
+- [ ] Image uploads work
+- [ ] Cache clears
+
+#### Task 11.2: Fix Known Issues
+
+Address any bugs found during testing.
+
+#### Task 11.3: Performance Check
+
+- Check page load times
+- Verify eager loading
+- Check N+1 queries
+- Optimize if needed
+
+---
+
+### Phase 12: Documentation (30 min)
+
+#### Task 12.1: Update README
+
+Add admin panel section:
+- Access URL
+- Default credentials
+- Feature overview
+
+#### Task 12.2: Admin Guide
+
+Create `docs/admin-guide.md`:
+- Login instructions
+- Module descriptions
+- Common tasks
+- Troubleshooting
 
 ---
 
 ## File Creation Checklist
 
-### Day 3 Backend Files
+### Controllers
 ```
 ☐ app/Http/Controllers/Admin/Hajj/TeamMemberController.php
 ☐ app/Http/Controllers/Admin/Hajj/TestimonialController.php
 ☐ app/Http/Controllers/Admin/Hajj/InquiryController.php
-☐ app/Http/Controllers/Admin/Hajj/SettingsController.php
-☐ app/Http/Controllers/Admin/Hajj/DashboardController.php
-☐ app/Http/Controllers/Admin/Hajj/FaqController.php
-
-☐ app/Http/Controllers/Hajj/HomeController.php
-☐ app/Http/Controllers/Hajj/PackageController.php
-☐ app/Http/Controllers/Hajj/ArticleController.php
-☐ app/Http/Controllers/Hajj/TeamController.php
-☐ app/Http/Controllers/Hajj/InquiryController.php
-
-☐ app/Http/Requests/Admin/Hajj/TeamMemberRequest.php
-☐ app/Http/Requests/Admin/Hajj/TestimonialRequest.php
-☐ app/Http/Requests/Admin/Hajj/SettingsRequest.php
-☐ app/Http/Requests/Admin/Hajj/FaqRequest.php
+☐ app/Http/Controllers/Admin/Hajj/SettingController.php
+☐ app/Http/Controllers/Admin/Hajj/FaqController.php (optional)
 ```
 
-### Day 3 Frontend Files
+### Form Requests
 ```
-☐ resources/js/pages/admin/hajj/Dashboard.vue
-☐ resources/js/pages/admin/hajj/team/Index.vue
-☐ resources/js/pages/admin/hajj/team/Create.vue
-☐ resources/js/pages/admin/hajj/team/Edit.vue
-☐ resources/js/pages/admin/hajj/testimonials/Index.vue
-☐ resources/js/pages/admin/hajj/testimonials/Create.vue
-☐ resources/js/pages/admin/hajj/testimonials/Edit.vue
-☐ resources/js/pages/admin/hajj/inquiries/Index.vue
-☐ resources/js/pages/admin/hajj/inquiries/Show.vue
-☐ resources/js/pages/admin/hajj/settings/Index.vue
-☐ resources/js/pages/admin/hajj/faqs/Index.vue
-
-☐ resources/js/components/admin/dashboard/StatsCard.vue
-☐ resources/js/components/admin/dashboard/RecentInquiriesList.vue
-☐ resources/js/components/admin/dashboard/QuickActionButton.vue
+☐ app/Http/Requests/Admin/TeamMemberRequest.php
+☐ app/Http/Requests/Admin/TestimonialRequest.php
 ```
 
-### Test Files
+### Services
 ```
-☐ tests/Feature/Admin/PackageTest.php
-☐ tests/Feature/Admin/ArticleTest.php
-☐ tests/Feature/ContactFormTest.php
+☐ Update app/Services/TeamService.php
+☐ Update app/Services/TestimonialService.php
+☐ Update app/Services/InquiryService.php
+☐ Update app/Services/SettingService.php
+☐ app/Services/ActivityLogService.php (optional)
+```
+
+### Views - Team
+```
+☐ resources/views/admin/pages/team/index.blade.php
+☐ resources/views/admin/pages/team/create.blade.php
+☐ resources/views/admin/pages/team/edit.blade.php
+```
+
+### Views - Testimonials
+```
+☐ resources/views/admin/pages/testimonials/index.blade.php
+☐ resources/views/admin/pages/testimonials/create.blade.php
+☐ resources/views/admin/pages/testimonials/edit.blade.php
+```
+
+### Views - Inquiries
+```
+☐ resources/views/admin/pages/inquiries/index.blade.php
+☐ resources/views/admin/pages/inquiries/show.blade.php
+```
+
+### Views - Settings
+```
+☐ resources/views/admin/pages/settings/index.blade.php
+```
+
+### Views - FAQs (optional)
+```
+☐ resources/views/admin/pages/faqs/index.blade.php
+```
+
+### Components
+```
+☐ resources/views/admin/components/form/star-rating.blade.php
+☐ resources/views/admin/components/ui/toast.blade.php
+```
+
+### Mail
+```
+☐ app/Mail/InquiryResponse.php
+☐ resources/views/emails/inquiry-response.blade.php
+```
+
+### Migrations (optional)
+```
+☐ database/migrations/xxxx_create_activity_logs_table.php
 ```
 
 ---
 
 ## End of Day 3 Verification
 
-### Functionality Checklist
-- [ ] Dashboard displays correctly with stats
-- [ ] All CRUD operations work for all entities
-- [ ] Image upload works everywhere
-- [ ] Settings save and load correctly
-- [ ] Inquiries can be viewed and managed
-- [ ] Testimonials can be approved/rejected
-- [ ] Team members can be reordered
-- [ ] FAQs can be managed
-- [ ] Public pages load data from database
-- [ ] Contact form submits to database
-- [ ] All forms validate correctly
-- [ ] All tests pass
-
-### Quality Checklist
+### Complete Functionality Checklist
+- [ ] All authentication working
+- [ ] Dashboard with real stats
+- [ ] Package CRUD complete
+- [ ] Article CRUD complete
+- [ ] Team Members CRUD complete
+- [ ] Testimonials CRUD complete
+- [ ] Inquiries management complete
+- [ ] Settings management complete
+- [ ] All forms validated
+- [ ] All images upload correctly
+- [ ] All toggles working
+- [ ] Toast notifications working
+- [ ] Responsive on all devices
 - [ ] No console errors
-- [ ] No PHP errors/warnings
-- [ ] Loading states work
-- [ ] Empty states display
-- [ ] Responsive design works
-- [ ] Consistent styling throughout
+- [ ] Performance acceptable
 
 ### Final Commands
+
 ```bash
-# Run tests
-php artisan test
+# Clear all caches
+php artisan optimize:clear
 
-# Clear caches
-php artisan cache:clear
-php artisan config:clear
-php artisan view:clear
-
-# Rebuild assets
+# Rebuild
 npm run build
 
-# Commit all changes
-git add .
-git commit -m "Complete Hajj admin panel implementation"
-git push
+# Final migration check
+php artisan migrate:status
+
+# Route list verification
+php artisan route:list --path=admin
+
+# Run tests (if any)
+php artisan test
 ```
 
 ---
 
-## Summary: 3-Day Development Plan
+## Project Completion Summary
 
-### Day 1: Foundation
-- Database migrations & models
-- Services layer
-- Admin routes setup
-- Admin layout frontend
-- Seeders with sample data
+### Modules Implemented
+1. ✅ Authentication (Login/Logout)
+2. ✅ Dashboard (Stats, Recent Items)
+3. ✅ Packages (Full CRUD, Gallery)
+4. ✅ Articles (Full CRUD, Categories)
+5. ✅ Team Members (CRUD, Reorder)
+6. ✅ Testimonials (CRUD, Approval)
+7. ✅ Inquiries (Management, Responses)
+8. ✅ Settings (All categories)
+9. ⚪ FAQs (Optional)
+10. ⚪ Activity Log (Optional)
 
-### Day 2: Core Features
-- Package CRUD (backend + frontend)
-- Article CRUD (backend + frontend)
-- Reusable components (DataTable, ImageUploader, etc.)
-- Form validation & feedback
+### Architecture Summary
+- **Frontend:** Blade + Alpine.js + Tailwind CSS v4
+- **Backend:** Laravel 12 with Service Pattern
+- **Database:** MySQL with proper relationships
+- **Authentication:** Session-based via Fortify
+- **File Storage:** Local with public disk
 
-### Day 3: Completion
-- Team, Testimonials, Inquiries, FAQs
-- Settings management
-- Dashboard with stats
-- Public pages integration
-- Testing & polish
-
----
-
-## Estimated Total Time
-
-| Day | Hours |
-|-----|-------|
-| Day 1 | 8-10 hours |
-| Day 2 | 10-12 hours |
-| Day 3 | 9-11 hours |
-| **Total** | **27-33 hours** |
+### Key Features
+- Fully responsive design
+- Professional UI/UX
+- Smooth animations
+- Reusable components
+- Form validation
+- Toast notifications
+- Drag-to-reorder
+- Image management
 
 ---
 
-## Post-Development Enhancements
+## Estimated Time: 12-15 hours
 
-After the 3-day implementation, consider these enhancements:
+| Phase | Time |
+|-------|------|
+| Phase 1: Team Module | 2-2.5 hours |
+| Phase 2: Testimonials | 2 hours |
+| Phase 3: Inquiries | 1.5-2 hours |
+| Phase 4: Settings | 2-2.5 hours |
+| Phase 5: FAQs (optional) | 1 hour |
+| Phase 6: Dashboard Stats | 1.5-2 hours |
+| Phase 7: Notifications | 1 hour |
+| Phase 8: Activity Log (optional) | 1 hour |
+| Phase 9: Polish | 1.5-2 hours |
+| Phase 10: Routes | 30 min |
+| Phase 11: Testing | 1.5-2 hours |
+| Phase 12: Documentation | 30 min |
 
-1. **Rich Text Editor** - Integrate Tiptap for full WYSIWYG
-2. **Email Notifications** - Send emails on new inquiries
-3. **Charts Library** - Add Chart.js for dashboard analytics
-4. **Export/Import** - CSV/Excel export for data
-5. **Activity Log** - Track admin actions
-6. **Multi-language** - Prepare for i18n
-7. **Role-based Access** - Different admin roles
-8. **API Documentation** - OpenAPI/Swagger docs
+---
+
+## Next Steps (Post-Day 3)
+
+1. **Public Website Integration**
+   - Connect admin data to public pages
+   - Display packages, articles, testimonials
+   - Contact form submissions
+
+2. **Advanced Features**
+   - Email notifications
+   - Scheduled content publishing
+   - Backup system
+   - Multi-language support
+
+3. **Security Hardening**
+   - Rate limiting
+   - Security audit
+   - Penetration testing
+
+4. **Deployment**
+   - Server setup
+   - SSL configuration
+   - Production optimization
+
+---
+
+*End of Day 3 Steps - Admin Panel Complete!*

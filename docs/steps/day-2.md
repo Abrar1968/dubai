@@ -1,486 +1,857 @@
-# Day 2: Core Feature Implementation
+# Day 2: Core CRUD Modules
 # Hajj Admin Panel Development
 
 **Date:** Day 2 of 3  
-**Focus:** Controllers, Form Requests, CRUD Operations, Frontend Forms
+**Focus:** Package CRUD, Article CRUD, Blade Components, Image Upload  
+**Stack:** Laravel 12 + Blade + Alpine.js + Tailwind CSS v4
 
 ---
 
 ## Overview
 
-Day 2 focuses on implementing the complete CRUD operations for Packages and Articles, including controllers, form requests, frontend forms, and reusable components.
+Day 2 implements the two most complex CRUD modules (Packages and Articles) along with reusable Blade components and image upload functionality.
+
+---
+
+## Prerequisites from Day 1
+
+Before starting Day 2, verify:
+- [ ] All migrations run successfully
+- [ ] All models created with relationships
+- [ ] Services created (PackageService, ArticleService, MediaService)
+- [ ] Admin layout functional
+- [ ] Login working
+- [ ] Dashboard displaying
 
 ---
 
 ## Tasks Checklist
 
-### Phase 1: Package Management Backend (2-3 hours)
+### Phase 1: Reusable Blade Components (2-2.5 hours)
 
-#### Task 1.1: Create Package Controller
-- [ ] Create `PackageController` with all CRUD methods
-- [ ] Implement index with filtering & pagination
-- [ ] Implement create/store
-- [ ] Implement edit/update
-- [ ] Implement destroy (soft delete)
-- [ ] Implement duplicate
-- [ ] Implement toggleStatus
-- [ ] Implement toggleFeatured
+#### Task 1.1: Create Component Directory
 
-**Command:**
-```bash
-php artisan make:controller Admin/Hajj/PackageController --resource
+```
+resources/views/admin/components/
+├── ui/
+│   ├── button.blade.php
+│   ├── input.blade.php
+│   ├── textarea.blade.php
+│   ├── select.blade.php
+│   ├── checkbox.blade.php
+│   ├── toggle.blade.php
+│   ├── alert.blade.php
+│   ├── badge.blade.php
+│   ├── card.blade.php
+│   └── modal.blade.php
+├── form/
+│   ├── image-upload.blade.php
+│   ├── multi-image-upload.blade.php
+│   ├── rich-editor.blade.php
+│   └── date-picker.blade.php
+└── data/
+    ├── table.blade.php
+    ├── pagination.blade.php
+    └── empty-state.blade.php
 ```
 
-**File:** `app/Http/Controllers/Admin/Hajj/PackageController.php`
+#### Task 1.2: Implement UI Components
 
-#### Task 1.2: Create Package Form Request
-- [ ] Create `PackageRequest` with validation rules
-- [ ] Define all field validations
-- [ ] Add custom error messages
+**button.blade.php**
+Props: type, variant (primary/secondary/danger), size, icon, loading, disabled, href
 
-**Command:**
+**input.blade.php**
+Props: name, type, label, value, error, placeholder, required, icon, hint
+
+**textarea.blade.php**
+Props: name, label, value, error, rows, placeholder, required
+
+**select.blade.php**
+Props: name, label, options, value, error, placeholder, required
+
+**toggle.blade.php**
+Props: name, label, checked, disabled, description
+
+**alert.blade.php**
+Props: type (success/error/warning/info), message, dismissible
+
+**badge.blade.php**
+Props: type (success/warning/danger/info), text
+
+**card.blade.php**
+Props: title, description, footer slot, actions slot
+
+**modal.blade.php** (Alpine.js)
+Props: name, title, maxWidth, closeable
+Alpine: x-data, @keydown.escape
+
+#### Task 1.3: Implement Form Components
+
+**image-upload.blade.php**
+Features:
+- Drag & drop zone
+- Image preview
+- Progress indicator
+- Remove button
+- File type validation
+- Alpine.js handling
+
+**multi-image-upload.blade.php**
+Features:
+- Multiple file selection
+- Drag & drop
+- Sortable previews
+- Individual remove
+- Limit enforcement
+
+**rich-editor.blade.php**
+Options:
+- TinyMCE or Quill integration
+- Basic formatting toolbar
+- Image upload
+- Clean paste
+
+**date-picker.blade.php**
+Features:
+- Calendar popup
+- Date format display
+- Range selection option
+- Alpine.js integration
+
+#### Task 1.4: Implement Data Components
+
+**table.blade.php**
+Props: columns, sortable, selectable
+Features:
+- Responsive horizontal scroll
+- Sortable headers
+- Row selection
+- Hover states
+- Actions slot
+
+**pagination.blade.php**
+Props: paginator
+Features:
+- Previous/Next
+- Page numbers
+- Per-page selector
+
+**empty-state.blade.php**
+Props: icon, title, description, action
+
+---
+
+### Phase 2: Package Controller (1 hour)
+
+#### Task 2.1: Create Controller
+
 ```bash
-php artisan make:request Admin/Hajj/PackageRequest
+php artisan make:controller Admin/Hajj/PackageController
 ```
 
-**File:** `app/Http/Requests/Admin/Hajj/PackageRequest.php`
+#### Task 2.2: Implement Controller Methods
 
-#### Task 1.3: Register Package Routes
-- [ ] Add all package routes to `routes/admin.php`
+| Method | Route | Purpose |
+|--------|-------|---------|
+| index | GET /admin/packages | List packages |
+| create | GET /admin/packages/create | Show create form |
+| store | POST /admin/packages | Save new package |
+| show | GET /admin/packages/{id} | View package |
+| edit | GET /admin/packages/{id}/edit | Show edit form |
+| update | PUT /admin/packages/{id} | Update package |
+| destroy | DELETE /admin/packages/{id} | Delete package |
+| toggleStatus | PATCH /admin/packages/{id}/toggle | Toggle active |
+| toggleFeatured | PATCH /admin/packages/{id}/featured | Toggle featured |
+| reorderGallery | POST /admin/packages/{id}/gallery/reorder | Sort gallery |
+| deleteGalleryImage | DELETE /admin/packages/{id}/gallery/{image} | Remove image |
+
+#### Task 2.3: Use Service Pattern
 
 ```php
-Route::prefix('hajj')->name('hajj.')->group(function () {
-    Route::resource('packages', PackageController::class);
-    Route::post('packages/{package}/duplicate', [PackageController::class, 'duplicate'])->name('packages.duplicate');
-    Route::put('packages/{package}/toggle-status', [PackageController::class, 'toggleStatus'])->name('packages.toggle-status');
-    Route::put('packages/{package}/toggle-featured', [PackageController::class, 'toggleFeatured'])->name('packages.toggle-featured');
-});
+public function __construct(
+    private PackageService $packageService,
+    private MediaService $mediaService
+) {}
 ```
 
 ---
 
-### Phase 2: Package Management Frontend (3-4 hours)
+### Phase 3: Package Form Request (45 min)
 
-#### Task 2.1: Create DataTable Component
-- [ ] Create reusable `DataTable.vue` component
-- [ ] Support sorting, pagination, selection
-- [ ] Support custom cell rendering
-- [ ] Support loading state
+#### Task 3.1: Create Form Request
 
-**File:** `resources/js/components/admin/common/DataTable.vue`
+```bash
+php artisan make:request Admin/PackageRequest
+```
 
-**Props:**
-```typescript
-interface DataTableProps {
-  columns: TableColumn[];
-  data: any[];
-  loading?: boolean;
-  selectable?: boolean;
-  pagination?: PaginationData;
+#### Task 3.2: Define Validation Rules
+
+```php
+public function rules(): array
+{
+    $packageId = $this->route('package');
+    
+    return [
+        'name' => ['required', 'string', 'max:255'],
+        'slug' => ['nullable', 'string', 'max:255', Rule::unique('packages')->ignore($packageId)],
+        'type' => ['required', Rule::enum(PackageType::class)],
+        'price' => ['required', 'numeric', 'min:0'],
+        'duration_days' => ['required', 'integer', 'min:1'],
+        'departure_date' => ['nullable', 'date', 'after_or_equal:today'],
+        'short_description' => ['required', 'string', 'max:500'],
+        'description' => ['required', 'string'],
+        'includes' => ['nullable', 'array'],
+        'excludes' => ['nullable', 'array'],
+        'itinerary' => ['nullable', 'array'],
+        'featured_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+        'gallery.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+        'is_active' => ['boolean'],
+        'is_featured' => ['boolean'],
+    ];
 }
 ```
 
-#### Task 2.2: Create SearchFilter Component
-- [ ] Create `SearchFilter.vue` component
-- [ ] Support search input
-- [ ] Support dropdown filters
-- [ ] Emit filter change events
+#### Task 3.3: Define Custom Messages
 
-**File:** `resources/js/components/admin/common/SearchFilter.vue`
+Add user-friendly error messages.
 
-#### Task 2.3: Create Package List Page
-- [ ] Create `resources/js/pages/admin/hajj/packages/Index.vue`
-- [ ] Implement DataTable with package data
-- [ ] Add search and filter functionality
-- [ ] Add action buttons (Edit, Delete, Duplicate)
-- [ ] Add bulk actions
+---
 
-**Key Features:**
-- Search by title
-- Filter by type (Hajj/Umrah)
-- Filter by status (Active/Inactive)
-- Toggle featured inline
+### Phase 4: Package Views (2.5-3 hours)
+
+#### Task 4.1: Create Package Views Directory
+
+```
+resources/views/admin/pages/packages/
+├── index.blade.php
+├── create.blade.php
+├── edit.blade.php
+└── show.blade.php
+```
+
+#### Task 4.2: Implement Index View
+
+**index.blade.php features:**
+- Search input
+- Filter buttons (All, Hajj, Umrah, Tour)
+- Status filter dropdown
+- Data table with:
+  - Thumbnail
+  - Name (linked)
+  - Type badge
+  - Price
+  - Duration
+  - Status toggle
+  - Featured toggle
+  - Actions dropdown
+- Pagination
+- Empty state
+
+#### Task 4.3: Implement Create/Edit Form
+
+**create.blade.php / edit.blade.php features:**
+
+**Tab 1: Basic Information**
+- Name input
+- Slug input (auto-generate)
+- Type select
+- Price input
+- Duration input
+- Departure date picker
+- Short description textarea
+- Status toggle
+- Featured toggle
+
+**Tab 2: Description**
+- Rich text editor
+- Full description
+- Preview option
+
+**Tab 3: Includes/Excludes**
+- Dynamic list builder (Alpine.js)
+- Add/remove items
+- Drag to reorder
+
+**Tab 4: Itinerary**
+- Day-by-day builder
+- Day number
+- Title
+- Description
+- Activities list
+
+**Tab 5: Media**
+- Featured image upload
+- Gallery multi-upload
+- Drag to reorder
+- Delete images
+
+**Form Footer:**
+- Cancel button
+- Save as Draft (create only)
+- Save button
+- Loading states
+
+#### Task 4.4: Implement Show View
+
+**show.blade.php features:**
+- Header with title, actions
+- Status badges
+- Information cards
+- Gallery preview
+- Itinerary timeline
+- Related testimonials
+- Related inquiries
+- Edit/Delete buttons
+
+---
+
+### Phase 5: PackageService Implementation (1.5 hours)
+
+#### Task 5.1: Complete CRUD Methods
+
+```php
+class PackageService
+{
+    public function list(array $filters = []): LengthAwarePaginator
+    public function getById(int $id): Package
+    public function create(array $data): Package
+    public function update(Package $package, array $data): Package
+    public function delete(Package $package): bool
+    public function toggleActive(Package $package): Package
+    public function toggleFeatured(Package $package): Package
+}
+```
+
+#### Task 5.2: Implement Image Handling
+
+```php
+private function handleFeaturedImage(array $data, ?Package $package = null): array
+{
+    // Handle featured image upload
+    // Delete old image if replacing
+}
+
+private function handleGalleryImages(Package $package, array $images): void
+{
+    // Upload each image
+    // Create PackageGallery records
+}
+
+public function reorderGallery(Package $package, array $order): void
+{
+    // Update sort_order for each gallery item
+}
+
+public function deleteGalleryImage(PackageGallery $image): bool
+{
+    // Delete file
+    // Delete record
+}
+```
+
+#### Task 5.3: Implement Filters
+
+```php
+private function applyFilters(Builder $query, array $filters): Builder
+{
+    if ($filters['type'] ?? null) {
+        $query->where('type', $filters['type']);
+    }
+    if ($filters['status'] ?? null) {
+        $query->where('is_active', $filters['status'] === 'active');
+    }
+    if ($filters['search'] ?? null) {
+        $query->where('name', 'like', "%{$filters['search']}%");
+    }
+    return $query;
+}
+```
+
+---
+
+### Phase 6: Article Controller (1 hour)
+
+#### Task 6.1: Create Controller
+
+```bash
+php artisan make:controller Admin/Hajj/ArticleController
+```
+
+#### Task 6.2: Implement Methods
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| index | GET /admin/articles | List articles |
+| create | GET /admin/articles/create | Show create form |
+| store | POST /admin/articles | Save article |
+| edit | GET /admin/articles/{id}/edit | Show edit form |
+| update | PUT /admin/articles/{id} | Update article |
+| destroy | DELETE /admin/articles/{id} | Delete article |
+| togglePublish | PATCH /admin/articles/{id}/publish | Toggle publish |
+| preview | GET /admin/articles/{id}/preview | Preview article |
+
+---
+
+### Phase 7: Article Form Request (30 min)
+
+#### Task 7.1: Create Form Request
+
+```bash
+php artisan make:request Admin/ArticleRequest
+```
+
+#### Task 7.2: Define Validation
+
+```php
+public function rules(): array
+{
+    $articleId = $this->route('article');
+    
+    return [
+        'title' => ['required', 'string', 'max:255'],
+        'slug' => ['nullable', 'string', 'max:255', Rule::unique('articles')->ignore($articleId)],
+        'article_category_id' => ['required', 'exists:article_categories,id'],
+        'excerpt' => ['nullable', 'string', 'max:500'],
+        'content' => ['required', 'string'],
+        'featured_image' => ['nullable', 'image', 'max:5120'],
+        'meta_title' => ['nullable', 'string', 'max:70'],
+        'meta_description' => ['nullable', 'string', 'max:160'],
+        'status' => ['required', Rule::enum(PublishStatus::class)],
+        'published_at' => ['nullable', 'date'],
+    ];
+}
+```
+
+---
+
+### Phase 8: Article Views (2-2.5 hours)
+
+#### Task 8.1: Create Article Views
+
+```
+resources/views/admin/pages/articles/
+├── index.blade.php
+├── create.blade.php
+├── edit.blade.php
+└── preview.blade.php
+```
+
+#### Task 8.2: Implement Index View
+
+**index.blade.php features:**
+- Search input
+- Category filter
+- Status filter (All, Published, Draft)
+- Data table with:
+  - Featured image thumb
+  - Title (linked)
+  - Category badge
+  - Author
+  - Status badge
+  - Published date
+  - View count (if tracked)
+  - Actions
+- Bulk actions (publish, unpublish, delete)
 - Pagination
 
-#### Task 2.4: Create ImageUploader Component
-- [ ] Create `ImageUploader.vue` component
-- [ ] Support drag & drop
-- [ ] Support click to upload
-- [ ] Show preview
-- [ ] Show upload progress
-- [ ] Handle errors
+#### Task 8.3: Implement Create/Edit Form
 
-**File:** `resources/js/components/admin/common/ImageUploader.vue`
+**Two-column layout:**
 
-#### Task 2.5: Create DynamicList Component
-- [ ] Create `DynamicList.vue` component
-- [ ] Support add/remove items
-- [ ] Support drag to reorder
-- [ ] Used for features, inclusions, etc.
+**Left Column (2/3 width):**
+- Title input
+- Slug input (auto-generate from title)
+- Excerpt textarea
+- Content rich editor
 
-**File:** `resources/js/components/admin/common/DynamicList.vue`
+**Right Column (1/3 width):**
+- Publish panel
+  - Status select
+  - Published date picker
+  - Save button
+- Category select
+- Featured image upload
+- SEO panel
+  - Meta title input
+  - Meta description textarea
+  - SEO preview
 
-#### Task 2.6: Create Package Form Component
-- [ ] Create `PackageForm.vue` component
-- [ ] All form fields from SRS
-- [ ] Form validation display
-- [ ] Image upload integration
-- [ ] Dynamic lists for features
+#### Task 8.4: Implement Preview
 
-**File:** `resources/js/components/admin/forms/PackageForm.vue`
-
-**Sections:**
-1. Basic Information (title, slug, type, price, duration)
-2. Media (main image, gallery)
-3. Features (dynamic list)
-4. Description (rich text editor - can use simple textarea first)
-5. Itinerary (dynamic day sections)
-6. Hotel Information
-7. Inclusions/Exclusions (two lists)
-8. Availability (dates, capacity)
-9. Status (featured, active toggles)
-
-#### Task 2.7: Create Package Create Page
-- [ ] Create `resources/js/pages/admin/hajj/packages/Create.vue`
-- [ ] Use PackageForm component
-- [ ] Handle form submission
-- [ ] Handle success/error messages
-
-#### Task 2.8: Create Package Edit Page
-- [ ] Create `resources/js/pages/admin/hajj/packages/Edit.vue`
-- [ ] Load existing package data
-- [ ] Pre-populate form
-- [ ] Handle update submission
+**preview.blade.php:**
+- Article formatted as public view
+- Header with "Back to Edit" button
+- Responsive preview sizes
 
 ---
 
-### Phase 3: Article Management Backend (1-2 hours)
+### Phase 9: ArticleService Implementation (1 hour)
 
-#### Task 3.1: Create Article Controller
-- [ ] Create `ArticleController` with CRUD methods
-- [ ] Implement publish/unpublish methods
-- [ ] Handle image uploads
+#### Task 9.1: Complete CRUD Methods
 
-**Command:**
-```bash
-php artisan make:controller Admin/Hajj/ArticleController --resource
-```
-
-#### Task 3.2: Create ArticleCategory Controller
-- [ ] Create `ArticleCategoryController`
-- [ ] Simple CRUD for categories
-
-**Command:**
-```bash
-php artisan make:controller Admin/Hajj/ArticleCategoryController --resource
-```
-
-#### Task 3.3: Create Form Requests
-- [ ] Create `ArticleRequest`
-- [ ] Create `ArticleCategoryRequest`
-
-**Commands:**
-```bash
-php artisan make:request Admin/Hajj/ArticleRequest
-php artisan make:request Admin/Hajj/ArticleCategoryRequest
-```
-
-#### Task 3.4: Register Article Routes
 ```php
-Route::resource('articles', ArticleController::class);
-Route::put('articles/{article}/publish', [ArticleController::class, 'publish'])->name('articles.publish');
-Route::put('articles/{article}/unpublish', [ArticleController::class, 'unpublish'])->name('articles.unpublish');
-Route::resource('categories', ArticleCategoryController::class)->except(['create', 'edit', 'show']);
+class ArticleService
+{
+    public function list(array $filters = []): LengthAwarePaginator
+    public function getById(int $id): Article
+    public function create(array $data): Article
+    public function update(Article $article, array $data): Article
+    public function delete(Article $article): bool
+    public function publish(Article $article): Article
+    public function unpublish(Article $article): Article
+}
 ```
 
----
+#### Task 9.2: Handle Publishing Logic
 
-### Phase 4: Article Management Frontend (2-3 hours)
-
-#### Task 4.1: Create Article List Page
-- [ ] Create `resources/js/pages/admin/hajj/articles/Index.vue`
-- [ ] DataTable with articles
-- [ ] Filter by category, status
-- [ ] Quick publish/unpublish toggle
-
-#### Task 4.2: Create RichTextEditor Component (Basic)
-- [ ] Create `RichTextEditor.vue` component
-- [ ] Basic implementation (can use textarea initially)
-- [ ] Plan for Tiptap integration later
-
-**File:** `resources/js/components/admin/common/RichTextEditor.vue`
-
-**Note:** For Day 2, can use simple textarea with markdown support. Full Tiptap can be added in enhancement phase.
-
-#### Task 4.3: Create Article Form Component
-- [ ] Create `ArticleForm.vue`
-- [ ] Title, slug, excerpt
-- [ ] Category select/create
-- [ ] Content editor
-- [ ] Featured image
-- [ ] SEO fields
-- [ ] Publishing options
-
-**File:** `resources/js/components/admin/forms/ArticleForm.vue`
-
-#### Task 4.4: Create Article Create/Edit Pages
-- [ ] Create `resources/js/pages/admin/hajj/articles/Create.vue`
-- [ ] Create `resources/js/pages/admin/hajj/articles/Edit.vue`
-
----
-
-### Phase 5: Confirm Modal & Toast (30 min)
-
-#### Task 5.1: Create ConfirmModal Component
-- [ ] Create `ConfirmModal.vue`
-- [ ] Support danger/warning variants
-- [ ] Customizable text
-
-**File:** `resources/js/components/admin/common/ConfirmModal.vue`
-
-#### Task 5.2: Implement Toast Notifications
-- [ ] Use Inertia flash messages
-- [ ] Create toast display component or use existing UI
-
----
-
-### Phase 6: Media Upload Controller (1 hour)
-
-#### Task 6.1: Create MediaController
-- [ ] Create `MediaController`
-- [ ] Implement uploadImage endpoint
-- [ ] Implement uploadImages endpoint
-- [ ] Implement deleteImage endpoint
-
-**Command:**
-```bash
-php artisan make:controller Admin/MediaController
-```
-
-**File:** `app/Http/Controllers/Admin/MediaController.php`
-
-#### Task 6.2: Register Media Routes
 ```php
-Route::post('upload/image', [MediaController::class, 'uploadImage'])->name('upload.image');
-Route::post('upload/images', [MediaController::class, 'uploadImages'])->name('upload.images');
-Route::delete('upload/{path}', [MediaController::class, 'deleteImage'])->name('upload.delete')->where('path', '.*');
+private function handlePublishing(array $data): array
+{
+    if ($data['status'] === PublishStatus::PUBLISHED->value) {
+        $data['published_at'] ??= now();
+    }
+    return $data;
+}
+```
+
+---
+
+### Phase 10: Article Category Management (1 hour)
+
+#### Task 10.1: Create Controller
+
+```bash
+php artisan make:controller Admin/Hajj/ArticleCategoryController
+```
+
+#### Task 10.2: Implement Simple CRUD
+
+Categories are simpler - can be inline managed:
+- Modal-based create/edit
+- Ajax operations
+- Inline delete with confirmation
+
+#### Task 10.3: Create Views
+
+```
+resources/views/admin/pages/articles/
+└── categories/
+    └── index.blade.php (includes modal)
+```
+
+---
+
+### Phase 11: MediaService Implementation (45 min)
+
+#### Task 11.1: Complete Upload Methods
+
+```php
+class MediaService
+{
+    public function uploadImage(UploadedFile $file, string $path): string
+    {
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $file->storeAs($path, $filename, 'public');
+        return $path . '/' . $filename;
+    }
+
+    public function uploadImages(array $files, string $path): array
+    {
+        return array_map(fn($file) => $this->uploadImage($file, $path), $files);
+    }
+
+    public function deleteImage(string $path): bool
+    {
+        if (Storage::disk('public')->exists($path)) {
+            return Storage::disk('public')->delete($path);
+        }
+        return false;
+    }
+    
+    public function createThumbnail(string $path, int $width = 300): string
+    {
+        // Use Intervention Image or similar
+    }
+}
+```
+
+---
+
+### Phase 12: Alpine.js Interactive Features (1 hour)
+
+#### Task 12.1: Dynamic List Builder
+
+For package includes/excludes:
+```javascript
+function listBuilder(items = []) {
+    return {
+        items: items,
+        newItem: '',
+        add() {
+            if (this.newItem.trim()) {
+                this.items.push(this.newItem.trim());
+                this.newItem = '';
+            }
+        },
+        remove(index) {
+            this.items.splice(index, 1);
+        },
+        // Drag & drop using SortableJS
+    }
+}
+```
+
+#### Task 12.2: Itinerary Builder
+
+```javascript
+function itineraryBuilder(days = []) {
+    return {
+        days: days,
+        addDay() {
+            this.days.push({
+                day: this.days.length + 1,
+                title: '',
+                description: '',
+                activities: []
+            });
+        },
+        removeDay(index) {
+            this.days.splice(index, 1);
+            // Renumber days
+        }
+    }
+}
+```
+
+#### Task 12.3: Slug Generator
+
+```javascript
+function slugGenerator() {
+    return {
+        title: '',
+        slug: '',
+        autoGenerate: true,
+        generateSlug() {
+            if (this.autoGenerate) {
+                this.slug = this.title
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-|-$/g, '');
+            }
+        }
+    }
+}
+```
+
+---
+
+### Phase 13: Routes Update (30 min)
+
+#### Task 13.1: Add Package Routes
+
+```php
+// routes/admin.php
+
+Route::prefix('packages')->name('packages.')->group(function () {
+    Route::get('/', [PackageController::class, 'index'])->name('index');
+    Route::get('/create', [PackageController::class, 'create'])->name('create');
+    Route::post('/', [PackageController::class, 'store'])->name('store');
+    Route::get('/{package}', [PackageController::class, 'show'])->name('show');
+    Route::get('/{package}/edit', [PackageController::class, 'edit'])->name('edit');
+    Route::put('/{package}', [PackageController::class, 'update'])->name('update');
+    Route::delete('/{package}', [PackageController::class, 'destroy'])->name('destroy');
+    Route::patch('/{package}/toggle', [PackageController::class, 'toggleStatus'])->name('toggle');
+    Route::patch('/{package}/featured', [PackageController::class, 'toggleFeatured'])->name('featured');
+    Route::post('/{package}/gallery/reorder', [PackageController::class, 'reorderGallery'])->name('gallery.reorder');
+    Route::delete('/{package}/gallery/{image}', [PackageController::class, 'deleteGalleryImage'])->name('gallery.delete');
+});
+```
+
+#### Task 13.2: Add Article Routes
+
+```php
+Route::prefix('articles')->name('articles.')->group(function () {
+    Route::get('/', [ArticleController::class, 'index'])->name('index');
+    Route::get('/create', [ArticleController::class, 'create'])->name('create');
+    Route::post('/', [ArticleController::class, 'store'])->name('store');
+    Route::get('/{article}/edit', [ArticleController::class, 'edit'])->name('edit');
+    Route::put('/{article}', [ArticleController::class, 'update'])->name('update');
+    Route::delete('/{article}', [ArticleController::class, 'destroy'])->name('destroy');
+    Route::patch('/{article}/publish', [ArticleController::class, 'togglePublish'])->name('publish');
+    Route::get('/{article}/preview', [ArticleController::class, 'preview'])->name('preview');
+    
+    // Categories
+    Route::get('/categories', [ArticleCategoryController::class, 'index'])->name('categories.index');
+    Route::post('/categories', [ArticleCategoryController::class, 'store'])->name('categories.store');
+    Route::put('/categories/{category}', [ArticleCategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [ArticleCategoryController::class, 'destroy'])->name('categories.destroy');
+});
 ```
 
 ---
 
 ## File Creation Checklist
 
-### Backend Files
+### Controllers
 ```
 ☐ app/Http/Controllers/Admin/Hajj/PackageController.php
 ☐ app/Http/Controllers/Admin/Hajj/ArticleController.php
 ☐ app/Http/Controllers/Admin/Hajj/ArticleCategoryController.php
-☐ app/Http/Controllers/Admin/MediaController.php
-
-☐ app/Http/Requests/Admin/Hajj/PackageRequest.php
-☐ app/Http/Requests/Admin/Hajj/ArticleRequest.php
-☐ app/Http/Requests/Admin/Hajj/ArticleCategoryRequest.php
 ```
 
-### Frontend Files
+### Form Requests
 ```
-☐ resources/js/components/admin/common/DataTable.vue
-☐ resources/js/components/admin/common/SearchFilter.vue
-☐ resources/js/components/admin/common/ImageUploader.vue
-☐ resources/js/components/admin/common/DynamicList.vue
-☐ resources/js/components/admin/common/RichTextEditor.vue
-☐ resources/js/components/admin/common/ConfirmModal.vue
-
-☐ resources/js/components/admin/forms/PackageForm.vue
-☐ resources/js/components/admin/forms/ArticleForm.vue
-
-☐ resources/js/pages/admin/hajj/packages/Index.vue
-☐ resources/js/pages/admin/hajj/packages/Create.vue
-☐ resources/js/pages/admin/hajj/packages/Edit.vue
-
-☐ resources/js/pages/admin/hajj/articles/Index.vue
-☐ resources/js/pages/admin/hajj/articles/Create.vue
-☐ resources/js/pages/admin/hajj/articles/Edit.vue
+☐ app/Http/Requests/Admin/PackageRequest.php
+☐ app/Http/Requests/Admin/ArticleRequest.php
 ```
 
----
-
-## Verification Steps
-
-### End of Day 2 Checklist
-- [ ] Package list page shows all packages
-- [ ] Package filtering works (search, type, status)
-- [ ] Create new package works
-- [ ] Edit package works
-- [ ] Delete package works (with confirmation)
-- [ ] Duplicate package works
-- [ ] Toggle status/featured works
-- [ ] Image upload works
-- [ ] Article list page shows all articles
-- [ ] Create/Edit article works
-- [ ] Publish/Unpublish works
-- [ ] Form validation displays errors
-- [ ] Success/error toasts display
-
-### Test Scenarios
-
-**Package CRUD:**
+### Components (UI)
 ```
-1. Navigate to /admin/hajj/packages
-2. Click "Add Package"
-3. Fill form with test data
-4. Upload image
-5. Submit and verify redirect
-6. Edit the created package
-7. Change some fields
-8. Update and verify
-9. Duplicate the package
-10. Delete a package
+☐ resources/views/admin/components/ui/button.blade.php
+☐ resources/views/admin/components/ui/input.blade.php
+☐ resources/views/admin/components/ui/textarea.blade.php
+☐ resources/views/admin/components/ui/select.blade.php
+☐ resources/views/admin/components/ui/checkbox.blade.php
+☐ resources/views/admin/components/ui/toggle.blade.php
+☐ resources/views/admin/components/ui/alert.blade.php
+☐ resources/views/admin/components/ui/badge.blade.php
+☐ resources/views/admin/components/ui/card.blade.php
+☐ resources/views/admin/components/ui/modal.blade.php
 ```
 
-**Article CRUD:**
+### Components (Form)
 ```
-1. Navigate to /admin/hajj/articles
-2. Create new article
-3. Select/create category
-4. Add content
-5. Save as draft
-6. Publish article
-7. Verify publish date set
-8. Unpublish and verify
+☐ resources/views/admin/components/form/image-upload.blade.php
+☐ resources/views/admin/components/form/multi-image-upload.blade.php
+☐ resources/views/admin/components/form/rich-editor.blade.php
+☐ resources/views/admin/components/form/date-picker.blade.php
+```
+
+### Components (Data)
+```
+☐ resources/views/admin/components/data/table.blade.php
+☐ resources/views/admin/components/data/pagination.blade.php
+☐ resources/views/admin/components/data/empty-state.blade.php
+```
+
+### Package Views
+```
+☐ resources/views/admin/pages/packages/index.blade.php
+☐ resources/views/admin/pages/packages/create.blade.php
+☐ resources/views/admin/pages/packages/edit.blade.php
+☐ resources/views/admin/pages/packages/show.blade.php
+```
+
+### Article Views
+```
+☐ resources/views/admin/pages/articles/index.blade.php
+☐ resources/views/admin/pages/articles/create.blade.php
+☐ resources/views/admin/pages/articles/edit.blade.php
+☐ resources/views/admin/pages/articles/preview.blade.php
+☐ resources/views/admin/pages/articles/categories/index.blade.php
 ```
 
 ---
 
-## Notes for Tomorrow (Day 3)
+## End of Day 2 Verification
+
+### Functionality Checklist
+- [ ] Package list displays with filters
+- [ ] Package create form works
+- [ ] Package edit form populates data
+- [ ] Package image upload works
+- [ ] Package gallery works
+- [ ] Package delete works
+- [ ] Article list displays with filters
+- [ ] Article create/edit works
+- [ ] Article rich editor works
+- [ ] Article publish/unpublish works
+- [ ] Article categories manageable
+- [ ] All form validation working
+- [ ] All components reusable
+
+### Test Actions
+
+1. **Package CRUD:**
+   - Create new Hajj package with all fields
+   - Upload featured image
+   - Add gallery images
+   - Edit and update
+   - Toggle active/featured
+   - Delete package
+
+2. **Article CRUD:**
+   - Create article category
+   - Create new article with image
+   - Preview article
+   - Publish article
+   - Edit and update
+   - Unpublish
+   - Delete article
+
+---
+
+## Notes for Day 3
 
 Day 3 will focus on:
-1. Team Member management
-2. Testimonial management
-3. Inquiry management
-4. Settings page
-5. Dashboard statistics
-6. Final testing and polish
+- Team Members CRUD
+- Testimonials CRUD
+- Contact Inquiries management
+- Site Settings
+- Dashboard statistics
+- Final polish and testing
 
-**Prerequisites for Day 3:**
-- Package CRUD fully working
-- Article CRUD fully working
-- Image upload working
-- Form validation working
+**Prerequisites:**
+- All components working
+- Services implemented
+- Package & Article modules complete
 
 ---
 
-## Estimated Time: 10-12 hours
+## Estimated Time: 13-15 hours
 
 | Phase | Time |
 |-------|------|
-| Phase 1: Package Backend | 2-3 hours |
-| Phase 2: Package Frontend | 3-4 hours |
-| Phase 3: Article Backend | 1-2 hours |
-| Phase 4: Article Frontend | 2-3 hours |
-| Phase 5: Confirm Modal & Toast | 30 min |
-| Phase 6: Media Upload | 1 hour |
-
----
-
-## Code Snippets
-
-### Package Controller Index Method
-```php
-public function index(): Response
-{
-    $packages = Package::query()
-        ->when(request('search'), fn($q, $s) => $q->where('title', 'like', "%{$s}%"))
-        ->when(request('type'), fn($q, $t) => $q->where('type', $t))
-        ->when(request('status') !== null, function($q) {
-            return request('status') === 'active' 
-                ? $q->where('is_active', true) 
-                : $q->where('is_active', false);
-        })
-        ->orderBy(request('sort', 'created_at'), request('order', 'desc'))
-        ->paginate(request('per_page', 10))
-        ->withQueryString();
-
-    return Inertia::render('admin/hajj/packages/Index', [
-        'packages' => $packages,
-        'filters' => request()->only(['search', 'type', 'status', 'sort', 'order']),
-    ]);
-}
-```
-
-### DataTable Column Definition Example
-```typescript
-const columns: TableColumn[] = [
-  {
-    key: 'image',
-    label: '',
-    width: '60px',
-    render: (_, row) => h('img', { src: row.image_url, class: 'w-12 h-12 rounded object-cover' })
-  },
-  { key: 'title', label: 'Title', sortable: true },
-  { key: 'type', label: 'Type', sortable: true },
-  { 
-    key: 'price', 
-    label: 'Price', 
-    sortable: true,
-    render: (value, row) => `${row.currency} ${value}`
-  },
-  {
-    key: 'is_active',
-    label: 'Status',
-    render: (value) => h(StatusBadge, { status: value ? 'active' : 'inactive' })
-  },
-  {
-    key: 'actions',
-    label: '',
-    render: (_, row) => h(ActionDropdown, { package: row })
-  }
-];
-```
-
-### Inertia Form Usage
-```typescript
-import { useForm } from '@inertiajs/vue3';
-
-const form = useForm({
-  title: props.package?.title ?? '',
-  type: props.package?.type ?? 'hajj',
-  price: props.package?.price ?? 0,
-  // ... other fields
-});
-
-const submit = () => {
-  if (props.package) {
-    form.put(route('admin.hajj.packages.update', props.package.id));
-  } else {
-    form.post(route('admin.hajj.packages.store'));
-  }
-};
-```
+| Phase 1: Blade Components | 2-2.5 hours |
+| Phase 2: Package Controller | 1 hour |
+| Phase 3: Package Request | 45 min |
+| Phase 4: Package Views | 2.5-3 hours |
+| Phase 5: PackageService | 1.5 hours |
+| Phase 6: Article Controller | 1 hour |
+| Phase 7: Article Request | 30 min |
+| Phase 8: Article Views | 2-2.5 hours |
+| Phase 9: ArticleService | 1 hour |
+| Phase 10: Categories | 1 hour |
+| Phase 11: MediaService | 45 min |
+| Phase 12: Alpine.js Features | 1 hour |
+| Phase 13: Routes | 30 min |
 
 ---
 
 ## Troubleshooting
 
-### Image Upload Issues
+**Image not uploading:**
 ```bash
-# Check storage link
 php artisan storage:link
-
-# Check permissions
-chmod -R 775 storage
-chmod -R 775 bootstrap/cache
+chmod -R 755 storage
+chmod -R 755 bootstrap/cache
 ```
 
-### Form Validation Not Showing
-```vue
-<!-- Make sure to pass errors -->
-<InputError :message="form.errors.title" />
-```
+**Validation errors not showing:**
+- Check `@error` directive usage
+- Verify `old()` values
+- Check form method spoofing
 
-### Inertia Page Props Not Updating
-```typescript
-// Use router.reload() or form.reset()
-import { router } from '@inertiajs/vue3';
-router.reload({ only: ['packages'] });
-```
+**Alpine.js not working:**
+- Check script inclusion
+- Verify x-data syntax
+- Check browser console
+
+**Rich editor not loading:**
+- Verify CDN/package import
+- Check initialization timing
+- Review console errors
+
+---
+
+*End of Day 2 Steps*

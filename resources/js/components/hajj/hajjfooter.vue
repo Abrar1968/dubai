@@ -64,6 +64,7 @@ import { Mail, Phone } from 'lucide-vue-next';
                     <a href="#" class="hover:text-gray-300 transition-colors">Contact</a>
                     <a href="#" class="hover:text-gray-300 transition-colors">Help Center</a>
                     <a href="#" class="hover:text-gray-300 transition-colors">Career</a>
+                    <a href="/admin/login" class="hover:text-[#D3A762] transition-colors text-gray-500 text-xs mt-2">Admin Login</a>
                 </nav>
             </div>
         </div>

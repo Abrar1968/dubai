@@ -1,584 +1,517 @@
-# Hajj Section Overview - Admin Panel Design Analysis
+# Hajj Section Overview
+# Admin Panel Design & Analysis
 
-## 1. Current Frontend Structure Analysis
+**Version:** 2.0  
+**Date:** January 14, 2026  
+**Project:** Dubai Travel & Services
 
-### 1.1 Hajj & Umrah Pages
+---
 
-| File | Purpose | Data Expected |
-|------|---------|---------------|
-| `hajjhome.vue` | Main landing page for Hajj section | Packages, Features, Blogs, Testimonials |
-| `hajjpackage.vue` | Lists Hajj packages | Package objects with id, title, price, image, features[] |
-| `umrahpackage.vue` | Lists Umrah packages | Same structure as Hajj packages |
-| `articles.vue` | Blog/Article listing | Posts with id, slug, category, title, excerpt, image |
-| `article_detail.vue` | Single article view | Slug parameter, full article content |
-| `team.vue` | Team members page | Team members with name, role, img, social links |
-| `contactus.vue` | Contact form | Form submission: name, email, subject, message |
+## 1. Project Overview
 
-### 1.2 Hajj Components
+### 1.1 Purpose
+
+This document provides a comprehensive overview of the Hajj & Umrah section, including the existing public-facing frontend analysis and the complete admin panel design specifications.
+
+### 1.2 Sections
+
+The Dubai Travel & Services platform consists of three main sections:
+
+| Section | Status | Priority |
+|---------|--------|----------|
+| Hajj & Umrah | Active Development | Primary |
+| Tour & Travel | Placeholder | Phase 2 |
+| Typing Services | Placeholder | Phase 3 |
+
+---
+
+## 2. Current Frontend Analysis
+
+### 2.1 Public Pages (Vue.js + Inertia)
+
+| File | Route | Purpose |
+|------|-------|---------|
+| hajjhome.vue | /hajj-umrah | Main landing page |
+| hajjpackage.vue | /hajjpackage | Hajj packages listing |
+| umrahpackage.vue | /umrahpackage | Umrah packages listing |
+| articles.vue | /articles | Blog/article listing |
+| article_detail.vue | /articles/{slug} | Single article view |
+| team.vue | /hajj-umrah/team | Team members page |
+| contactus.vue | /contactus | Contact form |
+
+### 2.2 Current Components
 
 | Component | Purpose |
 |-----------|---------|
-| `hajjheader.vue` | Navigation with email, phone, social links, menu with dropdowns |
-| `hajjfooter.vue` | Footer with office info, menus, links |
+| hajjheader.vue | Navigation with contact info, social links, menu |
+| hajjfooter.vue | Footer with office info, links, copyright |
+| HajjUmrahLayout.vue | Layout wrapper with header/footer |
 
-### 1.3 Layout
+### 2.3 Data Currently Used (Hardcoded)
 
-| Layout | Purpose |
-|--------|---------|
-| `HajjUmrahLayout.vue` | Wraps pages with header and footer |
+**Packages:**
+- id, title, price, image, features array
 
----
+**Articles:**
+- id, slug, category, title, excerpt, image
 
-## 2. Data Models Required for Admin Panel
+**Team:**
+- name, role, image, social links
 
-### 2.1 Package Data Structure
-```typescript
-interface Package {
-    id: number;
-    title: string;
-    slug: string;
-    type: 'hajj' | 'umrah' | 'tour';
-    price: number;
-    currency: string;
-    duration_days: number;
-    image: string;
-    thumbnail?: string;
-    features: string[];
-    description?: string;
-    inclusions?: string[];
-    exclusions?: string[];
-    itinerary?: ItineraryDay[];
-    hotel_details?: HotelInfo;
-    departure_dates?: Date[];
-    max_capacity?: number;
-    current_bookings?: number;
-    is_featured: boolean;
-    is_active: boolean;
-    created_at: Date;
-    updated_at: Date;
-}
-
-interface ItineraryDay {
-    day: number;
-    title: string;
-    description: string;
-    activities: string[];
-}
-
-interface HotelInfo {
-    name: string;
-    rating: number;
-    location: string;
-    distance_to_haram?: string;
-    amenities: string[];
-}
-```
-
-### 2.2 Article/Blog Data Structure
-```typescript
-interface Article {
-    id: number;
-    slug: string;
-    title: string;
-    excerpt: string;
-    content: string; // Rich text/HTML
-    category: string;
-    image: string;
-    thumbnail?: string;
-    author_id: number;
-    author?: User;
-    tags?: string[];
-    meta_title?: string;
-    meta_description?: string;
-    is_published: boolean;
-    published_at?: Date;
-    views_count: number;
-    created_at: Date;
-    updated_at: Date;
-}
-
-interface ArticleCategory {
-    id: number;
-    name: string;
-    slug: string;
-    description?: string;
-}
-```
-
-### 2.3 Team Member Data Structure
-```typescript
-interface TeamMember {
-    id: number;
-    name: string;
-    role: string;
-    image: string;
-    bio?: string;
-    email?: string;
-    phone?: string;
-    social_links?: {
-        facebook?: string;
-        twitter?: string;
-        linkedin?: string;
-        instagram?: string;
-    };
-    order: number;
-    is_active: boolean;
-    created_at: Date;
-    updated_at: Date;
-}
-```
-
-### 2.4 Contact/Inquiry Data Structure
-```typescript
-interface ContactInquiry {
-    id: number;
-    name: string;
-    email: string;
-    phone?: string;
-    subject: string;
-    message: string;
-    package_id?: number;
-    status: 'new' | 'read' | 'responded' | 'closed';
-    admin_notes?: string;
-    responded_at?: Date;
-    created_at: Date;
-    updated_at: Date;
-}
-```
-
-### 2.5 Testimonial Data Structure
-```typescript
-interface Testimonial {
-    id: number;
-    name: string;
-    location: string;
-    avatar?: string;
-    rating: number; // 1-5
-    content: string;
-    package_id?: number;
-    is_featured: boolean;
-    is_approved: boolean;
-    created_at: Date;
-    updated_at: Date;
-}
-```
-
-### 2.6 Settings/Configuration
-```typescript
-interface HajjSettings {
-    company_name: string;
-    company_email: string;
-    company_phone: string;
-    company_address: string;
-    social_links: {
-        facebook?: string;
-        twitter?: string;
-        instagram?: string;
-        linkedin?: string;
-    };
-    office_locations: OfficeLocation[];
-    hero_banner_image: string;
-    hero_title: string;
-    hero_subtitle: string;
-}
-
-interface OfficeLocation {
-    id: number;
-    name: string;
-    address: string;
-    phone: string;
-    email: string;
-    map_coordinates?: {
-        lat: number;
-        lng: number;
-    };
-}
-```
+**Testimonials:**
+- name, location, quote, avatar
 
 ---
 
-## 3. Admin Panel Sections Design
+## 3. Admin Panel Overview
 
-### 3.1 Dashboard
-- **Overview Statistics**:
-  - Total Packages (Active/Inactive)
-  - Total Articles (Published/Draft)
-  - New Inquiries (Unread count)
-  - Total Team Members
-  - Recent Testimonials
+### 3.1 Technology Stack Change
 
-- **Quick Actions**:
-  - Add New Package
-  - Write New Article
-  - View New Inquiries
+**Previous Plan:** Vue.js + Inertia for admin  
+**Current Plan:** Laravel Blade + Alpine.js + Tailwind CSS v4
 
-- **Recent Activity Feed**:
-  - Latest inquiries
-  - Recent article views
-  - New testimonials
+**Rationale:**
+- Faster initial page loads
+- Simpler deployment
+- Better SEO for admin (if needed)
+- Reduced JavaScript bundle
+- Easier maintenance
 
-### 3.2 Packages Management
+### 3.2 Architecture Pattern
 
-#### List View
-| Column | Actions |
-|--------|---------|
-| Image Thumbnail | View |
-| Title | Edit |
-| Type (Hajj/Umrah) | Duplicate |
-| Price | Toggle Active |
-| Duration | Delete |
-| Featured Badge | |
-| Status (Active/Inactive) | |
+**Service Pattern** - All business logic in service classes:
 
-#### Create/Edit Form
-- **Basic Information**
-  - Title (text)
-  - Slug (auto-generated, editable)
-  - Type (dropdown: Hajj, Umrah, Tour)
-  - Price (number + currency selector)
-  - Duration (number + days)
-  - Featured (toggle)
-  - Active (toggle)
+| Layer | Responsibility |
+|-------|----------------|
+| Controller | HTTP handling only |
+| Service | Business logic |
+| Model | Data representation |
 
-- **Media**
-  - Main Image (upload with preview)
-  - Gallery Images (multiple upload)
+### 3.3 Admin Access
 
-- **Features** (dynamic list)
-  - Add/Remove feature items
+**Entry Point:** Admin Login link in public website footer
 
-- **Description** (rich text editor)
+| Route | Purpose |
+|-------|---------|
+| /admin/login | Authentication page |
+| /admin/hajj | Dashboard after login |
 
-- **Itinerary** (dynamic day-by-day)
-  - Day number
-  - Title
-  - Description
-  - Activities list
+---
 
-- **Hotel Information**
-  - Hotel name
-  - Star rating
-  - Location
-  - Distance to Haram
-  - Amenities (tags)
+## 4. Data Models
 
-- **Inclusions/Exclusions** (two dynamic lists)
+### 4.1 Package
 
-- **Departure Dates** (date picker, multiple)
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Primary key |
+| title | string | Package name |
+| slug | string | URL slug |
+| type | enum | hajj, umrah, tour |
+| price | decimal | Base price |
+| currency | string | USD, AED, SAR |
+| duration_days | integer | Trip duration |
+| image | string | Main image path |
+| features | json | Feature list |
+| description | text | Full description |
+| inclusions | json | What's included |
+| exclusions | json | What's not included |
+| itinerary | json | Day-by-day plan |
+| hotel_details | json | Hotel information |
+| departure_dates | json | Available dates |
+| max_capacity | integer | Max travelers |
+| is_featured | boolean | Featured flag |
+| is_active | boolean | Active flag |
 
-- **Capacity**
-  - Max capacity
-  - Current bookings (display only)
+### 4.2 Article
 
-### 3.3 Articles/Blog Management
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Primary key |
+| title | string | Article title |
+| slug | string | URL slug |
+| excerpt | string | Short summary |
+| content | text | Full content (HTML) |
+| category_id | integer | FK to categories |
+| author_id | integer | FK to users |
+| image | string | Featured image |
+| meta_title | string | SEO title |
+| meta_description | string | SEO description |
+| tags | json | Tag list |
+| status | enum | draft, published |
+| published_at | datetime | Publish date |
+| views_count | integer | View counter |
 
-#### List View
-| Column | Actions |
-|--------|---------|
-| Thumbnail | View |
-| Title | Edit |
-| Category | Publish/Unpublish |
-| Status | Delete |
-| Published Date | |
-| Views | |
+### 4.3 Article Category
 
-#### Create/Edit Form
-- **Basic Information**
-  - Title
-  - Slug (auto-generated)
-  - Category (dropdown/create new)
-  - Excerpt (textarea)
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Primary key |
+| name | string | Category name |
+| slug | string | URL slug |
+| description | text | Description |
 
-- **Content** (Rich Text Editor - TinyMCE/Tiptap)
+### 4.4 Team Member
 
-- **Media**
-  - Featured Image
-  - In-content images
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Primary key |
+| name | string | Full name |
+| role | string | Position title |
+| image | string | Photo path |
+| bio | text | Biography |
+| email | string | Contact email |
+| phone | string | Contact phone |
+| social_links | json | Social media URLs |
+| sort_order | integer | Display order |
+| is_active | boolean | Active flag |
 
-- **SEO**
-  - Meta Title
-  - Meta Description
-  - Tags
+### 4.5 Testimonial
 
-- **Publishing**
-  - Status (Draft/Published)
-  - Publish Date (schedule)
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Primary key |
+| name | string | Customer name |
+| location | string | Customer location |
+| avatar | string | Photo path |
+| rating | integer | 1-5 stars |
+| content | text | Testimonial text |
+| package_id | integer | FK to packages |
+| is_featured | boolean | Featured flag |
+| is_approved | boolean | Approval status |
 
-### 3.4 Team Management
+### 4.6 Contact Inquiry
 
-#### List View (Grid or Table)
-| Column | Actions |
-|--------|---------|
-| Avatar | Edit |
-| Name | Reorder (drag) |
-| Role | Toggle Active |
-| Social Links | Delete |
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Primary key |
+| name | string | Customer name |
+| email | string | Customer email |
+| phone | string | Customer phone |
+| subject | string | Inquiry subject |
+| message | text | Full message |
+| package_id | integer | FK to packages |
+| status | enum | new, read, responded, closed |
+| admin_notes | text | Internal notes |
+| responded_at | datetime | Response timestamp |
 
-#### Create/Edit Form
-- Name
-- Role/Position
-- Image Upload
-- Bio (textarea)
-- Email
-- Phone
-- Social Links (Facebook, Twitter, LinkedIn, Instagram)
-- Display Order
-- Active Status
+### 4.7 Site Setting
 
-### 3.5 Inquiries/Contacts
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Primary key |
+| section | string | Module (hajj, tour, etc.) |
+| key | string | Setting key |
+| value | text | Setting value |
+| type | enum | string, text, json, boolean |
 
-#### List View
-| Column | Actions |
-|--------|---------|
-| Name | View Details |
-| Email | Mark as Read |
-| Subject | Respond |
-| Status Badge | Delete |
-| Package (if linked) | |
-| Date | |
+### 4.8 Office Location
 
-#### Detail View
-- Full message content
-- Admin notes (editable)
-- Quick reply option
-- Status changer
-- Related package info (if any)
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Primary key |
+| section | string | Module |
+| name | string | Office name |
+| address | text | Full address |
+| phone | string | Contact phone |
+| email | string | Contact email |
+| map_lat | decimal | Latitude |
+| map_lng | decimal | Longitude |
+| sort_order | integer | Display order |
+| is_active | boolean | Active flag |
 
-### 3.6 Testimonials
+### 4.9 FAQ
 
-#### List View
-| Column | Actions |
-|--------|---------|
-| Avatar | Edit |
-| Name | Approve/Reject |
-| Rating (stars) | Feature/Unfeature |
-| Excerpt | Delete |
-| Featured Badge | |
-| Status | |
+| Field | Type | Description |
+|-------|------|-------------|
+| id | integer | Primary key |
+| section | string | Module |
+| question | string | Question text |
+| answer | text | Answer text |
+| sort_order | integer | Display order |
+| is_active | boolean | Active flag |
 
-#### Create/Edit Form
-- Name
-- Location/Country
-- Avatar Upload
+---
+
+## 5. Admin Panel Modules
+
+### 5.1 Dashboard
+
+**Content:**
+- Statistics cards (packages, articles, inquiries, testimonials)
+- Recent inquiries table
+- Quick action buttons
+- Activity feed
+
+**Statistics Displayed:**
+
+| Metric | Description |
+|--------|-------------|
+| Total Packages | Active/inactive breakdown |
+| Total Articles | Published/draft breakdown |
+| New Inquiries | Unread count highlighted |
+| Testimonials | Approved/pending breakdown |
+
+### 5.2 Package Management
+
+**List Features:**
+- Sortable table columns
+- Search by title
+- Filter by type (Hajj/Umrah)
+- Filter by status (Active/Inactive)
+- Quick toggle for featured/active
+- Bulk actions
+
+**Form Sections:**
+1. Basic Information
+2. Media (main image, gallery)
+3. Features (dynamic list)
+4. Description (rich text)
+5. Itinerary (day-by-day)
+6. Hotel Information
+7. Inclusions/Exclusions
+8. Availability
+
+### 5.3 Article Management
+
+**List Features:**
+- Search and filter
+- Category filter
+- Status filter
+- Quick publish toggle
+
+**Form Sections:**
+1. Content (title, excerpt, body)
+2. Media (featured image)
+3. Categorization (category, tags)
+4. SEO (meta fields)
+5. Publishing (status, date)
+
+### 5.4 Team Management
+
+**Display:** Grid view with drag-to-reorder
+
+**Form Fields:**
+- Name, role, photo
+- Bio, email, phone
+- Social media links
+- Display order, active status
+
+### 5.5 Testimonial Management
+
+**List Features:**
+- Filter by approval status
+- Filter by featured status
+- Quick approve/reject
+- Quick feature toggle
+
+**Form Fields:**
+- Name, location, avatar
 - Rating (1-5 stars)
-- Testimonial Text
-- Linked Package (optional)
-- Featured Toggle
-- Approved Toggle
+- Content
+- Package association
+- Status toggles
 
-### 3.7 Settings
+### 5.6 Inquiry Management
 
-#### General Settings
-- Company Name
-- Logo Upload
-- Email
-- Phone
-- Address
+**List Features:**
+- Status badges (color-coded)
+- Filter by status
+- Date range filter
 
-#### Office Locations
-- Add/Edit/Remove offices
-- Name, Address, Phone, Email, Map coordinates
+**Detail View:**
+- Full message display
+- Customer information
+- Associated package
+- Admin notes
+- Status management
 
-#### Social Media Links
-- Facebook, Twitter, Instagram, LinkedIn URLs
+### 5.7 Settings Management
 
-#### Homepage Settings
-- Hero Banner Image
-- Hero Title
-- Hero Subtitle
-- Featured Packages Selection
+**Tabs:**
+1. General (company info, logo)
+2. Social Media (platform URLs)
+3. SEO (default meta tags)
+4. Appearance (colors, hero)
+5. Office Locations (CRUD list)
 
 ---
 
-## 4. Admin Panel UI Structure
+## 6. UI/UX Guidelines
 
-### 4.1 Layout Components Needed
+### 6.1 Design Quality Standards
 
-```
-admin/
-├── layouts/
-│   └── AdminLayout.vue          # Main admin wrapper
-├── components/
-│   ├── sidebar/
-│   │   ├── AdminSidebar.vue     # Main navigation
-│   │   ├── SidebarItem.vue      # Individual menu item
-│   │   └── SidebarSection.vue   # Grouped items (Hajj, Tour, Typing)
-│   ├── header/
-│   │   ├── AdminHeader.vue      # Top bar
-│   │   ├── UserDropdown.vue     # Admin user menu
-│   │   └── NotificationBell.vue # Inquiry notifications
-│   ├── common/
-│   │   ├── DataTable.vue        # Reusable table
-│   │   ├── SearchFilter.vue     # Search and filter bar
-│   │   ├── Pagination.vue       # Page navigation
-│   │   ├── ImageUploader.vue    # Single image upload
-│   │   ├── GalleryUploader.vue  # Multiple images
-│   │   ├── RichTextEditor.vue   # TinyMCE/Tiptap wrapper
-│   │   ├── DynamicList.vue      # Add/remove items
-│   │   ├── StatusBadge.vue      # Active/Inactive badges
-│   │   ├── ConfirmModal.vue     # Delete confirmation
-│   │   └── StatsCard.vue        # Dashboard stat cards
-│   └── forms/
-│       ├── PackageForm.vue      # Package create/edit
-│       ├── ArticleForm.vue      # Article create/edit
-│       ├── TeamMemberForm.vue   # Team member form
-│       └── TestimonialForm.vue  # Testimonial form
-└── pages/
-    └── admin/
-        ├── Dashboard.vue
-        ├── hajj/
-        │   ├── packages/
-        │   │   ├── Index.vue    # List
-        │   │   ├── Create.vue   # Create
-        │   │   └── Edit.vue     # Edit
-        │   ├── articles/
-        │   │   ├── Index.vue
-        │   │   ├── Create.vue
-        │   │   └── Edit.vue
-        │   ├── team/
-        │   │   └── Index.vue    # CRUD in one page
-        │   ├── testimonials/
-        │   │   └── Index.vue
-        │   ├── inquiries/
-        │   │   ├── Index.vue
-        │   │   └── Show.vue
-        │   └── settings/
-        │       └── Index.vue
-        ├── tour/
-        │   └── ... (placeholder)
-        └── typing/
-            └── ... (placeholder)
-```
+| Standard | Description |
+|----------|-------------|
+| Professional | Clean, modern, big-tech aesthetic |
+| Responsive | Perfect on all devices 320px+ |
+| Smooth | Fluid animations, transitions |
+| Accessible | WCAG 2.1 AA compliant |
+| Consistent | Uniform patterns throughout |
 
-### 4.2 Navigation Structure
+### 6.2 Color Palette
+
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Primary (Gold) | #D3A762 | CTAs, highlights |
+| Primary Hover | #c29652 | Hover states |
+| Sidebar BG | #1e293b | Navigation |
+| Page BG | #f8fafc | Content area |
+| Surface | #ffffff | Cards, modals |
+| Success | #22c55e | Active, published |
+| Warning | #f59e0b | Pending |
+| Error | #ef4444 | Errors, delete |
+| Info | #3b82f6 | New items |
+
+### 6.3 Responsive Breakpoints
+
+| Breakpoint | Width | Sidebar | Layout |
+|------------|-------|---------|--------|
+| Mobile | < 640px | Hidden overlay | Single column |
+| Tablet | 640-1023px | Hidden overlay | 2 columns |
+| Desktop | ≥ 1024px | Fixed visible | Multi-column |
+
+### 6.4 Animation Standards
+
+| Animation | Duration | Easing |
+|-----------|----------|--------|
+| Fade | 200ms | ease-out |
+| Slide | 300ms | ease-out |
+| Scale | 200ms | ease-out |
+| Hover | 150ms | ease-in-out |
+| Loading | 1000ms | linear |
+
+---
+
+## 7. Navigation Structure
+
+### 7.1 Sidebar Menu
 
 ```
 📊 Dashboard
-
-📿 Hajj & Umrah
+───────────────
+📿 HAJJ & UMRAH
    ├── 📦 Packages
-   │   ├── All Packages
-   │   └── Add New
    ├── 📝 Articles
-   │   ├── All Articles
-   │   └── Add New
    ├── 👥 Team
    ├── 💬 Testimonials
-   ├── 📩 Inquiries
+   ├── 📧 Inquiries
    └── ⚙️ Settings
-
-✈️ Tour & Travel (Coming Soon)
-   └── ...
-
-📄 Typing Services (Coming Soon)
-   └── ...
-
+───────────────
+✈️ TOUR & TRAVEL
+   └── (Coming Soon)
+───────────────
+📄 TYPING SERVICES
+   └── (Coming Soon)
+───────────────
 👤 Profile
 🚪 Logout
 ```
 
----
+### 7.2 Breadcrumb Pattern
 
-## 5. Technology Stack for Admin Panel
+Format: `Dashboard > Section > Page > Action`
 
-### Frontend
-- **Vue 3** with Composition API
-- **TypeScript** for type safety
-- **Inertia.js** for SPA-like experience
-- **Tailwind CSS v4** for styling
-- **Alpine.js** for lightweight interactivity
-- **Lucide Icons** (already in use)
-
-### UI Components (Leverage Existing)
-- Existing `ui/` components:
-  - Button, Input, Label, Checkbox
-  - Card, Dialog, Sheet
-  - Dropdown Menu, Sidebar
-  - Avatar, Badge, Tooltip
-  - Skeleton (loading states)
-
-### Additional Recommended
-- **Tiptap** or **TinyMCE** for rich text editing
-- **Vue Draggable** for reordering
-- **FilePond** or custom uploader for images
-- **ApexCharts** for dashboard charts
-
-### Backend (Laravel)
-- Laravel 12 Controllers
-- Form Requests for validation
-- Eloquent Models with relationships
-- Laravel Storage for file uploads
-- API Resources for consistent responses
+Examples:
+- Dashboard > Packages
+- Dashboard > Packages > Create
+- Dashboard > Packages > Edit: Premium Hajj 2025
+- Dashboard > Settings > Social Media
 
 ---
 
-## 6. Color Scheme & Design Tokens
+## 8. Public Website Integration
 
-Based on existing Hajj frontend:
+### 8.1 Admin Login Access
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| Primary | `#D3A762` (Gold) | CTAs, highlights |
-| Primary Hover | `#c29652` | Button hover |
-| Secondary | `teal-900` | Headers, nav |
-| Background | `slate-50` / `gray-50` | Page backgrounds |
-| Surface | `white` | Cards, panels |
-| Text Primary | `slate-900` | Headings |
-| Text Secondary | `slate-600` | Body text |
-| Text Muted | `slate-500` | Captions |
-| Success | `green-500` | Active states |
-| Warning | `yellow-500` | Alerts |
-| Error | `red-500` | Errors, delete |
+**Location:** Footer of public website (hajjfooter.vue)
 
----
+**Implementation:**
+- Add "Admin Login" link in footer links section
+- Link points to `/admin/login`
+- Subtle placement, not prominent
 
-## 7. Responsive Considerations
+### 8.2 Data Flow
 
-| Breakpoint | Behavior |
-|------------|----------|
-| Mobile (<768px) | Collapsible sidebar, stacked layouts |
-| Tablet (768-1024px) | Mini sidebar, 2-column grids |
-| Desktop (>1024px) | Full sidebar, multi-column layouts |
+Public pages will receive data from admin-managed database:
+
+| Public Page | Data Source |
+|-------------|-------------|
+| hajjhome.vue | Packages, Articles, Testimonials from DB |
+| hajjpackage.vue | Hajj packages from DB |
+| umrahpackage.vue | Umrah packages from DB |
+| articles.vue | Published articles from DB |
+| article_detail.vue | Single article from DB |
+| team.vue | Active team members from DB |
+| contactus.vue | Submits to contact_inquiries table |
 
 ---
 
-## 8. Future Expansion Notes
+## 9. Implementation Priorities
 
-### For Tour & Travel Section
-- Similar package structure
+### 9.1 Phase 1 (Day 1)
+- Database migrations
+- Models with relationships
+- Service classes
+- Admin route setup
+- Admin layout (Blade)
+- Authentication
+
+### 9.2 Phase 2 (Day 2)
+- Package CRUD
+- Article CRUD
+- Blade components
+- Form handling
+- Image uploads
+
+### 9.3 Phase 3 (Day 3)
+- Team management
+- Testimonials
+- Inquiries
+- Settings
+- Dashboard statistics
+- Testing & polish
+
+---
+
+## 10. Future Considerations
+
+### 10.1 Tour & Travel Module
+
+When implemented, will share:
+- Admin layout
+- UI components
+- Service patterns
+- Media handling
+
+Unique features:
 - Destination management
-- Booking system integration
-- Tour guides management
+- Tour categories
+- Booking integration
+- Guide management
 
-### For Typing Services Section
-- Service categories
+### 10.2 Typing Services Module
+
+When implemented, will share:
+- Admin layout
+- UI components
+- Service patterns
+
+Unique features:
+- Service catalog
 - Pricing tiers
-- Document types
 - Order tracking
+- Document management
 
-### Shared Features (Consider Now)
-- User authentication (already exists)
-- Media library (shared uploads)
-- SEO settings module
-- Email templates
-- Notification system
-- Activity logs
+### 10.3 Shared Features to Build Now
+
+| Feature | Benefit |
+|---------|---------|
+| Reusable Blade components | Used by all modules |
+| Media service | Shared image handling |
+| Setting service | Multi-section support |
+| Admin layout | Consistent experience |
 
 ---
 
-## 9. Summary
-
-The Hajj section admin panel needs to manage:
-1. **7 main data entities**: Packages, Articles, Team, Testimonials, Inquiries, Settings, Categories
-2. **CRUD operations** for all entities
-3. **Media management** for images
-4. **Rich text editing** for articles and descriptions
-5. **Status management** (active/inactive, published/draft)
-6. **Dashboard analytics** for quick overview
-
-The design should:
-- Leverage existing UI components
-- Maintain consistency with frontend styling
-- Be scalable for Tour and Typing sections
-- Use Laravel best practices for backend
-- Implement proper validation and error handling
+*End of Hajj Section Overview*
