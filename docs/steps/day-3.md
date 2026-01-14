@@ -2,14 +2,14 @@
 # Hajj Admin Panel Development
 
 **Date:** Day 3 of 3  
-**Focus:** Team, Testimonials, Inquiries, Settings, Dashboard, Polish  
+**Focus:** Team, Testimonials, Inquiries, Settings, User Dashboard, Admin Management, Polish  
 **Stack:** Laravel 12 + Blade + Alpine.js + Tailwind CSS v4
 
 ---
 
 ## Overview
 
-Day 3 completes all remaining CRUD modules, implements the dashboard with real statistics, site settings management, and final polish for a production-ready admin panel.
+Day 3 completes all remaining CRUD modules, implements the dashboard with real statistics, site settings management, **user-facing dashboard for booking tracking**, **admin user management (Super Admin)**, and final polish for a production-ready admin panel.
 
 ---
 
@@ -18,9 +18,11 @@ Day 3 completes all remaining CRUD modules, implements the dashboard with real s
 Before starting Day 3, verify:
 - [ ] Package CRUD fully functional
 - [ ] Article CRUD fully functional
+- [ ] Booking management fully functional
 - [ ] All Blade components working
 - [ ] Image upload working
 - [ ] Services implemented
+- [ ] User role system working
 
 ---
 
@@ -458,6 +460,284 @@ resources/views/admin/pages/faqs/
 
 ---
 
+### Phase 5B: User Dashboard Module (2-2.5 hours)
+
+> **Note:** This is for regular users (customers) to track their bookings.
+
+#### Task 5B.1: Create User Controllers
+
+```bash
+php artisan make:controller User/DashboardController
+php artisan make:controller User/BookingController
+php artisan make:controller User/ProfileController
+```
+
+#### Task 5B.2: Implement User Dashboard Controller
+
+```php
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $user = auth()->user();
+        
+        return view('user.dashboard', [
+            'activeBookings' => $user->bookings()->whereNotIn('status', ['completed', 'cancelled'])->latest()->get(),
+            'completedBookings' => $user->bookings()->where('status', 'completed')->count(),
+            'recentBookings' => $user->bookings()->latest()->take(5)->get(),
+        ]);
+    }
+}
+```
+
+#### Task 5B.3: Implement User Booking Controller
+
+```php
+class BookingController extends Controller
+{
+    public function index()
+    {
+        $bookings = auth()->user()->bookings()
+            ->with(['package', 'travelers', 'statusLogs'])
+            ->latest()
+            ->paginate(10);
+            
+        return view('user.bookings.index', compact('bookings'));
+    }
+    
+    public function show(Booking $booking)
+    {
+        $this->authorize('view', $booking);
+        
+        $booking->load(['package', 'travelers', 'statusLogs.changedBy']);
+        
+        return view('user.bookings.show', compact('booking'));
+    }
+}
+```
+
+#### Task 5B.4: Create User Views Directory
+
+```
+resources/views/user/
+├── layouts/
+│   └── app.blade.php
+├── components/
+│   ├── navigation.blade.php
+│   └── booking-card.blade.php
+├── dashboard.blade.php
+├── bookings/
+│   ├── index.blade.php
+│   └── show.blade.php
+└── profile/
+    ├── edit.blade.php
+    └── password.blade.php
+```
+
+#### Task 5B.5: User Dashboard View Features
+
+**dashboard.blade.php:**
+- Welcome message with user name
+- Active bookings count
+- Completed bookings count
+- Quick stats cards
+- Recent bookings list
+- Link to view all bookings
+- Profile quick access
+
+**bookings/index.blade.php:**
+- Booking cards with:
+  - Package name and image
+  - Booking reference number
+  - Status badge (color-coded)
+  - Date and travelers count
+  - Total amount
+  - View details button
+- Filter by status
+- Pagination
+
+**bookings/show.blade.php:**
+- Booking header with status
+- Package details card
+- Travelers list
+- Status timeline (visual progress)
+- Important dates
+- Download invoice (if paid)
+- Contact support button
+
+#### Task 5B.6: Add User Routes
+
+```php
+// routes/web.php
+
+Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
+    Route::get('/dashboard', [User\DashboardController::class, 'index'])->name('dashboard');
+    
+    Route::prefix('bookings')->name('bookings.')->group(function () {
+        Route::get('/', [User\BookingController::class, 'index'])->name('index');
+        Route::get('/{booking}', [User\BookingController::class, 'show'])->name('show');
+    });
+    
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [User\ProfileController::class, 'edit'])->name('edit');
+        Route::put('/', [User\ProfileController::class, 'update'])->name('update');
+        Route::get('/password', [User\ProfileController::class, 'password'])->name('password');
+        Route::put('/password', [User\ProfileController::class, 'updatePassword'])->name('password.update');
+    });
+});
+```
+
+---
+
+### Phase 5C: Admin User Management (Super Admin Only - 1.5 hours)
+
+> **Note:** Only Super Admin can manage admin users and assign sections.
+
+#### Task 5C.1: Create Admin User Controller
+
+```bash
+php artisan make:controller Admin/UserController
+```
+
+#### Task 5C.2: Implement Controller Methods
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| index | GET /admin/users | List all admin users |
+| create | GET /admin/users/create | Show create form |
+| store | POST /admin/users | Create admin user |
+| edit | GET /admin/users/{id}/edit | Show edit form |
+| update | PUT /admin/users/{id} | Update admin user |
+| destroy | DELETE /admin/users/{id} | Delete admin user |
+| toggleStatus | PATCH /admin/users/{id}/toggle | Enable/disable user |
+| assignSections | POST /admin/users/{id}/sections | Assign sections to admin |
+
+#### Task 5C.3: Create AdminService
+
+```php
+class AdminService
+{
+    public function listAdmins(): LengthAwarePaginator
+    {
+        return User::whereIn('role', ['admin', 'super_admin'])
+            ->with('sections')
+            ->latest()
+            ->paginate(15);
+    }
+    
+    public function createAdmin(array $data): User
+    {
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role' => 'admin',
+            'is_active' => $data['is_active'] ?? true,
+        ]);
+        
+        if (!empty($data['sections'])) {
+            $this->assignSections($user, $data['sections']);
+        }
+        
+        return $user;
+    }
+    
+    public function assignSections(User $user, array $sections): void
+    {
+        // Remove existing assignments
+        AdminSection::where('user_id', $user->id)->delete();
+        
+        // Add new assignments
+        foreach ($sections as $section) {
+            AdminSection::create([
+                'user_id' => $user->id,
+                'section' => $section, // 'hajj', 'tour', or 'typing'
+            ]);
+        }
+    }
+    
+    public function getAvailableSections(): array
+    {
+        return ['hajj', 'tour', 'typing'];
+    }
+}
+```
+
+#### Task 5C.4: Create Admin User Views
+
+```
+resources/views/admin/pages/users/
+├── index.blade.php
+├── create.blade.php
+└── edit.blade.php
+```
+
+**index.blade.php features:**
+- Table with admin users
+- Name, email, role
+- Assigned sections (badges)
+- Status toggle
+- Actions (edit, delete)
+- Add new admin button
+
+**create.blade.php / edit.blade.php features:**
+- Name input
+- Email input
+- Password input (required on create, optional on edit)
+- Role select (admin only, super admin requires special permission)
+- Section checkboxes (Hajj, Tour, Typing)
+- Active toggle
+
+#### Task 5C.5: Add Admin User Routes
+
+```php
+// routes/admin.php (inside auth middleware)
+
+Route::middleware('role:super_admin')->prefix('users')->name('users.')->group(function () {
+    Route::get('/', [UserController::class, 'index'])->name('index');
+    Route::get('/create', [UserController::class, 'create'])->name('create');
+    Route::post('/', [UserController::class, 'store'])->name('store');
+    Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+    Route::put('/{user}', [UserController::class, 'update'])->name('update');
+    Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    Route::patch('/{user}/toggle', [UserController::class, 'toggleStatus'])->name('toggle');
+    Route::post('/{user}/sections', [UserController::class, 'assignSections'])->name('sections');
+});
+```
+
+#### Task 5C.6: Create Role Middleware
+
+```php
+// app/Http/Middleware/CheckRole.php
+
+class CheckRole
+{
+    public function handle(Request $request, Closure $next, ...$roles): Response
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login');
+        }
+        
+        if (!in_array(auth()->user()->role, $roles)) {
+            abort(403, 'Unauthorized access.');
+        }
+        
+        return $next($request);
+    }
+}
+```
+
+Register in `bootstrap/app.php`:
+```php
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->alias([
+        'role' => \App\Http\Middleware\CheckRole::class,
+    ]);
+})
+```
+
+---
+
 ### Phase 6: Dashboard Statistics (1.5-2 hours)
 
 #### Task 6.1: Enhance DashboardController
@@ -827,12 +1107,22 @@ Create `docs/admin-guide.md`:
 ☐ app/Http/Controllers/Admin/Hajj/InquiryController.php
 ☐ app/Http/Controllers/Admin/Hajj/SettingController.php
 ☐ app/Http/Controllers/Admin/Hajj/FaqController.php (optional)
+☐ app/Http/Controllers/Admin/UserController.php
+☐ app/Http/Controllers/User/DashboardController.php
+☐ app/Http/Controllers/User/BookingController.php
+☐ app/Http/Controllers/User/ProfileController.php
 ```
 
 ### Form Requests
 ```
 ☐ app/Http/Requests/Admin/TeamMemberRequest.php
 ☐ app/Http/Requests/Admin/TestimonialRequest.php
+☐ app/Http/Requests/Admin/AdminUserRequest.php
+```
+
+### Middleware
+```
+☐ app/Http/Middleware/CheckRole.php
 ```
 
 ### Services
@@ -841,6 +1131,8 @@ Create `docs/admin-guide.md`:
 ☐ Update app/Services/TestimonialService.php
 ☐ Update app/Services/InquiryService.php
 ☐ Update app/Services/SettingService.php
+☐ Update app/Services/AdminService.php
+☐ Update app/Services/UserService.php
 ☐ app/Services/ActivityLogService.php (optional)
 ```
 
@@ -874,6 +1166,25 @@ Create `docs/admin-guide.md`:
 ☐ resources/views/admin/pages/faqs/index.blade.php
 ```
 
+### Views - Admin Users (Super Admin)
+```
+☐ resources/views/admin/pages/users/index.blade.php
+☐ resources/views/admin/pages/users/create.blade.php
+☐ resources/views/admin/pages/users/edit.blade.php
+```
+
+### Views - User Dashboard
+```
+☐ resources/views/user/layouts/app.blade.php
+☐ resources/views/user/components/navigation.blade.php
+☐ resources/views/user/components/booking-card.blade.php
+☐ resources/views/user/dashboard.blade.php
+☐ resources/views/user/bookings/index.blade.php
+☐ resources/views/user/bookings/show.blade.php
+☐ resources/views/user/profile/edit.blade.php
+☐ resources/views/user/profile/password.blade.php
+```
+
 ### Components
 ```
 ☐ resources/views/admin/components/form/star-rating.blade.php
@@ -883,7 +1194,9 @@ Create `docs/admin-guide.md`:
 ### Mail
 ```
 ☐ app/Mail/InquiryResponse.php
+☐ app/Mail/BookingStatusChanged.php
 ☐ resources/views/emails/inquiry-response.blade.php
+☐ resources/views/emails/booking-status-changed.blade.php
 ```
 
 ### Migrations (optional)
@@ -904,6 +1217,12 @@ Create `docs/admin-guide.md`:
 - [ ] Testimonials CRUD complete
 - [ ] Inquiries management complete
 - [ ] Settings management complete
+- [ ] **User dashboard accessible**
+- [ ] **User can view their bookings**
+- [ ] **User can see booking status timeline**
+- [ ] **Super Admin can manage admin users**
+- [ ] **Super Admin can assign sections to admins**
+- [ ] **Admin sees only assigned sections**
 - [ ] All forms validated
 - [ ] All images upload correctly
 - [ ] All toggles working
@@ -944,8 +1263,10 @@ php artisan test
 6. ✅ Testimonials (CRUD, Approval)
 7. ✅ Inquiries (Management, Responses)
 8. ✅ Settings (All categories)
-9. ⚪ FAQs (Optional)
-10. ⚪ Activity Log (Optional)
+9. ✅ User Dashboard (Booking Tracking)
+10. ✅ Admin User Management (Super Admin)
+11. ⚪ FAQs (Optional)
+12. ⚪ Activity Log (Optional)
 
 ### Architecture Summary
 - **Frontend:** Blade + Alpine.js + Tailwind CSS v4
@@ -953,6 +1274,7 @@ php artisan test
 - **Database:** MySQL with proper relationships
 - **Authentication:** Session-based via Fortify
 - **File Storage:** Local with public disk
+- **Role System:** Super Admin, Admin, User
 
 ### Key Features
 - Fully responsive design
@@ -963,10 +1285,14 @@ php artisan test
 - Toast notifications
 - Drag-to-reorder
 - Image management
+- **Role-based access control**
+- **Section assignment for admins**
+- **User booking tracking**
+- **Booking status history**
 
 ---
 
-## Estimated Time: 12-15 hours
+## Estimated Time: 16-19 hours
 
 | Phase | Time |
 |-------|------|
@@ -975,6 +1301,8 @@ php artisan test
 | Phase 3: Inquiries | 1.5-2 hours |
 | Phase 4: Settings | 2-2.5 hours |
 | Phase 5: FAQs (optional) | 1 hour |
+| **Phase 5B: User Dashboard** | 2-2.5 hours |
+| **Phase 5C: Admin User Management** | 1.5 hours |
 | Phase 6: Dashboard Stats | 1.5-2 hours |
 | Phase 7: Notifications | 1 hour |
 | Phase 8: Activity Log (optional) | 1 hour |

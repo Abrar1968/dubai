@@ -108,38 +108,60 @@ app/
 ├── Enums/
 │   ├── PackageType.php
 │   ├── InquiryStatus.php
-│   └── PublishStatus.php
+│   ├── PublishStatus.php
+│   ├── BookingStatus.php
+│   └── UserRole.php
 │
 ├── Http/
 │   ├── Controllers/
-│   │   └── Admin/
-│   │       └── Hajj/
-│   │           ├── DashboardController.php
-│   │           ├── PackageController.php
-│   │           ├── ArticleController.php
-│   │           ├── ArticleCategoryController.php
-│   │           ├── TeamMemberController.php
-│   │           ├── TestimonialController.php
-│   │           ├── InquiryController.php
-│   │           ├── SettingController.php
-│   │           └── MediaController.php
+│   │   ├── Admin/
+│   │   │   ├── Auth/
+│   │   │   │   └── LoginController.php
+│   │   │   ├── AdminController.php
+│   │   │   └── Hajj/
+│   │   │       ├── DashboardController.php
+│   │   │       ├── PackageController.php
+│   │   │       ├── ArticleController.php
+│   │   │       ├── ArticleCategoryController.php
+│   │   │       ├── TeamMemberController.php
+│   │   │       ├── TestimonialController.php
+│   │   │       ├── InquiryController.php
+│   │   │       ├── BookingController.php
+│   │   │       ├── SettingController.php
+│   │   │       └── MediaController.php
+│   │   └── User/
+│   │       ├── DashboardController.php
+│   │       ├── BookingController.php
+│   │       └── ProfileController.php
 │   │
 │   ├── Middleware/
-│   │   └── AdminMiddleware.php
+│   │   ├── AdminMiddleware.php
+│   │   ├── SuperAdminMiddleware.php
+│   │   └── SectionAccessMiddleware.php
 │   │
 │   └── Requests/
-│       └── Admin/
-│           └── Hajj/
-│               ├── PackageRequest.php
-│               ├── ArticleRequest.php
-│               ├── ArticleCategoryRequest.php
-│               ├── TeamMemberRequest.php
-│               ├── TestimonialRequest.php
-│               └── SettingRequest.php
+│       ├── Admin/
+│       │   ├── AdminUserRequest.php
+│       │   └── Hajj/
+│       │       ├── PackageRequest.php
+│       │       ├── ArticleRequest.php
+│       │       ├── ArticleCategoryRequest.php
+│       │       ├── TeamMemberRequest.php
+│       │       ├── TestimonialRequest.php
+│       │       ├── BookingRequest.php
+│       │       └── SettingRequest.php
+│       └── User/
+│           ├── ProfileRequest.php
+│           └── BookingRequest.php
 │
 ├── Models/
+│   ├── User.php
+│   ├── AdminSection.php
 │   ├── Package.php
 │   ├── PackageGallery.php
+│   ├── Booking.php
+│   ├── BookingTraveler.php
+│   ├── BookingStatusLog.php
 │   ├── Article.php
 │   ├── ArticleCategory.php
 │   ├── TeamMember.php
@@ -155,6 +177,9 @@ app/
 │   ├── TeamService.php
 │   ├── TestimonialService.php
 │   ├── InquiryService.php
+│   ├── BookingService.php
+│   ├── UserService.php
+│   ├── AdminService.php
 │   ├── SettingService.php
 │   ├── MediaService.php
 │   └── SlugService.php
@@ -166,8 +191,13 @@ app/
 
 database/
 ├── migrations/
+│   ├── xxxx_add_role_fields_to_users_table.php
+│   ├── xxxx_create_admin_sections_table.php
 │   ├── xxxx_create_packages_table.php
 │   ├── xxxx_create_package_gallery_table.php
+│   ├── xxxx_create_bookings_table.php
+│   ├── xxxx_create_booking_travelers_table.php
+│   ├── xxxx_create_booking_status_logs_table.php
 │   ├── xxxx_create_article_categories_table.php
 │   ├── xxxx_create_articles_table.php
 │   ├── xxxx_create_team_members_table.php
@@ -178,12 +208,15 @@ database/
 │   └── xxxx_create_faqs_table.php
 │
 ├── factories/
+│   ├── UserFactory.php
 │   ├── PackageFactory.php
+│   ├── BookingFactory.php
 │   ├── ArticleFactory.php
 │   ├── TeamMemberFactory.php
 │   └── TestimonialFactory.php
 │
 └── seeders/
+    ├── AdminUserSeeder.php
     ├── PackageSeeder.php
     ├── ArticleCategorySeeder.php
     ├── ArticleSeeder.php
@@ -194,19 +227,122 @@ database/
 
 routes/
 ├── web.php
-└── admin.php
+├── admin.php
+└── user.php
 
 resources/
 └── views/
-    └── admin/
-        └── (Blade templates)
+    ├── admin/
+    │   └── (Admin Blade templates)
+    └── user/
+        └── (User dashboard Blade templates)
 ```
 
 ---
 
 ## 4. Database Schema
 
-### 4.1 packages
+> **Note:** Complete database schema with ERD is documented in SRS.md Section 7.2. 
+> This section provides a summary for backend implementation reference.
+
+### 4.1 Users & Authentication
+
+#### users (Enhanced for RBAC)
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT |
+| name | VARCHAR(255) | NOT NULL |
+| email | VARCHAR(255) | UNIQUE, NOT NULL |
+| email_verified_at | TIMESTAMP | NULL |
+| password | VARCHAR(255) | NOT NULL |
+| role | ENUM('super_admin', 'admin', 'user') | NOT NULL, DEFAULT 'user' |
+| phone | VARCHAR(50) | NULL |
+| date_of_birth | DATE | NULL |
+| passport_number | VARCHAR(50) | NULL |
+| passport_expiry | DATE | NULL |
+| address | TEXT | NULL |
+| emergency_contact | VARCHAR(255) | NULL |
+| profile_photo | VARCHAR(500) | NULL |
+| is_active | BOOLEAN | DEFAULT TRUE |
+| last_login_at | TIMESTAMP | NULL |
+| remember_token | VARCHAR(100) | NULL |
+| created_at | TIMESTAMP | NULL |
+| updated_at | TIMESTAMP | NULL |
+| deleted_at | TIMESTAMP | NULL |
+
+**Indexes:** idx_email, idx_role, idx_is_active
+
+#### admin_sections
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT |
+| user_id | BIGINT UNSIGNED | FK → users(id) ON DELETE CASCADE |
+| section | ENUM('hajj', 'tour', 'typing') | NOT NULL |
+| assigned_by | BIGINT UNSIGNED | FK → users(id) ON DELETE SET NULL |
+| assigned_at | TIMESTAMP | NOT NULL |
+| created_at | TIMESTAMP | NULL |
+| updated_at | TIMESTAMP | NULL |
+
+**Unique:** (user_id, section)
+
+### 4.2 Bookings
+
+#### bookings
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT |
+| booking_number | VARCHAR(20) | UNIQUE, NOT NULL |
+| user_id | BIGINT UNSIGNED | FK → users(id) ON DELETE CASCADE |
+| package_id | BIGINT UNSIGNED | FK → packages(id) ON DELETE SET NULL |
+| status | ENUM('pending', 'confirmed', 'paid', 'processing', 'ready', 'completed', 'cancelled') | DEFAULT 'pending' |
+| travel_date | DATE | NULL |
+| return_date | DATE | NULL |
+| num_travelers | INT UNSIGNED | NOT NULL, DEFAULT 1 |
+| total_amount | DECIMAL(12,2) | NOT NULL |
+| paid_amount | DECIMAL(12,2) | DEFAULT 0 |
+| special_requests | TEXT | NULL |
+| admin_notes | TEXT | NULL |
+| confirmed_at | TIMESTAMP | NULL |
+| paid_at | TIMESTAMP | NULL |
+| cancelled_at | TIMESTAMP | NULL |
+| cancellation_reason | TEXT | NULL |
+| created_at | TIMESTAMP | NULL |
+| updated_at | TIMESTAMP | NULL |
+
+**Indexes:** idx_user_id, idx_package_id, idx_status, idx_booking_number
+
+#### booking_travelers
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT |
+| booking_id | BIGINT UNSIGNED | FK → bookings(id) ON DELETE CASCADE |
+| full_name | VARCHAR(255) | NOT NULL |
+| passport_number | VARCHAR(50) | NULL |
+| passport_expiry | DATE | NULL |
+| date_of_birth | DATE | NULL |
+| nationality | VARCHAR(100) | NULL |
+| gender | ENUM('male', 'female', 'other') | NULL |
+| is_primary | BOOLEAN | DEFAULT FALSE |
+| created_at | TIMESTAMP | NULL |
+| updated_at | TIMESTAMP | NULL |
+
+#### booking_status_logs
+
+| Column | Type | Constraints |
+|--------|------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT |
+| booking_id | BIGINT UNSIGNED | FK → bookings(id) ON DELETE CASCADE |
+| from_status | VARCHAR(50) | NULL |
+| to_status | VARCHAR(50) | NOT NULL |
+| changed_by | BIGINT UNSIGNED | FK → users(id) ON DELETE SET NULL |
+| notes | TEXT | NULL |
+| created_at | TIMESTAMP | NULL |
+
+### 4.3 packages
 
 | Column | Type | Constraints |
 |--------|------|-------------|
@@ -426,7 +562,75 @@ resources/
 | image_url | Full URL to image |
 | formatted_price | Price with currency symbol |
 
-### 5.2 Article Model
+### 5.2 User Model (Enhanced)
+
+**Relationships:**
+
+| Relation | Type | Model |
+|----------|------|-------|
+| assignedSections | hasMany | AdminSection |
+| bookings | hasMany | Booking |
+| articles | hasMany | Article |
+
+**Scopes:**
+
+| Scope | Description |
+|-------|-------------|
+| admins() | Where role in ['super_admin', 'admin'] |
+| superAdmins() | Where role = 'super_admin' |
+| customers() | Where role = 'user' |
+| active() | Where is_active = true |
+
+**Methods:**
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| isSuperAdmin() | bool | Check if super admin |
+| isAdmin() | bool | Check if admin role |
+| isUser() | bool | Check if customer |
+| hasSection(section) | bool | Check if has section access |
+| getSections() | array | Get all assigned sections |
+
+### 5.3 Booking Model
+
+**Relationships:**
+
+| Relation | Type | Model |
+|----------|------|-------|
+| user | belongsTo | User |
+| package | belongsTo | Package |
+| travelers | hasMany | BookingTraveler |
+| statusLogs | hasMany | BookingStatusLog |
+
+**Casts:**
+
+| Attribute | Cast |
+|-----------|------|
+| status | BookingStatus (enum) |
+| travel_date | date |
+| return_date | date |
+| total_amount | decimal:2 |
+| paid_amount | decimal:2 |
+
+**Scopes:**
+
+| Scope | Description |
+|-------|-------------|
+| pending() | Where status = 'pending' |
+| confirmed() | Where status = 'confirmed' |
+| paid() | Where status = 'paid' |
+| active() | Where status not in ['completed', 'cancelled'] |
+| forUser(userId) | Where user_id = userId |
+
+**Accessors:**
+
+| Accessor | Returns |
+|----------|---------|
+| balance_due | total_amount - paid_amount |
+| is_fully_paid | paid_amount >= total_amount |
+| status_label | Human-readable status |
+
+### 5.4 Article Model
 
 **Relationships:**
 
@@ -443,7 +647,7 @@ resources/
 | draft() | Where status = 'draft' |
 | recent() | OrderBy published_at desc |
 
-### 5.3 TeamMember Model
+### 5.5 TeamMember Model
 
 **Casts:**
 
@@ -459,7 +663,7 @@ resources/
 | active() | Where is_active = true |
 | ordered() | OrderBy sort_order asc |
 
-### 5.4 Testimonial Model
+### 5.6 Testimonial Model
 
 **Relationships:**
 
@@ -474,7 +678,7 @@ resources/
 | approved() | Where is_approved = true |
 | featured() | Where is_featured = true |
 
-### 5.5 ContactInquiry Model
+### 5.7 ContactInquiry Model
 
 **Relationships:**
 
@@ -509,7 +713,59 @@ resources/
 | toggleFeatured | Package | Package | Toggle is_featured |
 | updateGallery | Package, images | void | Sync gallery images |
 
-### 6.2 ArticleService
+### 6.2 BookingService
+
+**Methods:**
+
+| Method | Parameters | Returns | Description |
+|--------|------------|---------|-------------|
+| getAll | filters, perPage | LengthAwarePaginator | List all bookings |
+| getForUser | User, perPage | LengthAwarePaginator | User's bookings |
+| find | id | Booking | Get single booking |
+| create | User, Package, data | Booking | Create new booking |
+| updateStatus | Booking, status, notes | Booking | Update booking status |
+| addTraveler | Booking, data | BookingTraveler | Add traveler |
+| updateTraveler | BookingTraveler, data | BookingTraveler | Update traveler |
+| removeTraveler | BookingTraveler | bool | Remove traveler |
+| recordPayment | Booking, amount | Booking | Record payment |
+| cancel | Booking, reason | Booking | Cancel booking |
+| getStatusHistory | Booking | Collection | Get status logs |
+| generateBookingNumber | | string | Generate unique number |
+| getPendingCount | | int | Count pending bookings |
+| getActiveBookings | User | Collection | User's active bookings |
+
+### 6.3 UserService
+
+**Methods:**
+
+| Method | Parameters | Returns | Description |
+|--------|------------|---------|-------------|
+| getProfile | User | User | Get user profile |
+| updateProfile | User, data | User | Update profile |
+| updatePassword | User, password | User | Change password |
+| updatePassport | User, data | User | Update passport info |
+| getBookingHistory | User, perPage | LengthAwarePaginator | User's booking history |
+| getActiveBookings | User | Collection | Current active bookings |
+| deactivateAccount | User | bool | Soft delete account |
+
+### 6.4 AdminService
+
+**Methods:**
+
+| Method | Parameters | Returns | Description |
+|--------|------------|---------|-------------|
+| getAllAdmins | perPage | LengthAwarePaginator | List admin users |
+| find | id | User | Get single admin |
+| create | data | User | Create admin account |
+| update | User, data | User | Update admin |
+| delete | User | bool | Delete admin |
+| assignSection | User, section | AdminSection | Assign section |
+| revokeSection | User, section | bool | Remove section |
+| getSections | User | Collection | Get assigned sections |
+| toggleStatus | User | User | Toggle active status |
+| getAdminsBySection | section | Collection | Admins for section |
+
+### 6.5 ArticleService
 
 **Methods:**
 
@@ -524,7 +780,7 @@ resources/
 | unpublish | Article | Article | Set to draft |
 | incrementViews | Article | void | Increment view count |
 
-### 6.3 TeamService
+### 6.6 TeamService
 
 **Methods:**
 
@@ -537,7 +793,7 @@ resources/
 | delete | TeamMember | bool | Delete member |
 | reorder | array ids | void | Update sort order |
 
-### 6.4 TestimonialService
+### 6.7 TestimonialService
 
 **Methods:**
 
@@ -552,7 +808,7 @@ resources/
 | reject | Testimonial | Testimonial | Set rejected |
 | toggleFeatured | Testimonial | Testimonial | Toggle featured |
 
-### 6.5 InquiryService
+### 6.8 InquiryService
 
 **Methods:**
 
@@ -567,7 +823,7 @@ resources/
 | delete | ContactInquiry | bool | Delete |
 | getUnreadCount | | int | Count new inquiries |
 
-### 6.6 SettingService
+### 6.9 SettingService
 
 **Methods:**
 
@@ -581,7 +837,7 @@ resources/
 | saveOffice | data | OfficeLocation | Create/update office |
 | deleteOffice | id | bool | Delete office |
 
-### 6.7 MediaService
+### 6.10 MediaService
 
 **Methods:**
 
@@ -593,7 +849,7 @@ resources/
 | createThumbnail | path, size | string | Generate thumbnail |
 | getUrl | path | string | Get full URL |
 
-### 6.8 SlugService
+### 6.11 SlugService
 
 **Methods:**
 
@@ -738,10 +994,56 @@ Controllers should be thin, delegating to services:
 
 | Prefix | Middleware | Description |
 |--------|------------|-------------|
-| admin | web, auth | All admin routes |
-| admin/hajj | web, auth | Hajj section |
+| admin | web, auth, admin | All admin routes |
+| admin/hajj | web, auth, admin, section:hajj | Hajj section routes |
+| admin/users | web, auth, super_admin | Admin user management |
 
-### 9.2 Hajj Section Routes
+**routes/user.php:**
+
+| Prefix | Middleware | Description |
+|--------|------------|-------------|
+| user | web, auth | User dashboard routes |
+| user/bookings | web, auth | User booking routes |
+| user/profile | web, auth | User profile routes |
+
+### 9.2 Admin Management Routes
+
+| Method | URI | Controller | Description |
+|--------|-----|------------|-------------|
+| GET | /admin/users | AdminController@index | List admins |
+| GET | /admin/users/create | AdminController@create | Create form |
+| POST | /admin/users | AdminController@store | Store admin |
+| GET | /admin/users/{id}/edit | AdminController@edit | Edit form |
+| PUT | /admin/users/{id} | AdminController@update | Update admin |
+| DELETE | /admin/users/{id} | AdminController@destroy | Delete admin |
+| POST | /admin/users/{id}/sections | AdminController@assignSection | Assign section |
+| DELETE | /admin/users/{id}/sections/{section} | AdminController@revokeSection | Revoke section |
+| PATCH | /admin/users/{id}/toggle | AdminController@toggleStatus | Toggle active |
+
+### 9.3 Booking Management Routes (Admin)
+
+| Method | URI | Controller | Description |
+|--------|-----|------------|-------------|
+| GET | /admin/hajj/bookings | BookingController@index | List bookings |
+| GET | /admin/hajj/bookings/{id} | BookingController@show | View booking |
+| PATCH | /admin/hajj/bookings/{id}/status | BookingController@updateStatus | Update status |
+| POST | /admin/hajj/bookings/{id}/payment | BookingController@recordPayment | Record payment |
+| POST | /admin/hajj/bookings/{id}/message | BookingController@sendMessage | Send message |
+| DELETE | /admin/hajj/bookings/{id} | BookingController@destroy | Delete booking |
+
+### 9.4 User Dashboard Routes
+
+| Method | URI | Controller | Description |
+|--------|-----|------------|-------------|
+| GET | /user/dashboard | DashboardController@index | User dashboard |
+| GET | /user/bookings | BookingController@index | My bookings |
+| GET | /user/bookings/{id} | BookingController@show | Booking details |
+| POST | /user/bookings | BookingController@store | Create booking |
+| GET | /user/profile | ProfileController@edit | Profile form |
+| PUT | /user/profile | ProfileController@update | Update profile |
+| PUT | /user/profile/password | ProfileController@updatePassword | Change password |
+
+### 9.5 Hajj Section Routes
 
 | Method | URI | Action | Name |
 |--------|-----|--------|------|

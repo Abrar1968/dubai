@@ -1,7 +1,7 @@
 # Frontend Technical Specification
-# Hajj Section - Admin Panel
+# Hajj Section - Admin Panel & User Dashboard
 
-**Version:** 2.0  
+**Version:** 3.0  
 **Date:** January 14, 2026  
 **Project:** Dubai Travel & Services Admin Panel  
 **Stack:** Laravel Blade + Alpine.js + Tailwind CSS v4
@@ -29,9 +29,21 @@
 
 ### 1.1 Purpose
 
-This document provides detailed technical specifications for the frontend implementation of the Hajj Admin Panel using Laravel Blade templates with Alpine.js for interactivity and Tailwind CSS v4 for styling.
+This document provides detailed technical specifications for the frontend implementation of:
+- **Admin Panel**: For Super Admins and Admins to manage content
+- **User Dashboard**: For customers to track bookings and manage profiles
 
-### 1.2 Design Philosophy
+Both use Laravel Blade templates with Alpine.js for interactivity and Tailwind CSS v4 for styling.
+
+### 1.2 User Interfaces
+
+| Interface | Users | Purpose |
+|-----------|-------|---------|
+| Admin Panel | Super Admin, Admin | Content management, booking management |
+| User Dashboard | Registered Customers | Booking tracking, profile management |
+| Public Website | All Visitors | Browse packages, register, login |
+
+### 1.3 Design Philosophy
 
 | Principle | Description |
 |-----------|-------------|
@@ -42,7 +54,7 @@ This document provides detailed technical specifications for the frontend implem
 | Fully Responsive | Seamless experience across all devices |
 | Smooth Interactions | Eye-catching visuals with fluid animations |
 
-### 1.3 Quality Standards
+### 1.4 Quality Standards
 
 The admin panel shall meet these quality benchmarks:
 
@@ -93,61 +105,86 @@ The admin panel shall meet these quality benchmarks:
 ```
 resources/
 ├── views/
-│   └── admin/
+│   ├── admin/
+│   │   ├── layouts/
+│   │   │   ├── app.blade.php
+│   │   │   └── auth.blade.php
+│   │   │
+│   │   ├── components/
+│   │   │   ├── layout/
+│   │   │   │   ├── sidebar.blade.php
+│   │   │   │   ├── header.blade.php
+│   │   │   │   ├── breadcrumb.blade.php
+│   │   │   │   └── mobile-nav.blade.php
+│   │   │   │
+│   │   │   ├── ui/
+│   │   │   │   ├── button.blade.php
+│   │   │   │   ├── input.blade.php
+│   │   │   │   ├── select.blade.php
+│   │   │   │   ├── textarea.blade.php
+│   │   │   │   ├── checkbox.blade.php
+│   │   │   │   ├── toggle.blade.php
+│   │   │   │   ├── badge.blade.php
+│   │   │   │   ├── card.blade.php
+│   │   │   │   ├── modal.blade.php
+│   │   │   │   ├── dropdown.blade.php
+│   │   │   │   ├── alert.blade.php
+│   │   │   │   └── tooltip.blade.php
+│   │   │   │
+│   │   │   ├── data/
+│   │   │   │   ├── table.blade.php
+│   │   │   │   ├── pagination.blade.php
+│   │   │   │   ├── empty-state.blade.php
+│   │   │   │   └── skeleton.blade.php
+│   │   │   │
+│   │   │   ├── form/
+│   │   │   │   ├── image-upload.blade.php
+│   │   │   │   ├── gallery-upload.blade.php
+│   │   │   │   ├── rich-editor.blade.php
+│   │   │   │   ├── dynamic-list.blade.php
+│   │   │   │   ├── date-picker.blade.php
+│   │   │   │   ├── star-rating.blade.php
+│   │   │   │   └── color-picker.blade.php
+│   │   │   │
+│   │   │   └── dashboard/
+│   │   │       ├── stats-card.blade.php
+│   │   │       ├── activity-feed.blade.php
+│   │   │       └── quick-actions.blade.php
+│   │   │
+│   │   └── pages/
+│   │       ├── dashboard.blade.php
+│   │       ├── admins/              # Admin user management (Super Admin only)
+│   │       │   ├── index.blade.php
+│   │       │   ├── create.blade.php
+│   │       │   └── edit.blade.php
+│   │       ├── packages/
+│   │       ├── bookings/            # Booking management
+│   │       │   ├── index.blade.php
+│   │       │   └── show.blade.php
+│   │       ├── articles/
+│   │       ├── team/
+│   │       ├── testimonials/
+│   │       ├── inquiries/
+│   │       └── settings/
+│   │
+│   └── user/                        # User Dashboard Views
 │       ├── layouts/
-│       │   ├── app.blade.php
-│       │   └── auth.blade.php
+│       │   └── app.blade.php
 │       │
 │       ├── components/
-│       │   ├── layout/
-│       │   │   ├── sidebar.blade.php
-│       │   │   ├── header.blade.php
-│       │   │   ├── breadcrumb.blade.php
-│       │   │   └── mobile-nav.blade.php
-│       │   │
-│       │   ├── ui/
-│       │   │   ├── button.blade.php
-│       │   │   ├── input.blade.php
-│       │   │   ├── select.blade.php
-│       │   │   ├── textarea.blade.php
-│       │   │   ├── checkbox.blade.php
-│       │   │   ├── toggle.blade.php
-│       │   │   ├── badge.blade.php
-│       │   │   ├── card.blade.php
-│       │   │   ├── modal.blade.php
-│       │   │   ├── dropdown.blade.php
-│       │   │   ├── alert.blade.php
-│       │   │   └── tooltip.blade.php
-│       │   │
-│       │   ├── data/
-│       │   │   ├── table.blade.php
-│       │   │   ├── pagination.blade.php
-│       │   │   ├── empty-state.blade.php
-│       │   │   └── skeleton.blade.php
-│       │   │
-│       │   ├── form/
-│       │   │   ├── image-upload.blade.php
-│       │   │   ├── gallery-upload.blade.php
-│       │   │   ├── rich-editor.blade.php
-│       │   │   ├── dynamic-list.blade.php
-│       │   │   ├── date-picker.blade.php
-│       │   │   ├── star-rating.blade.php
-│       │   │   └── color-picker.blade.php
-│       │   │
-│       │   └── dashboard/
-│       │       ├── stats-card.blade.php
-│       │       ├── activity-feed.blade.php
-│       │       └── quick-actions.blade.php
+│       │   ├── sidebar.blade.php
+│       │   ├── header.blade.php
+│       │   └── booking-card.blade.php
 │       │
-│       ├── pages/
-│       │   ├── dashboard.blade.php
-│       │   ├── packages/
-│       │   ├── articles/
-│       │   ├── team/
-│       │   ├── testimonials/
-│       │   ├── inquiries/
-│       │   └── settings/
-│       │
+│       └── pages/
+│           ├── dashboard.blade.php
+│           ├── bookings/
+│           │   ├── index.blade.php
+│           │   ├── show.blade.php
+│           │   └── create.blade.php
+│           └── profile/
+│               └── edit.blade.php
+│
 │       └── auth/
 │           ├── login.blade.php
 │           └── forgot-password.blade.php

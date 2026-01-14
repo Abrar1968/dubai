@@ -1,7 +1,7 @@
 # Hajj Section Overview
 # Admin Panel Design & Analysis
 
-**Version:** 2.0  
+**Version:** 3.0  
 **Date:** January 14, 2026  
 **Project:** Dubai Travel & Services
 
@@ -11,7 +11,7 @@
 
 ### 1.1 Purpose
 
-This document provides a comprehensive overview of the Hajj & Umrah section, including the existing public-facing frontend analysis and the complete admin panel design specifications.
+This document provides a comprehensive overview of the Hajj & Umrah section, including the existing public-facing frontend analysis, admin panel design specifications, and user dashboard features.
 
 ### 1.2 Sections
 
@@ -22,6 +22,14 @@ The Dubai Travel & Services platform consists of three main sections:
 | Hajj & Umrah | Active Development | Primary |
 | Tour & Travel | Placeholder | Phase 2 |
 | Typing Services | Placeholder | Phase 3 |
+
+### 1.3 User Roles
+
+| Role | Access Level | Description |
+|------|--------------|-------------|
+| Super Admin | Full System | All sections, admin management, full control |
+| Admin | Assigned Section(s) | Only assigned sections, no admin management |
+| User (Customer) | User Dashboard | Booking tracking, profile management |
 
 ---
 
@@ -44,7 +52,7 @@ The Dubai Travel & Services platform consists of three main sections:
 | Component | Purpose |
 |-----------|---------|
 | hajjheader.vue | Navigation with contact info, social links, menu |
-| hajjfooter.vue | Footer with office info, links, copyright |
+| hajjfooter.vue | Footer with office info, links, copyright, admin login |
 | HajjUmrahLayout.vue | Layout wrapper with header/footer |
 
 ### 2.3 Data Currently Used (Hardcoded)
@@ -93,8 +101,22 @@ The Dubai Travel & Services platform consists of three main sections:
 
 | Route | Purpose |
 |-------|---------|
-| /admin/login | Authentication page |
-| /admin/hajj | Dashboard after login |
+| /admin/login | Admin authentication |
+| /admin/dashboard | Dashboard after login |
+| /admin/hajj/* | Hajj section management |
+| /admin/users | Admin user management (Super Admin only) |
+
+### 3.4 User Access
+
+**Entry Point:** Login/Register in public website header
+
+| Route | Purpose |
+|-------|---------|
+| /login | User login |
+| /register | User registration |
+| /user/dashboard | User dashboard |
+| /user/bookings | Booking history |
+| /user/profile | Profile management |
 
 ---
 

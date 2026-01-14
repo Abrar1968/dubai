@@ -2,25 +2,25 @@
 # Hajj Admin Panel Development
 
 **Date:** Day 2 of 3  
-**Focus:** Package CRUD, Article CRUD, Blade Components, Image Upload  
+**Focus:** Package CRUD, Booking Management, Article CRUD, Blade Components  
 **Stack:** Laravel 12 + Blade + Alpine.js + Tailwind CSS v4
 
 ---
 
 ## Overview
 
-Day 2 implements the two most complex CRUD modules (Packages and Articles) along with reusable Blade components and image upload functionality.
+Day 2 implements the core CRUD modules (Packages, Bookings, and Articles) along with reusable Blade components and image upload functionality.
 
 ---
 
 ## Prerequisites from Day 1
 
 Before starting Day 2, verify:
-- [ ] All migrations run successfully
+- [ ] All migrations run successfully (15 tables including bookings)
 - [ ] All models created with relationships
-- [ ] Services created (PackageService, ArticleService, MediaService)
-- [ ] Admin layout functional
-- [ ] Login working
+- [ ] Services created (PackageService, BookingService, ArticleService, MediaService)
+- [ ] Admin layout functional with role-based sidebar
+- [ ] Login working for all roles
 - [ ] Dashboard displaying
 
 ---
@@ -541,6 +541,129 @@ resources/views/admin/pages/articles/
 
 ---
 
+### Phase 10B: Booking Management (1.5 hours)
+
+> **Note:** This phase is for Admin/Super Admin booking oversight.
+
+#### Task 10B.1: Create Booking Controller
+
+```bash
+php artisan make:controller Admin/Hajj/BookingController
+```
+
+#### Task 10B.2: Implement Controller Methods
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| index | GET /admin/bookings | List all bookings |
+| show | GET /admin/bookings/{id} | View booking details |
+| updateStatus | PATCH /admin/bookings/{id}/status | Update booking status |
+| addNote | POST /admin/bookings/{id}/notes | Add internal note |
+| exportPdf | GET /admin/bookings/{id}/pdf | Export booking PDF |
+| exportList | GET /admin/bookings/export | Export bookings list |
+
+#### Task 10B.3: BookingService Implementation
+
+```php
+class BookingService
+{
+    public function list(array $filters = []): LengthAwarePaginator
+    {
+        return Booking::query()
+            ->with(['user', 'package', 'travelers'])
+            ->when($filters['status'] ?? null, fn($q, $s) => $q->where('status', $s))
+            ->when($filters['package_id'] ?? null, fn($q, $p) => $q->where('package_id', $p))
+            ->when($filters['search'] ?? null, fn($q, $s) => 
+                $q->whereHas('user', fn($u) => $u->where('name', 'like', "%{$s}%"))
+            )
+            ->latest()
+            ->paginate(15);
+    }
+    
+    public function updateStatus(Booking $booking, string $status, ?string $note = null): Booking
+    {
+        $oldStatus = $booking->status;
+        $booking->update(['status' => $status]);
+        
+        BookingStatusLog::create([
+            'booking_id' => $booking->id,
+            'old_status' => $oldStatus,
+            'new_status' => $status,
+            'note' => $note,
+            'changed_by' => auth()->id(),
+        ]);
+        
+        // Send notification to user
+        $booking->user->notify(new BookingStatusChanged($booking));
+        
+        return $booking->fresh();
+    }
+    
+    public function getTravelers(Booking $booking): Collection
+    {
+        return $booking->travelers;
+    }
+    
+    public function getStatusHistory(Booking $booking): Collection
+    {
+        return $booking->statusLogs()->with('changedBy')->latest()->get();
+    }
+}
+```
+
+#### Task 10B.4: Create Booking Views
+
+```
+resources/views/admin/pages/bookings/
+├── index.blade.php
+└── show.blade.php
+```
+
+**index.blade.php features:**
+- Search by customer name/email
+- Filter by status (pending, confirmed, paid, processing, ready, completed, cancelled)
+- Filter by package
+- Date range filter
+- Data table with:
+  - Booking reference
+  - Customer name
+  - Package name
+  - Travelers count
+  - Total amount
+  - Status badge
+  - Created date
+  - Actions (View)
+- Export to Excel/PDF
+- Pagination
+
+**show.blade.php features:**
+- Booking header with status
+- Customer information card
+- Package details card
+- Travelers list with details
+- Payment information
+- Status timeline/history
+- Admin notes section
+- Status update dropdown
+- Quick actions (Send email, Download PDF)
+
+#### Task 10B.5: Add Booking Routes
+
+```php
+// routes/admin.php
+
+Route::prefix('bookings')->name('bookings.')->group(function () {
+    Route::get('/', [BookingController::class, 'index'])->name('index');
+    Route::get('/export', [BookingController::class, 'exportList'])->name('export');
+    Route::get('/{booking}', [BookingController::class, 'show'])->name('show');
+    Route::patch('/{booking}/status', [BookingController::class, 'updateStatus'])->name('status');
+    Route::post('/{booking}/notes', [BookingController::class, 'addNote'])->name('notes');
+    Route::get('/{booking}/pdf', [BookingController::class, 'exportPdf'])->name('pdf');
+});
+```
+
+---
+
 ### Phase 11: MediaService Implementation (45 min)
 
 #### Task 11.1: Complete Upload Methods
@@ -697,12 +820,14 @@ Route::prefix('articles')->name('articles.')->group(function () {
 ☐ app/Http/Controllers/Admin/Hajj/PackageController.php
 ☐ app/Http/Controllers/Admin/Hajj/ArticleController.php
 ☐ app/Http/Controllers/Admin/Hajj/ArticleCategoryController.php
+☐ app/Http/Controllers/Admin/Hajj/BookingController.php
 ```
 
 ### Form Requests
 ```
 ☐ app/Http/Requests/Admin/PackageRequest.php
 ☐ app/Http/Requests/Admin/ArticleRequest.php
+☐ app/Http/Requests/Admin/BookingStatusRequest.php
 ```
 
 ### Components (UI)
@@ -751,6 +876,12 @@ Route::prefix('articles')->name('articles.')->group(function () {
 ☐ resources/views/admin/pages/articles/categories/index.blade.php
 ```
 
+### Booking Views (Admin)
+```
+☐ resources/views/admin/pages/bookings/index.blade.php
+☐ resources/views/admin/pages/bookings/show.blade.php
+```
+
 ---
 
 ## End of Day 2 Verification
@@ -767,6 +898,10 @@ Route::prefix('articles')->name('articles.')->group(function () {
 - [ ] Article rich editor works
 - [ ] Article publish/unpublish works
 - [ ] Article categories manageable
+- [ ] Booking list displays with filters
+- [ ] Booking detail view works
+- [ ] Booking status update works
+- [ ] Booking status history displays
 - [ ] All form validation working
 - [ ] All components reusable
 
@@ -789,6 +924,13 @@ Route::prefix('articles')->name('articles.')->group(function () {
    - Unpublish
    - Delete article
 
+3. **Booking Management:**
+   - View bookings list with filters
+   - View booking details
+   - Update booking status
+   - Verify status history is logged
+   - Add admin note to booking
+
 ---
 
 ## Notes for Day 3
@@ -798,6 +940,8 @@ Day 3 will focus on:
 - Testimonials CRUD
 - Contact Inquiries management
 - Site Settings
+- **User Dashboard & Booking Interface**
+- Admin User Management (Super Admin only)
 - Dashboard statistics
 - Final polish and testing
 
@@ -805,10 +949,11 @@ Day 3 will focus on:
 - All components working
 - Services implemented
 - Package & Article modules complete
+- Booking management complete
 
 ---
 
-## Estimated Time: 13-15 hours
+## Estimated Time: 14.5-16.5 hours
 
 | Phase | Time |
 |-------|------|
@@ -822,6 +967,7 @@ Day 3 will focus on:
 | Phase 8: Article Views | 2-2.5 hours |
 | Phase 9: ArticleService | 1 hour |
 | Phase 10: Categories | 1 hour |
+| Phase 10B: Booking Management | 1.5 hours |
 | Phase 11: MediaService | 45 min |
 | Phase 12: Alpine.js Features | 1 hour |
 | Phase 13: Routes | 30 min |

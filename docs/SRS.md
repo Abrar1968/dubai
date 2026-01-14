@@ -111,11 +111,39 @@ The system shall provide the following high-level functions:
 
 ### 2.3 User Classes and Characteristics
 
-| User Class | Description | Technical Proficiency |
-|------------|-------------|----------------------|
-| Super Admin | Full system access, manages all modules and users | Moderate |
-| Admin | Module-specific access, content management | Basic to Moderate |
-| Editor | Create and edit content, no deletion rights | Basic |
+#### 2.3.1 Role Hierarchy
+
+| User Class | Description | Technical Proficiency | Access Level |
+|------------|-------------|----------------------|---------------|
+| Super Admin | Full system access, manages all modules, assigns sections to admins | Moderate | All Sections |
+| Admin | Section-specific access, assigned by Super Admin | Basic to Moderate | Assigned Section Only |
+| User | Registered customer, can purchase packages and track orders | Basic | User Dashboard Only |
+
+#### 2.3.2 Role Capabilities
+
+**Super Admin:**
+- Access to all three sections (Hajj & Umrah, Tour & Travel, Typing Services)
+- Create and manage Admin accounts
+- Assign specific sections to Admin users
+- View all reports and analytics
+- Manage site-wide settings
+- Full CRUD on all content
+
+**Admin:**
+- Access only to assigned section(s)
+- Full CRUD within assigned section
+- View section-specific reports
+- Manage section settings
+- Cannot access other sections
+- Cannot manage other admins
+
+**User (Customer):**
+- Register/Login to account
+- Browse and purchase packages
+- Track package purchase status
+- View purchase history
+- Update profile information
+- Receive notifications about bookings
 
 ### 2.4 Operating Environment
 
@@ -247,14 +275,49 @@ routes/
 - Concurrent session handling configurable
 - Secure session storage
 
-#### AUTH-003: Access Control
-**Priority:** High  
-**Description:** The system shall implement role-based access control for admin functions.
+#### AUTH-003: Role-Based Access Control
+**Priority:** Critical  
+**Description:** The system shall implement role-based access control with section assignment.
 
 **Acceptance Criteria:**
-- Three user roles: Super Admin, Admin, Editor
+- Three user roles: Super Admin, Admin, User
+- Super Admin can assign sections to Admin users
+- Admin users only see assigned section(s) in sidebar
 - Permission checking on all protected routes
-- Unauthorized access displays appropriate error
+- Unauthorized access redirects with appropriate message
+
+#### AUTH-004: User Registration
+**Priority:** High  
+**Description:** The system shall allow customers to register for package purchases.
+
+**Acceptance Criteria:**
+- Registration form with: Name, Email, Phone, Password
+- Email verification required
+- Optional: Social login (Google, Facebook)
+- Profile completion after registration
+- Terms and conditions acceptance
+
+#### AUTH-005: User Login
+**Priority:** High  
+**Description:** The system shall provide secure customer login.
+
+**Acceptance Criteria:**
+- Login via email and password
+- "Remember Me" functionality
+- Password reset via email
+- Account lockout after 5 failed attempts
+- Redirect to intended page after login
+
+#### AUTH-006: Admin Section Assignment
+**Priority:** High  
+**Description:** Super Admin can assign sections to Admin users.
+
+**Acceptance Criteria:**
+- Section options: Hajj & Umrah, Tour & Travel, Typing Services
+- Admin can be assigned one or multiple sections
+- Assignment reflected immediately in sidebar
+- Revocation removes access immediately
+- Audit log of assignment changes
 
 ### 4.2 Dashboard Module (DASH)
 
@@ -679,6 +742,177 @@ routes/
 | Map Coordinates | No | Lat/Lng |
 | Is Active | Yes | Toggle |
 
+### 4.9 User Dashboard Module (USER)
+
+#### USER-001: User Dashboard
+**Priority:** High  
+**Description:** Registered users can view their personalized dashboard.
+
+**Dashboard Elements:**
+| Element | Description |
+|---------|-------------|
+| Welcome Message | Personalized greeting with user name |
+| Active Bookings | Current packages with status |
+| Booking History | Past completed packages |
+| Quick Actions | View packages, Update profile |
+| Notifications | Recent updates about bookings |
+
+#### USER-002: Package Purchase
+**Priority:** Critical  
+**Description:** Users can purchase packages and track status.
+
+**Purchase Flow:**
+1. Browse packages on public website
+2. Select package and click "Book Now"
+3. Login/Register if not authenticated
+4. Fill booking details (travelers, dates, preferences)
+5. Review booking summary
+6. Submit booking request
+7. Receive confirmation email
+8. Track status in dashboard
+
+**Booking Statuses:**
+| Status | Description | Color |
+|--------|-------------|-------|
+| Pending | Awaiting admin confirmation | Yellow |
+| Confirmed | Booking accepted, payment pending | Blue |
+| Paid | Payment received | Green |
+| Processing | Documents/Visa in progress | Purple |
+| Ready | All preparations complete | Teal |
+| Completed | Travel completed | Gray |
+| Cancelled | Booking cancelled | Red |
+
+#### USER-003: Booking Details
+**Priority:** High  
+**Description:** Users can view detailed information about each booking.
+
+**Information Displayed:**
+- Package name and details
+- Booking date and status
+- Traveler information
+- Payment status and history
+- Important dates (departure, return)
+- Documents checklist
+- Admin notes/messages
+- Contact support option
+
+#### USER-004: User Profile Management
+**Priority:** High  
+**Description:** Users can manage their profile information.
+
+**Profile Fields:**
+| Field | Required | Editable |
+|-------|----------|----------|
+| Full Name | Yes | Yes |
+| Email | Yes | No (verified) |
+| Phone | Yes | Yes |
+| Date of Birth | No | Yes |
+| Passport Number | No | Yes |
+| Passport Expiry | No | Yes |
+| Address | No | Yes |
+| Emergency Contact | No | Yes |
+| Profile Photo | No | Yes |
+
+#### USER-005: Booking History
+**Priority:** Medium  
+**Description:** Users can view all past bookings.
+
+**History Features:**
+- List of all past bookings
+- Filter by year, status, package type
+- View booking details
+- Download booking confirmation PDF
+- Re-book same package option
+
+### 4.10 Admin Management Module (ADMIN)
+
+#### ADMIN-001: Admin User Listing
+**Priority:** High  
+**Description:** Super Admin can view and manage all admin users.
+
+**Table Columns:**
+| Column | Description |
+|--------|-------------|
+| Name | Admin full name |
+| Email | Login email |
+| Role | Super Admin / Admin |
+| Assigned Sections | List of accessible sections |
+| Status | Active / Inactive |
+| Last Login | Date and time |
+| Actions | Edit, Deactivate, Delete |
+
+#### ADMIN-002: Admin Creation
+**Priority:** High  
+**Description:** Super Admin can create new admin accounts.
+
+**Form Fields:**
+| Field | Required | Type |
+|-------|----------|------|
+| Name | Yes | Text |
+| Email | Yes | Email (unique) |
+| Password | Yes | Password |
+| Role | Yes | Select (Super Admin/Admin) |
+| Sections | Required for Admin | Multi-select checkboxes |
+| Is Active | Yes | Toggle |
+
+#### ADMIN-003: Section Assignment
+**Priority:** High  
+**Description:** Assign or modify section access for admin users.
+
+**Available Sections:**
+| Section | Code |
+|---------|------|
+| Hajj & Umrah | hajj |
+| Tour & Travel | tour |
+| Typing Services | typing |
+
+**Assignment Features:**
+- Multi-select for multiple sections
+- Immediate effect on assignment
+- Visual indicator in admin list
+- Audit log of changes
+
+### 4.11 Booking Management Module (BOOK)
+
+#### BOOK-001: Booking Listing
+**Priority:** Critical  
+**Description:** Admin can view all package bookings.
+
+**Table Columns:**
+| Column | Sortable | Filterable |
+|--------|----------|------------|
+| Booking ID | Yes | Search |
+| Customer Name | Yes | Search |
+| Package | Yes | Dropdown |
+| Status | Yes | Dropdown |
+| Booking Date | Yes | Date Range |
+| Travel Date | Yes | Date Range |
+| Amount | Yes | Range |
+| Actions | No | No |
+
+#### BOOK-002: Booking Status Management
+**Priority:** Critical  
+**Description:** Admin can update booking status.
+
+**Workflow:**
+1. View booking details
+2. Update status from dropdown
+3. Add admin notes (optional)
+4. Save changes
+5. User receives notification
+6. Status history logged
+
+#### BOOK-003: Booking Communication
+**Priority:** High  
+**Description:** Admin can communicate with customers about bookings.
+
+**Features:**
+- Send message to customer
+- View message history
+- Attach documents
+- Email notification to customer
+- Message templates
+
 ---
 
 ## 5. Non-Functional Requirements
@@ -848,8 +1082,13 @@ routes/
 
 | Entity | Description | Estimated Volume |
 |--------|-------------|------------------|
+| User | System users (admins & customers) | 100-5000 records |
+| Admin Section | Section assignment for admins | 50-100 records |
 | Package | Travel package details | 100-500 records |
 | Package Gallery | Package images | 500-2500 records |
+| Booking | Customer package purchases | 500-10000 records |
+| Booking Traveler | Travelers per booking | 1000-25000 records |
+| Booking Status Log | Booking status history | 2000-50000 records |
 | Article | Blog posts | 200-1000 records |
 | Article Category | Article groupings | 10-50 records |
 | Team Member | Staff profiles | 10-50 records |
@@ -857,18 +1096,359 @@ routes/
 | Contact Inquiry | Customer messages | 1000-10000 records |
 | Site Setting | Configuration | 50-100 records |
 | Office Location | Office details | 5-20 records |
+| FAQ | Frequently asked questions | 50-200 records |
 
-### 7.2 Data Retention
+### 7.2 Complete Database Schema
+
+#### 7.2.1 Entity Relationship Diagram (Text Representation)
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            DATABASE SCHEMA                                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+                                    ┌─────────────┐
+                                    │   users     │
+                                    ├─────────────┤
+                                    │ PK: id      │
+                                    │ name        │
+                                    │ email       │
+                                    │ role        │
+                                    │ ...         │
+                                    └──────┬──────┘
+                                           │
+              ┌────────────────────────────┼────────────────────────────┐
+              │                            │                            │
+              ▼                            ▼                            ▼
+    ┌─────────────────┐          ┌─────────────────┐          ┌─────────────────┐
+    │ admin_sections  │          │    bookings     │          │    articles     │
+    ├─────────────────┤          ├─────────────────┤          ├─────────────────┤
+    │ PK: id          │          │ PK: id          │          │ PK: id          │
+    │ FK: user_id     │          │ FK: user_id     │          │ FK: author_id   │
+    │ section         │          │ FK: package_id  │          │ FK: category_id │
+    └─────────────────┘          │ status          │          └─────────────────┘
+                                 └────────┬────────┘
+                                          │
+                     ┌────────────────────┼────────────────────┐
+                     │                    │                    │
+                     ▼                    ▼                    ▼
+           ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+           │booking_travelers│  │booking_status_  │  │    packages     │
+           │                 │  │     logs        │  │                 │
+           ├─────────────────┤  ├─────────────────┤  ├─────────────────┤
+           │ PK: id          │  │ PK: id          │  │ PK: id          │
+           │ FK: booking_id  │  │ FK: booking_id  │  │ type            │
+           └─────────────────┘  │ FK: changed_by  │  │ price           │
+                                └─────────────────┘  └────────┬────────┘
+                                                              │
+                                          ┌───────────────────┼───────────────────┐
+                                          │                   │                   │
+                                          ▼                   ▼                   ▼
+                                ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐
+                                │ package_gallery │ │  testimonials   │ │contact_inquiries│
+                                ├─────────────────┤ ├─────────────────┤ ├─────────────────┤
+                                │ PK: id          │ │ PK: id          │ │ PK: id          │
+                                │ FK: package_id  │ │ FK: package_id  │ │ FK: package_id  │
+                                └─────────────────┘ └─────────────────┘ └─────────────────┘
+```
+
+#### 7.2.2 users Table
+
+**Purpose:** Store all system users including Super Admins, Admins, and Customers
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| name | VARCHAR(255) | NOT NULL | Full name |
+| email | VARCHAR(255) | UNIQUE, NOT NULL | Login email |
+| email_verified_at | TIMESTAMP | NULL | Email verification date |
+| password | VARCHAR(255) | NOT NULL | Hashed password |
+| role | ENUM('super_admin', 'admin', 'user') | NOT NULL, DEFAULT 'user' | User role |
+| phone | VARCHAR(50) | NULL | Contact phone |
+| date_of_birth | DATE | NULL | Customer DOB |
+| passport_number | VARCHAR(50) | NULL | Customer passport |
+| passport_expiry | DATE | NULL | Passport expiry date |
+| address | TEXT | NULL | Full address |
+| emergency_contact | VARCHAR(255) | NULL | Emergency contact info |
+| profile_photo | VARCHAR(500) | NULL | Profile image path |
+| is_active | BOOLEAN | DEFAULT TRUE | Account status |
+| last_login_at | TIMESTAMP | NULL | Last login timestamp |
+| remember_token | VARCHAR(100) | NULL | Remember me token |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+| deleted_at | TIMESTAMP | NULL | Soft delete timestamp |
+
+**Indexes:** idx_email, idx_role, idx_is_active
+
+#### 7.2.3 admin_sections Table
+
+**Purpose:** Store section assignments for admin users
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| user_id | BIGINT UNSIGNED | FK → users(id) ON DELETE CASCADE | Admin user |
+| section | ENUM('hajj', 'tour', 'typing') | NOT NULL | Assigned section |
+| assigned_by | BIGINT UNSIGNED | FK → users(id) ON DELETE SET NULL | Super Admin who assigned |
+| assigned_at | TIMESTAMP | NOT NULL | Assignment date |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+
+**Unique:** (user_id, section)
+**Indexes:** idx_user_id, idx_section
+
+#### 7.2.4 packages Table
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| title | VARCHAR(200) | NOT NULL | Package name |
+| slug | VARCHAR(220) | UNIQUE, NOT NULL | URL-friendly slug |
+| type | ENUM('hajj', 'umrah', 'tour') | NOT NULL, DEFAULT 'hajj' | Package type |
+| price | DECIMAL(10,2) | NOT NULL | Base price |
+| currency | VARCHAR(3) | NOT NULL, DEFAULT 'USD' | Currency code |
+| duration_days | INT UNSIGNED | NOT NULL | Trip duration |
+| image | VARCHAR(500) | NULL | Featured image path |
+| thumbnail | VARCHAR(500) | NULL | Thumbnail image path |
+| features | JSON | NULL | Package features list |
+| description | TEXT | NULL | Full description |
+| inclusions | JSON | NULL | What's included |
+| exclusions | JSON | NULL | What's not included |
+| itinerary | JSON | NULL | Day-by-day plan |
+| hotel_details | JSON | NULL | Hotel information |
+| departure_dates | JSON | NULL | Available departure dates |
+| max_capacity | INT UNSIGNED | NULL | Maximum travelers |
+| current_bookings | INT UNSIGNED | DEFAULT 0 | Current booking count |
+| is_featured | BOOLEAN | DEFAULT FALSE | Featured on homepage |
+| is_active | BOOLEAN | DEFAULT TRUE | Active status |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+| deleted_at | TIMESTAMP | NULL | Soft delete timestamp |
+
+**Indexes:** idx_type, idx_is_active, idx_is_featured, idx_slug
+
+#### 7.2.5 bookings Table
+
+**Purpose:** Store customer package purchases
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| booking_number | VARCHAR(20) | UNIQUE, NOT NULL | Human-readable booking ID (e.g., BK-2026-00001) |
+| user_id | BIGINT UNSIGNED | FK → users(id) ON DELETE CASCADE | Customer who booked |
+| package_id | BIGINT UNSIGNED | FK → packages(id) ON DELETE SET NULL | Booked package |
+| status | ENUM('pending', 'confirmed', 'paid', 'processing', 'ready', 'completed', 'cancelled') | NOT NULL, DEFAULT 'pending' | Booking status |
+| travel_date | DATE | NULL | Planned departure date |
+| return_date | DATE | NULL | Expected return date |
+| num_travelers | INT UNSIGNED | NOT NULL, DEFAULT 1 | Number of travelers |
+| total_amount | DECIMAL(12,2) | NOT NULL | Total booking amount |
+| paid_amount | DECIMAL(12,2) | DEFAULT 0 | Amount paid so far |
+| special_requests | TEXT | NULL | Customer special requests |
+| admin_notes | TEXT | NULL | Internal admin notes |
+| confirmed_at | TIMESTAMP | NULL | Confirmation date |
+| paid_at | TIMESTAMP | NULL | Full payment date |
+| cancelled_at | TIMESTAMP | NULL | Cancellation date |
+| cancellation_reason | TEXT | NULL | Reason for cancellation |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+
+**Indexes:** idx_user_id, idx_package_id, idx_status, idx_booking_number, idx_travel_date
+
+#### 7.2.6 booking_travelers Table
+
+**Purpose:** Store individual traveler information for each booking
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| booking_id | BIGINT UNSIGNED | FK → bookings(id) ON DELETE CASCADE | Parent booking |
+| full_name | VARCHAR(255) | NOT NULL | Traveler full name |
+| passport_number | VARCHAR(50) | NULL | Passport number |
+| passport_expiry | DATE | NULL | Passport expiry date |
+| date_of_birth | DATE | NULL | Date of birth |
+| nationality | VARCHAR(100) | NULL | Nationality |
+| gender | ENUM('male', 'female', 'other') | NULL | Gender |
+| is_primary | BOOLEAN | DEFAULT FALSE | Primary contact traveler |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+
+**Indexes:** idx_booking_id
+
+#### 7.2.7 booking_status_logs Table
+
+**Purpose:** Track booking status changes history
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| booking_id | BIGINT UNSIGNED | FK → bookings(id) ON DELETE CASCADE | Related booking |
+| from_status | VARCHAR(50) | NULL | Previous status |
+| to_status | VARCHAR(50) | NOT NULL | New status |
+| changed_by | BIGINT UNSIGNED | FK → users(id) ON DELETE SET NULL | Admin who changed |
+| notes | TEXT | NULL | Notes about change |
+| created_at | TIMESTAMP | NULL | Change timestamp |
+
+**Indexes:** idx_booking_id, idx_created_at
+
+#### 7.2.8 package_gallery Table
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| package_id | BIGINT UNSIGNED | FK → packages(id) ON DELETE CASCADE | Parent package |
+| image_path | VARCHAR(500) | NOT NULL | Image file path |
+| sort_order | INT UNSIGNED | DEFAULT 0 | Display order |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+
+#### 7.2.9 article_categories Table
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| name | VARCHAR(100) | NOT NULL | Category name |
+| slug | VARCHAR(120) | UNIQUE, NOT NULL | URL-friendly slug |
+| description | TEXT | NULL | Category description |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+
+#### 7.2.10 articles Table
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| title | VARCHAR(200) | NOT NULL | Article title |
+| slug | VARCHAR(220) | UNIQUE, NOT NULL | URL-friendly slug |
+| excerpt | VARCHAR(500) | NULL | Short summary |
+| content | LONGTEXT | NULL | Full article content |
+| category_id | BIGINT UNSIGNED | FK → article_categories(id) ON DELETE SET NULL | Category |
+| author_id | BIGINT UNSIGNED | FK → users(id) ON DELETE CASCADE | Author |
+| image | VARCHAR(500) | NULL | Featured image |
+| thumbnail | VARCHAR(500) | NULL | Thumbnail image |
+| meta_title | VARCHAR(60) | NULL | SEO title |
+| meta_description | VARCHAR(160) | NULL | SEO description |
+| tags | JSON | NULL | Article tags |
+| status | ENUM('draft', 'published') | DEFAULT 'draft' | Publish status |
+| published_at | TIMESTAMP | NULL | Publication date |
+| views_count | INT UNSIGNED | DEFAULT 0 | View counter |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+| deleted_at | TIMESTAMP | NULL | Soft delete timestamp |
+
+**Indexes:** idx_status, idx_category_id, idx_author_id, idx_published_at
+
+#### 7.2.11 team_members Table
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| name | VARCHAR(100) | NOT NULL | Member name |
+| role | VARCHAR(100) | NOT NULL | Position/title |
+| image | VARCHAR(500) | NULL | Photo path |
+| bio | TEXT | NULL | Biography |
+| email | VARCHAR(255) | NULL | Email address |
+| phone | VARCHAR(50) | NULL | Phone number |
+| social_links | JSON | NULL | Social media links |
+| sort_order | INT UNSIGNED | DEFAULT 0 | Display order |
+| is_active | BOOLEAN | DEFAULT TRUE | Active status |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+
+**Indexes:** idx_is_active, idx_sort_order
+
+#### 7.2.12 testimonials Table
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| name | VARCHAR(100) | NOT NULL | Customer name |
+| location | VARCHAR(100) | NULL | Customer location |
+| avatar | VARCHAR(500) | NULL | Customer photo |
+| rating | TINYINT UNSIGNED | NOT NULL, DEFAULT 5 | Star rating (1-5) |
+| content | TEXT | NOT NULL | Testimonial text |
+| package_id | BIGINT UNSIGNED | FK → packages(id) ON DELETE SET NULL | Related package |
+| is_featured | BOOLEAN | DEFAULT FALSE | Featured status |
+| is_approved | BOOLEAN | DEFAULT FALSE | Approval status |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+
+**Indexes:** idx_is_approved, idx_is_featured, idx_package_id
+
+#### 7.2.13 contact_inquiries Table
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| name | VARCHAR(100) | NOT NULL | Customer name |
+| email | VARCHAR(255) | NOT NULL | Customer email |
+| phone | VARCHAR(50) | NULL | Phone number |
+| subject | VARCHAR(200) | NOT NULL | Inquiry subject |
+| message | TEXT | NOT NULL | Full message |
+| package_id | BIGINT UNSIGNED | FK → packages(id) ON DELETE SET NULL | Related package |
+| status | ENUM('new', 'read', 'responded', 'closed') | DEFAULT 'new' | Inquiry status |
+| admin_notes | TEXT | NULL | Admin notes |
+| responded_at | TIMESTAMP | NULL | Response date |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+
+**Indexes:** idx_status, idx_created_at, idx_email
+
+#### 7.2.14 site_settings Table
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| section | VARCHAR(50) | NOT NULL, DEFAULT 'hajj' | Site section |
+| key | VARCHAR(100) | NOT NULL | Setting key |
+| value | TEXT | NULL | Setting value |
+| type | ENUM('string', 'text', 'json', 'boolean', 'integer') | DEFAULT 'string' | Value type |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+
+**Unique:** (section, key)
+
+#### 7.2.15 office_locations Table
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| section | VARCHAR(50) | NOT NULL, DEFAULT 'hajj' | Site section |
+| name | VARCHAR(100) | NOT NULL | Office name |
+| address | TEXT | NOT NULL | Full address |
+| phone | VARCHAR(50) | NULL | Phone number |
+| email | VARCHAR(255) | NULL | Email address |
+| map_lat | DECIMAL(10,8) | NULL | Latitude |
+| map_lng | DECIMAL(11,8) | NULL | Longitude |
+| sort_order | INT UNSIGNED | DEFAULT 0 | Display order |
+| is_active | BOOLEAN | DEFAULT TRUE | Active status |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+
+#### 7.2.16 faqs Table
+
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | BIGINT UNSIGNED | PRIMARY KEY, AUTO_INCREMENT | Unique identifier |
+| section | VARCHAR(50) | NOT NULL, DEFAULT 'hajj' | Site section |
+| question | VARCHAR(500) | NOT NULL | FAQ question |
+| answer | TEXT | NOT NULL | FAQ answer |
+| sort_order | INT UNSIGNED | DEFAULT 0 | Display order |
+| is_active | BOOLEAN | DEFAULT TRUE | Active status |
+| created_at | TIMESTAMP | NULL | Created timestamp |
+| updated_at | TIMESTAMP | NULL | Updated timestamp |
+
+### 7.3 Data Retention
 
 | Data Type | Retention Period |
 |-----------|------------------|
 | Active Content | Indefinite |
 | Soft Deleted | 30 days |
 | Inquiries | 2 years |
+| Booking Records | 7 years (legal requirement) |
 | Activity Logs | 1 year |
 | Session Data | 24 hours |
 
-### 7.3 Data Validation Rules
+### 7.4 Data Validation Rules
 
 | Field Type | Validation |
 |------------|------------|
@@ -878,6 +1458,8 @@ routes/
 | Price | Positive decimal, 2 places |
 | Slug | Lowercase, alphanumeric, hyphens |
 | Image | Max 10MB, jpg/png/webp formats |
+| Passport | Alphanumeric, max 20 chars |
+| Booking Number | Format: BK-YYYY-XXXXX |
 
 ---
 

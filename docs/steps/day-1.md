@@ -2,27 +2,32 @@
 # Hajj Admin Panel Development
 
 **Date:** Day 1 of 3  
-**Focus:** Database, Models, Services, Admin Layout, Authentication  
+**Focus:** Database, Models, Services, Admin Layout, Authentication, RBAC  
 **Stack:** Laravel 12 + Blade + Alpine.js + Tailwind CSS v4
 
 ---
 
 ## Overview
 
-Day 1 establishes the complete foundation: database schema, Eloquent models, service layer, admin layout structure, and authentication setup.
+Day 1 establishes the complete foundation: database schema (including user roles and bookings), Eloquent models, service layer, admin layout structure, role-based access control, and authentication setup.
 
 ---
 
 ## Tasks Checklist
 
-### Phase 1: Database Migrations (1.5-2 hours)
+### Phase 1: Database Migrations (2-2.5 hours)
 
 #### Task 1.1: Create All Migrations
 
 | Migration | Command |
 |-----------|---------|
+| users (update) | `php artisan make:migration add_role_fields_to_users_table` |
+| admin_sections | `php artisan make:migration create_admin_sections_table` |
 | packages | `php artisan make:migration create_packages_table` |
 | package_gallery | `php artisan make:migration create_package_gallery_table` |
+| bookings | `php artisan make:migration create_bookings_table` |
+| booking_travelers | `php artisan make:migration create_booking_travelers_table` |
+| booking_status_logs | `php artisan make:migration create_booking_status_logs_table` |
 | article_categories | `php artisan make:migration create_article_categories_table` |
 | articles | `php artisan make:migration create_articles_table` |
 | team_members | `php artisan make:migration create_team_members_table` |
@@ -34,7 +39,14 @@ Day 1 establishes the complete foundation: database schema, Eloquent models, ser
 
 #### Task 1.2: Define Table Schemas
 
-Implement schemas as defined in srs-backend.md Section 4.
+Implement schemas as defined in SRS.md Section 7.2.
+
+**Priority Tables (Core Functionality):**
+1. users (update) - Add role, profile fields
+2. admin_sections - Section assignments for admins
+3. bookings - Customer package purchases
+4. booking_travelers - Traveler information
+5. booking_status_logs - Status history
 
 #### Task 1.3: Run Migrations
 
@@ -44,20 +56,25 @@ php artisan migrate:status
 ```
 
 **Verification:**
-- [ ] All 10 tables created
-- [ ] Indexes present
+- [ ] All 15 tables created
+- [ ] Users table has role column
 - [ ] Foreign keys working
+- [ ] Indexes present
 
 ---
 
-### Phase 2: Eloquent Models (1.5-2 hours)
+### Phase 2: Eloquent Models (2 hours)
 
 #### Task 2.1: Create Models
 
 | Model | Command |
 |-------|---------|
+| AdminSection | `php artisan make:model AdminSection` |
 | Package | `php artisan make:model Package` |
 | PackageGallery | `php artisan make:model PackageGallery` |
+| Booking | `php artisan make:model Booking` |
+| BookingTraveler | `php artisan make:model BookingTraveler` |
+| BookingStatusLog | `php artisan make:model BookingStatusLog` |
 | Article | `php artisan make:model Article` |
 | ArticleCategory | `php artisan make:model ArticleCategory` |
 | TeamMember | `php artisan make:model TeamMember` |
@@ -67,35 +84,49 @@ php artisan migrate:status
 | OfficeLocation | `php artisan make:model OfficeLocation` |
 | Faq | `php artisan make:model Faq` |
 
-#### Task 2.2: Define Model Properties
+#### Task 2.2: Update User Model
+
+Add to existing User model:
+- role enum cast
+- Relationships: assignedSections, bookings, articles
+- Helper methods: isSuperAdmin(), isAdmin(), isUser(), hasSection()
+
+#### Task 2.3: Define Model Properties
 
 For each model:
 - [ ] Define $fillable array
 - [ ] Define $casts array
 - [ ] Add SoftDeletes trait (where applicable)
 
-#### Task 2.3: Define Relationships
+#### Task 2.4: Define Relationships
 
 | Model | Relationships |
 |-------|---------------|
-| Package | hasMany(PackageGallery), hasMany(Testimonial), hasMany(ContactInquiry) |
+| User | hasMany(AdminSection), hasMany(Booking), hasMany(Article) |
+| AdminSection | belongsTo(User), belongsTo(User, 'assigned_by') |
+| Package | hasMany(PackageGallery), hasMany(Booking), hasMany(Testimonial), hasMany(ContactInquiry) |
+| Booking | belongsTo(User), belongsTo(Package), hasMany(BookingTraveler), hasMany(BookingStatusLog) |
+| BookingTraveler | belongsTo(Booking) |
+| BookingStatusLog | belongsTo(Booking), belongsTo(User, 'changed_by') |
 | Article | belongsTo(ArticleCategory), belongsTo(User) |
 | ArticleCategory | hasMany(Article) |
 | Testimonial | belongsTo(Package) |
 | ContactInquiry | belongsTo(Package) |
 
-#### Task 2.4: Add Scopes
+#### Task 2.5: Add Scopes
 
 | Model | Scopes |
 |-------|--------|
+| User | admins(), superAdmins(), customers(), active() |
 | Package | active(), featured(), hajj(), umrah() |
+| Booking | pending(), confirmed(), paid(), active(), forUser(userId) |
 | Article | published(), draft(), recent() |
 | TeamMember | active(), ordered() |
 | Testimonial | approved(), featured() |
 
 ---
 
-### Phase 3: Enums (30 min)
+### Phase 3: Enums (45 min)
 
 #### Task 3.1: Create Enums Directory
 
@@ -107,18 +138,22 @@ mkdir app/Enums
 
 | Enum | Values |
 |------|--------|
+| UserRole | super_admin, admin, user |
 | PackageType | hajj, umrah, tour |
+| BookingStatus | pending, confirmed, paid, processing, ready, completed, cancelled |
 | InquiryStatus | new, read, responded, closed |
 | PublishStatus | draft, published |
 
 **Files to create:**
+- `app/Enums/UserRole.php`
 - `app/Enums/PackageType.php`
+- `app/Enums/BookingStatus.php`
 - `app/Enums/InquiryStatus.php`
 - `app/Enums/PublishStatus.php`
 
 ---
 
-### Phase 4: Service Layer (2-2.5 hours)
+### Phase 4: Service Layer (2.5-3 hours)
 
 #### Task 4.1: Create Services Directory
 
@@ -130,6 +165,9 @@ mkdir app/Services
 
 | Service | Primary Responsibility |
 |---------|----------------------|
+| AdminService | Admin CRUD, section assignment |
+| UserService | User profile, password management |
+| BookingService | Booking CRUD, status updates, payment |
 | PackageService | Package CRUD, status toggles |
 | ArticleService | Article CRUD, publishing |
 | TeamService | Team CRUD, reordering |
