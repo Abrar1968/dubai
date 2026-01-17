@@ -102,7 +102,7 @@ class Article extends Model
     {
         $wordCount = str_word_count(strip_tags($this->content ?? ''));
         $wordsPerMinute = 200;
-        
+
         return max(1, (int) ceil($wordCount / $wordsPerMinute));
     }
 

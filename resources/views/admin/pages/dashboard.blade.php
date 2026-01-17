@@ -98,7 +98,7 @@
                                     </p>
                                 </div>
                                 <div class="ml-4 flex-shrink-0">
-                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium 
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
                                         {{ $booking->status->value === 'pending' ? 'bg-yellow-100 text-yellow-800' : '' }}
                                         {{ $booking->status->value === 'confirmed' ? 'bg-blue-100 text-blue-800' : '' }}
                                         {{ $booking->status->value === 'completed' ? 'bg-green-100 text-green-800' : '' }}
@@ -142,7 +142,7 @@
                                     </p>
                                 </div>
                                 <div class="ml-4 flex-shrink-0">
-                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium 
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
                                         {{ $inquiry->status->value === 'new' ? 'bg-blue-100 text-blue-800' : '' }}
                                         {{ $inquiry->status->value === 'read' ? 'bg-yellow-100 text-yellow-800' : '' }}
                                         {{ $inquiry->status->value === 'responded' ? 'bg-green-100 text-green-800' : '' }}

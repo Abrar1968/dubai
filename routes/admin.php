@@ -32,53 +32,85 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
         // ==========================================
+        // Shared Admin Routes (accessible from any section)
+        // ==========================================
+
+        // Packages
+        Route::resource('packages', \App\Http\Controllers\Admin\Hajj\PackageController::class);
+        Route::patch('packages/{package}/toggle-status', [\App\Http\Controllers\Admin\Hajj\PackageController::class, 'toggleStatus'])->name('packages.toggle-status');
+        Route::patch('packages/{package}/toggle-featured', [\App\Http\Controllers\Admin\Hajj\PackageController::class, 'toggleFeatured'])->name('packages.toggle-featured');
+
+        // Bookings
+        Route::resource('bookings', \App\Http\Controllers\Admin\Hajj\BookingController::class)->except(['create', 'store', 'edit', 'update']);
+        Route::patch('bookings/{booking}/update-status', [\App\Http\Controllers\Admin\Hajj\BookingController::class, 'updateStatus'])->name('bookings.update-status');
+        Route::patch('bookings/{booking}/confirm', [\App\Http\Controllers\Admin\Hajj\BookingController::class, 'confirm'])->name('bookings.confirm');
+        Route::patch('bookings/{booking}/cancel', [\App\Http\Controllers\Admin\Hajj\BookingController::class, 'cancel'])->name('bookings.cancel');
+        Route::patch('bookings/{booking}/update-payment', [\App\Http\Controllers\Admin\Hajj\BookingController::class, 'updatePayment'])->name('bookings.update-payment');
+
+        // Articles
+        Route::resource('articles', \App\Http\Controllers\Admin\Hajj\ArticleController::class);
+        Route::patch('articles/{article}/publish', [\App\Http\Controllers\Admin\Hajj\ArticleController::class, 'publish'])->name('articles.publish');
+        Route::patch('articles/{article}/unpublish', [\App\Http\Controllers\Admin\Hajj\ArticleController::class, 'unpublish'])->name('articles.unpublish');
+
+        // Article Categories
+        Route::resource('article-categories', \App\Http\Controllers\Admin\Hajj\ArticleCategoryController::class)->except(['show']);
+
+        // ==========================================
         // Hajj & Umrah Section Routes
         // ==========================================
         Route::prefix('hajj')->name('hajj.')->middleware('section:hajj')->group(function () {
             // Packages
             Route::resource('packages', \App\Http\Controllers\Admin\Hajj\PackageController::class);
-            Route::post('packages/{package}/toggle-active', [\App\Http\Controllers\Admin\Hajj\PackageController::class, 'toggleActive'])->name('packages.toggle-active');
-            Route::post('packages/{package}/toggle-featured', [\App\Http\Controllers\Admin\Hajj\PackageController::class, 'toggleFeatured'])->name('packages.toggle-featured');
+            Route::patch('packages/{package}/toggle-status', [\App\Http\Controllers\Admin\Hajj\PackageController::class, 'toggleStatus'])->name('packages.toggle-status');
+            Route::patch('packages/{package}/toggle-featured', [\App\Http\Controllers\Admin\Hajj\PackageController::class, 'toggleFeatured'])->name('packages.toggle-featured');
 
             // Bookings
-            Route::resource('bookings', \App\Http\Controllers\Admin\Hajj\BookingController::class);
-            Route::post('bookings/{booking}/update-status', [\App\Http\Controllers\Admin\Hajj\BookingController::class, 'updateStatus'])->name('bookings.update-status');
+            Route::resource('bookings', \App\Http\Controllers\Admin\Hajj\BookingController::class)->except(['create', 'store', 'edit', 'update']);
+            Route::patch('bookings/{booking}/update-status', [\App\Http\Controllers\Admin\Hajj\BookingController::class, 'updateStatus'])->name('bookings.update-status');
+            Route::patch('bookings/{booking}/confirm', [\App\Http\Controllers\Admin\Hajj\BookingController::class, 'confirm'])->name('bookings.confirm');
+            Route::patch('bookings/{booking}/cancel', [\App\Http\Controllers\Admin\Hajj\BookingController::class, 'cancel'])->name('bookings.cancel');
+            Route::patch('bookings/{booking}/update-payment', [\App\Http\Controllers\Admin\Hajj\BookingController::class, 'updatePayment'])->name('bookings.update-payment');
 
             // Articles
             Route::resource('articles', \App\Http\Controllers\Admin\Hajj\ArticleController::class);
-            Route::post('articles/{article}/publish', [\App\Http\Controllers\Admin\Hajj\ArticleController::class, 'publish'])->name('articles.publish');
-            Route::post('articles/{article}/unpublish', [\App\Http\Controllers\Admin\Hajj\ArticleController::class, 'unpublish'])->name('articles.unpublish');
+            Route::patch('articles/{article}/publish', [\App\Http\Controllers\Admin\Hajj\ArticleController::class, 'publish'])->name('articles.publish');
+            Route::patch('articles/{article}/unpublish', [\App\Http\Controllers\Admin\Hajj\ArticleController::class, 'unpublish'])->name('articles.unpublish');
 
             // Article Categories
             Route::resource('article-categories', \App\Http\Controllers\Admin\Hajj\ArticleCategoryController::class)->except(['show']);
 
+            // ==========================================
+            // Day 3 Controllers (To be implemented)
+            // ==========================================
+            // TODO: Uncomment when Day 3 is implemented
+            
             // Team Members
-            Route::resource('team', \App\Http\Controllers\Admin\Hajj\TeamMemberController::class);
-            Route::post('team/reorder', [\App\Http\Controllers\Admin\Hajj\TeamMemberController::class, 'reorder'])->name('team.reorder');
+            // Route::resource('team', \App\Http\Controllers\Admin\Hajj\TeamMemberController::class);
+            // Route::post('team/reorder', [\App\Http\Controllers\Admin\Hajj\TeamMemberController::class, 'reorder'])->name('team.reorder');
 
             // Testimonials
-            Route::resource('testimonials', \App\Http\Controllers\Admin\Hajj\TestimonialController::class);
-            Route::post('testimonials/{testimonial}/approve', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'approve'])->name('testimonials.approve');
-            Route::post('testimonials/{testimonial}/reject', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'reject'])->name('testimonials.reject');
-            Route::post('testimonials/{testimonial}/toggle-featured', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'toggleFeatured'])->name('testimonials.toggle-featured');
+            // Route::resource('testimonials', \App\Http\Controllers\Admin\Hajj\TestimonialController::class);
+            // Route::post('testimonials/{testimonial}/approve', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'approve'])->name('testimonials.approve');
+            // Route::post('testimonials/{testimonial}/reject', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'reject'])->name('testimonials.reject');
+            // Route::post('testimonials/{testimonial}/toggle-featured', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'toggleFeatured'])->name('testimonials.toggle-featured');
 
             // Contact Inquiries
-            Route::resource('inquiries', \App\Http\Controllers\Admin\Hajj\ContactInquiryController::class)->only(['index', 'show', 'destroy']);
-            Route::post('inquiries/{inquiry}/mark-read', [\App\Http\Controllers\Admin\Hajj\ContactInquiryController::class, 'markAsRead'])->name('inquiries.mark-read');
-            Route::post('inquiries/{inquiry}/respond', [\App\Http\Controllers\Admin\Hajj\ContactInquiryController::class, 'respond'])->name('inquiries.respond');
-            Route::post('inquiries/{inquiry}/close', [\App\Http\Controllers\Admin\Hajj\ContactInquiryController::class, 'close'])->name('inquiries.close');
+            // Route::resource('inquiries', \App\Http\Controllers\Admin\Hajj\ContactInquiryController::class)->only(['index', 'show', 'destroy']);
+            // Route::post('inquiries/{inquiry}/mark-read', [\App\Http\Controllers\Admin\Hajj\ContactInquiryController::class, 'markAsRead'])->name('inquiries.mark-read');
+            // Route::post('inquiries/{inquiry}/respond', [\App\Http\Controllers\Admin\Hajj\ContactInquiryController::class, 'respond'])->name('inquiries.respond');
+            // Route::post('inquiries/{inquiry}/close', [\App\Http\Controllers\Admin\Hajj\ContactInquiryController::class, 'close'])->name('inquiries.close');
 
             // FAQs
-            Route::resource('faqs', \App\Http\Controllers\Admin\Hajj\FaqController::class)->except(['show']);
-            Route::post('faqs/reorder', [\App\Http\Controllers\Admin\Hajj\FaqController::class, 'reorder'])->name('faqs.reorder');
+            // Route::resource('faqs', \App\Http\Controllers\Admin\Hajj\FaqController::class)->except(['show']);
+            // Route::post('faqs/reorder', [\App\Http\Controllers\Admin\Hajj\FaqController::class, 'reorder'])->name('faqs.reorder');
 
             // Settings
-            Route::get('settings', [\App\Http\Controllers\Admin\Hajj\SettingsController::class, 'index'])->name('settings.index');
-            Route::put('settings', [\App\Http\Controllers\Admin\Hajj\SettingsController::class, 'update'])->name('settings.update');
+            // Route::get('settings', [\App\Http\Controllers\Admin\Hajj\SettingsController::class, 'index'])->name('settings.index');
+            // Route::put('settings', [\App\Http\Controllers\Admin\Hajj\SettingsController::class, 'update'])->name('settings.update');
 
             // Office Locations
-            Route::resource('locations', \App\Http\Controllers\Admin\Hajj\OfficeLocationController::class)->except(['show']);
-            Route::post('locations/reorder', [\App\Http\Controllers\Admin\Hajj\OfficeLocationController::class, 'reorder'])->name('locations.reorder');
+            // Route::resource('locations', \App\Http\Controllers\Admin\Hajj\OfficeLocationController::class)->except(['show']);
+            // Route::post('locations/reorder', [\App\Http\Controllers\Admin\Hajj\OfficeLocationController::class, 'reorder'])->name('locations.reorder');
         });
 
         // ==========================================
@@ -102,17 +134,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         // ==========================================
-        // Super Admin Only Routes
+        // Super Admin Only Routes (Day 3)
         // ==========================================
-        Route::prefix('system')->name('system.')->middleware('super_admin')->group(function () {
-            // Admin Management
-            Route::resource('admins', \App\Http\Controllers\Admin\System\AdminController::class);
-            Route::post('admins/{admin}/toggle-active', [\App\Http\Controllers\Admin\System\AdminController::class, 'toggleActive'])->name('admins.toggle-active');
-            Route::put('admins/{admin}/sections', [\App\Http\Controllers\Admin\System\AdminController::class, 'updateSections'])->name('admins.update-sections');
+        // TODO: Uncomment when Day 3 is implemented
+        // Route::prefix('system')->name('system.')->middleware('super_admin')->group(function () {
+        //     // Admin Management
+        //     Route::resource('admins', \App\Http\Controllers\Admin\System\AdminController::class);
+        //     Route::post('admins/{admin}/toggle-active', [\App\Http\Controllers\Admin\System\AdminController::class, 'toggleActive'])->name('admins.toggle-active');
+        //     Route::put('admins/{admin}/sections', [\App\Http\Controllers\Admin\System\AdminController::class, 'updateSections'])->name('admins.update-sections');
 
-            // Global Settings
-            Route::get('settings', [\App\Http\Controllers\Admin\System\SettingsController::class, 'index'])->name('settings.index');
-            Route::put('settings', [\App\Http\Controllers\Admin\System\SettingsController::class, 'update'])->name('settings.update');
-        });
+        //     // Global Settings
+        //     Route::get('settings', [\App\Http\Controllers\Admin\System\SettingsController::class, 'index'])->name('settings.index');
+        //     Route::put('settings', [\App\Http\Controllers\Admin\System\SettingsController::class, 'update'])->name('settings.update');
+        // });
     });
 });

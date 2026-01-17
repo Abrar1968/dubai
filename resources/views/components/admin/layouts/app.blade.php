@@ -40,7 +40,7 @@
         <!-- Main content area -->
         <div class="lg:pl-64">
             <!-- Header -->
-            <x-admin.layout.header :title="$title ?? 'Dashboard'" />
+            <x-admin.layout.header :title="$title" />
 
             <!-- Page content -->
             <main class="py-6">

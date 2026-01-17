@@ -51,7 +51,7 @@ class SiteSetting extends Model
     public static function get(string $key, string $section = 'global', $default = null)
     {
         $setting = self::where('section', $section)->where('key', $key)->first();
-        
+
         return $setting ? $setting->casted_value : $default;
     }
 
