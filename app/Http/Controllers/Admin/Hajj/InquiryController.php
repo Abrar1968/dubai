@@ -104,7 +104,7 @@ class InquiryController extends Controller
     public function bulkMarkRead(Request $request): RedirectResponse
     {
         $ids = $request->input('ids', []);
-        
+
         foreach ($ids as $id) {
             $inquiry = $this->inquiryService->getById($id);
             if ($inquiry->status === 'new') {
@@ -123,7 +123,7 @@ class InquiryController extends Controller
     public function bulkDelete(Request $request): RedirectResponse
     {
         $ids = $request->input('ids', []);
-        
+
         foreach ($ids as $id) {
             $inquiry = $this->inquiryService->getById($id);
             $this->inquiryService->delete($inquiry);

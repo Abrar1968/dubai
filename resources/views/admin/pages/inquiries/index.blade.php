@@ -10,29 +10,29 @@
 
         <!-- Status Filters -->
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('admin.hajj.inquiries.index') }}" 
+            <a href="{{ route('admin.hajj.inquiries.index') }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ !$currentStatus ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 All
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['all'] }}</span>
             </a>
-            <a href="{{ route('admin.hajj.inquiries.index', ['status' => 'new']) }}" 
+            <a href="{{ route('admin.hajj.inquiries.index', ['status' => 'new']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'new' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 New
                 @if($counts['new'] > 0)
                     <span class="rounded-full bg-blue-500 px-1.5 text-xs text-white">{{ $counts['new'] }}</span>
                 @endif
             </a>
-            <a href="{{ route('admin.hajj.inquiries.index', ['status' => 'read']) }}" 
+            <a href="{{ route('admin.hajj.inquiries.index', ['status' => 'read']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'read' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Read
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['read'] }}</span>
             </a>
-            <a href="{{ route('admin.hajj.inquiries.index', ['status' => 'replied']) }}" 
+            <a href="{{ route('admin.hajj.inquiries.index', ['status' => 'replied']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'replied' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Replied
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['replied'] }}</span>
             </a>
-            <a href="{{ route('admin.hajj.inquiries.index', ['status' => 'closed']) }}" 
+            <a href="{{ route('admin.hajj.inquiries.index', ['status' => 'closed']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'closed' ? 'bg-gray-200 text-gray-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Closed
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['closed'] }}</span>
@@ -73,8 +73,8 @@
                         <li class="relative hover:bg-gray-50 {{ $inquiry->status === 'new' ? 'bg-blue-50/50' : '' }}">
                             <div class="flex items-start gap-4 px-4 py-4">
                                 <!-- Checkbox -->
-                                <input type="checkbox" 
-                                       :value="{{ $inquiry->id }}" 
+                                <input type="checkbox"
+                                       :value="{{ $inquiry->id }}"
                                        x-model="selected"
                                        class="mt-1 rounded border-gray-300 text-amber-600 focus:ring-amber-500">
 
@@ -111,7 +111,7 @@
                                     </div>
                                     <p class="mt-1 text-sm font-medium text-gray-800">{{ $inquiry->subject }}</p>
                                     <p class="mt-1 line-clamp-2 text-sm text-gray-600">{{ $inquiry->message }}</p>
-                                    
+
                                     @if($inquiry->phone)
                                         <p class="mt-2 text-xs text-gray-500">
                                             <svg class="mr-1 inline h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,7 +124,7 @@
 
                                 <!-- Quick Actions -->
                                 <div class="flex items-center gap-1">
-                                    <a href="{{ route('admin.hajj.inquiries.show', $inquiry) }}" 
+                                    <a href="{{ route('admin.hajj.inquiries.show', $inquiry) }}"
                                        class="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
                                        title="View Details">
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

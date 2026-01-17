@@ -1,44 +1,74 @@
 <script setup lang="ts">
 import { ChevronDown, ChevronUp } from 'lucide-vue-next'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import HajjHeader from '@/components/hajj/hajjheader.vue'
 import HajjFooter from '@/components/hajj/hajjfooter.vue'
 
-const faqs = ref([
+// TypeScript interfaces
+interface TeamMember {
+    id: number;
+    name: string;
+    role: string;
+    photo: string | null;
+    bio?: string;
+    social_links?: {
+        facebook?: string;
+        twitter?: string;
+        linkedin?: string;
+    };
+}
+
+interface Faq {
+    id: number;
+    question: string;
+    answer: string;
+}
+
+const props = withDefaults(defineProps<{
+    teamMembers?: TeamMember[];
+    faqs?: Faq[];
+}>(), {
+    teamMembers: () => [],
+    faqs: () => [],
+});
+
+// Fallback team members
+const displayTeamMembers = computed(() => props.teamMembers.length > 0 ? props.teamMembers : [
+    { id: 1, name: 'Mazhar', role: 'Product Designer', photo: '/assets/img/team/1.jpg' },
+    { id: 2, name: 'Ayesha', role: 'UI/UX Designer', photo: '/assets/img/team/2.jpg' },
+    { id: 3, name: 'Nafisa', role: 'Marketing Lead', photo: '/assets/img/team/3.jpg' },
+    { id: 4, name: 'Rahim', role: 'Frontend Dev', photo: '/assets/img/team/4.jpg' },
+    { id: 5, name: 'Sabbir', role: 'Backend Dev', photo: '/assets/img/team/5.jpg' },
+    { id: 6, name: 'Nabila', role: 'HR & Ops', photo: '/assets/img/team/6.jpg' },
+    { id: 7, name: 'Imran', role: 'SQA Engineer', photo: '/assets/img/team/7.jpg' },
+    { id: 8, name: 'Faysal', role: 'Support', photo: '/assets/img/team/8.jpg' },
+]);
+
+// Fallback FAQs with reactive state for accordion
+const displayFaqs = ref(props.faqs.length > 0 ? props.faqs.map((f, i) => ({ ...f, open: i === 0 })) : [
     {
-        title: 'Opportunity to Shape the Future of Living',
-        body:
-            'We believe in building experiences that bring people closer. Our team focuses on clarity, quality, and long-term impact.',
+        id: 1,
+        question: 'Opportunity to Shape the Future of Living',
+        answer: 'We believe in building experiences that bring people closer. Our team focuses on clarity, quality, and long-term impact.',
         open: true,
     },
     {
-        title: 'Cross-Disciplinary Learning',
-        body:
-            'Design, development, marketing, operations — we learn together and share knowledge across roles to move faster and smarter.',
+        id: 2,
+        question: 'Cross-Disciplinary Learning',
+        answer: 'Design, development, marketing, operations — we learn together and share knowledge across roles to move faster and smarter.',
         open: false,
     },
     {
-        title: 'Impactful Solutions for Everyday Life',
-        body:
-            'We ship practical features that solve real problems. Our goal is to make travel planning simpler, safer, and more enjoyable.',
+        id: 3,
+        question: 'Impactful Solutions for Everyday Life',
+        answer: 'We ship practical features that solve real problems. Our goal is to make travel planning simpler, safer, and more enjoyable.',
         open: false,
     },
-])
+]);
 
 const toggleFaq = (i: number) => {
-    faqs.value[i].open = !faqs.value[i].open
-}
-
-const teamMembers = [
-    { name: 'Mazhar', role: 'Product Designer', img: '/assets/img/team/1.jpg' },
-    { name: 'Ayesha', role: 'UI/UX Designer', img: '/assets/img/team/2.jpg' },
-    { name: 'Nafisa', role: 'Marketing Lead', img: '/assets/img/team/3.jpg' },
-    { name: 'Rahim', role: 'Frontend Dev', img: '/assets/img/team/4.jpg' },
-    { name: 'Sabbir', role: 'Backend Dev', img: '/assets/img/team/5.jpg' },
-    { name: 'Nabila', role: 'HR & Ops', img: '/assets/img/team/6.jpg' },
-    { name: 'Imran', role: 'SQA Engineer', img: '/assets/img/team/7.jpg' },
-    { name: 'Faysal', role: 'Support', img: '/assets/img/team/8.jpg' },
-]
+    displayFaqs.value[i].open = !displayFaqs.value[i].open;
+};
 </script>
 
 <template>
@@ -84,18 +114,18 @@ const teamMembers = [
                                 </h2>
 
                                 <p class="mt-4 text-slate-500 leading-relaxed">
-                                    We’re a people-first team. We communicate clearly, respect deadlines, and ship work
-                                    we’re proud of.
+                                    We're a people-first team. We communicate clearly, respect deadlines, and ship work
+                                    we're proud of.
                                     Collaboration is our default — and we keep it simple.
                                 </p>
 
                                 <!-- Accordion -->
                                 <div class="mt-6 divide-y divide-slate-200/70">
-                                    <button v-for="(item, i) in faqs" :key="i"
+                                    <button v-for="(item, i) in displayFaqs" :key="item.id"
                                         class="w-full py-4 flex items-center justify-between text-left group"
                                         @click="toggleFaq(i)">
                                         <span class="font-semibold text-slate-900 group-hover:text-teal-700 transition">
-                                            {{ item.title }}
+                                            {{ item.question }}
                                         </span>
 
                                         <span class="ml-4 text-slate-500">
@@ -104,9 +134,9 @@ const teamMembers = [
                                         </span>
                                     </button>
 
-                                    <div v-for="(item, i) in faqs" :key="'body-' + i">
+                                    <div v-for="(item, i) in displayFaqs" :key="'body-' + item.id">
                                         <div v-show="item.open" class="pb-4 -mt-2 text-slate-500 leading-relaxed">
-                                            {{ item.body }}
+                                            {{ item.answer }}
                                         </div>
                                     </div>
                                 </div>
@@ -129,11 +159,11 @@ const teamMembers = [
 
                     <!-- Grid like screenshot -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        <div v-for="(m, idx) in teamMembers" :key="idx" class="group rounded-2xl border border-slate-100 bg-white shadow-[0_12px_30px_rgba(0,0,0,0.06)]
+                        <div v-for="m in displayTeamMembers" :key="m.id" class="group rounded-2xl border border-slate-100 bg-white shadow-[0_12px_30px_rgba(0,0,0,0.06)]
                    overflow-hidden hover:-translate-y-1 transition-transform duration-300">
                             <!-- image -->
                             <div class="relative bg-slate-100">
-                                <img :src="m.img" :alt="m.name" class="w-full h-[170px] sm:h-[190px] object-cover" />
+                                <img :src="m.photo || '/assets/img/team/placeholder.jpg'" :alt="m.name" class="w-full h-[170px] sm:h-[190px] object-cover" />
 
                                 <!-- subtle vertical label (optional like screenshot) -->
                                 <div
@@ -151,17 +181,17 @@ const teamMembers = [
 
                                 <!-- socials -->
                                 <div class="mt-3 flex items-center gap-2 text-slate-500">
-                                    <a href="#"
+                                    <a :href="m.social_links?.facebook || '#'"
                                         class="h-8 w-8 rounded-lg bg-slate-50 hover:bg-slate-100 grid place-items-center transition"
                                         aria-label="facebook">
                                         f
                                     </a>
-                                    <a href="#"
+                                    <a :href="m.social_links?.twitter || '#'"
                                         class="h-8 w-8 rounded-lg bg-slate-50 hover:bg-slate-100 grid place-items-center transition"
                                         aria-label="twitter">
                                         t
                                     </a>
-                                    <a href="#"
+                                    <a :href="m.social_links?.linkedin || '#'"
                                         class="h-8 w-8 rounded-lg bg-slate-50 hover:bg-slate-100 grid place-items-center transition"
                                         aria-label="linkedin">
                                         in

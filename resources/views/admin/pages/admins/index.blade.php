@@ -16,15 +16,15 @@
 
         <!-- Role Filters -->
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('admin.admins.index') }}" 
+            <a href="{{ route('admin.admins.index') }}"
                class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium {{ !$currentRole ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 All Admins
             </a>
-            <a href="{{ route('admin.admins.index', ['role' => 'super_admin']) }}" 
+            <a href="{{ route('admin.admins.index', ['role' => 'super_admin']) }}"
                class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium {{ $currentRole === 'super_admin' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Super Admins
             </a>
-            <a href="{{ route('admin.admins.index', ['role' => 'admin']) }}" 
+            <a href="{{ route('admin.admins.index', ['role' => 'admin']) }}"
                class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium {{ $currentRole === 'admin' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Admins
             </a>

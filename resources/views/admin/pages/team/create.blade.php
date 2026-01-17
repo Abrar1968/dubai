@@ -105,7 +105,7 @@
                     <h3 class="text-lg font-medium text-gray-900">Social Links</h3>
                 </x-slot:header>
 
-                <div x-data="{ 
+                <div x-data="{
                     links: [],
                     platforms: ['linkedin', 'twitter', 'instagram', 'facebook', 'youtube'],
                     addLink() {
@@ -123,7 +123,7 @@
                     }
                 }">
                     <input type="hidden" name="social_links" :value="getLinksJson()">
-                    
+
                     <div class="space-y-3">
                         <template x-for="(link, index) in links" :key="index">
                             <div class="flex items-center gap-3">

@@ -109,7 +109,7 @@
                     }
                 @endphp
 
-                <div x-data="{ 
+                <div x-data="{
                     links: {{ json_encode($linksArray) }},
                     platforms: ['linkedin', 'twitter', 'instagram', 'facebook', 'youtube'],
                     addLink() {
@@ -127,7 +127,7 @@
                     }
                 }">
                     <input type="hidden" name="social_links" :value="getLinksJson()">
-                    
+
                     <div class="space-y-3">
                         <template x-for="(link, index) in links" :key="index">
                             <div class="flex items-center gap-3">

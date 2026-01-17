@@ -5,7 +5,8 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Services\BookingService;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class BookingController extends Controller
 {
@@ -16,7 +17,7 @@ class BookingController extends Controller
     /**
      * Display a listing of user's bookings.
      */
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
         $user = auth()->user();
         $status = $request->get('status');
@@ -27,7 +28,7 @@ class BookingController extends Controller
             $query->where('status', $status);
         }
 
-        $bookings = $query->paginate(10);
+        $bookings = $query->get();
 
         // Get counts
         $counts = [
@@ -38,7 +39,7 @@ class BookingController extends Controller
             'cancelled' => $user->bookings()->where('status', 'cancelled')->count(),
         ];
 
-        return view('user.pages.bookings.index', [
+        return Inertia::render('user/Bookings', [
             'bookings' => $bookings,
             'counts' => $counts,
             'currentStatus' => $status,
@@ -48,14 +49,14 @@ class BookingController extends Controller
     /**
      * Display the specified booking.
      */
-    public function show(int $id): View
+    public function show(int $id): Response
     {
         $user = auth()->user();
         $booking = $user->bookings()
             ->with(['package', 'travelers', 'statusLogs'])
             ->findOrFail($id);
 
-        return view('user.pages.bookings.show', [
+        return Inertia::render('user/BookingShow', [
             'booking' => $booking,
         ]);
     }

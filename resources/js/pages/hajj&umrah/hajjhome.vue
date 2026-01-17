@@ -6,33 +6,132 @@ import {
     Clock, Heart, Menu, Phone, Mail, CheckCircle, ArrowUpRight
 } from 'lucide-vue-next';
 
-// Placeholder data for Packages
-const packages = [
+// Props from backend
+interface Package {
+    id: number;
+    title: string;
+    slug: string;
+    price: number;
+    currency: string;
+    duration_days: number;
+    image: string;
+    features: string[];
+    type: string;
+}
+
+interface Article {
+    id: number;
+    title: string;
+    slug: string;
+    excerpt: string;
+    category: string;
+    image: string;
+}
+
+interface Testimonial {
+    id: number;
+    name: string;
+    location: string;
+    content: string;
+    rating: number;
+    avatar: string | null;
+}
+
+const props = withDefaults(defineProps<{
+    packages?: Package[];
+    articles?: Article[];
+    testimonials?: Testimonial[];
+    settings?: Record<string, string>;
+}>(), {
+    packages: () => [],
+    articles: () => [],
+    testimonials: () => [],
+    settings: () => ({}),
+});
+
+// Fallback data if no data from backend
+const displayPackages = props.packages.length > 0 ? props.packages : [
     {
+        id: 1,
         title: 'Premium Hajj',
-        price: 'Start From $12,500',
-        image: '/assets/img/hajj/hajjbg.jpg', // Kaaba
-        features: ['5 Star Hotel', 'Direct Flight', 'Visa Included', 'Full Board']
+        slug: 'premium-hajj',
+        price: 12500,
+        currency: 'USD',
+        duration_days: 7,
+        image: '/assets/img/hajj/hajjbg.jpg',
+        features: ['5 Star Hotel', 'Direct Flight', 'Visa Included', 'Full Board'],
+        type: 'hajj',
     },
     {
+        id: 2,
         title: 'Ramadan Umrah',
-        price: 'Start From $2,250',
-        image: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070&auto=format&fit=crop', // Mosque interior
-        features: ['4 Star Hotel', 'Direct Flight', 'Visa Included', 'Breakfast']
+        slug: 'ramadan-umrah',
+        price: 2250,
+        currency: 'USD',
+        duration_days: 7,
+        image: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070&auto=format&fit=crop',
+        features: ['4 Star Hotel', 'Direct Flight', 'Visa Included', 'Breakfast'],
+        type: 'umrah',
     },
     {
+        id: 3,
         title: 'Family Umrah',
-        price: 'Start From $1,850',
-        image: '/assets/img/hajj/family.jpg', // Dates/Food
-        features: ['Family Room', 'City Tour', 'Visa Included', 'Guide']
+        slug: 'family-umrah',
+        price: 1850,
+        currency: 'USD',
+        duration_days: 7,
+        image: '/assets/img/hajj/family.jpg',
+        features: ['Family Room', 'City Tour', 'Visa Included', 'Guide'],
+        type: 'umrah',
     },
     {
+        id: 4,
         title: 'Medina City Tour',
-        price: 'Start From $850',
-        image: '/assets/img/hajj/madina.jpg', // Prophet's Mosque
-        features: ['Local Guide', 'Transport', 'Lunch Included', 'Museums']
+        slug: 'medina-city-tour',
+        price: 850,
+        currency: 'USD',
+        duration_days: 3,
+        image: '/assets/img/hajj/madina.jpg',
+        features: ['Local Guide', 'Transport', 'Lunch Included', 'Museums'],
+        type: 'tour',
     },
 ];
+
+const displayArticles = props.articles.length > 0 ? props.articles : [
+    {
+        id: 1,
+        slug: 'essential-packing-tips',
+        title: 'Essential Packing Tips for Your Hajj',
+        category: 'Travel Guide',
+        excerpt: '',
+        image: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070&auto=format&fit=crop',
+    },
+    {
+        id: 2,
+        slug: 'personal-stories',
+        title: 'Personal Stories from the Sacred Journey',
+        category: 'Travel Guide',
+        excerpt: '',
+        image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148&auto=format&fit=crop',
+    },
+    {
+        id: 3,
+        slug: 'ultimate-guide-umrah',
+        title: 'The Ultimate Guide to Performing Umrah',
+        category: 'Travel Guide',
+        excerpt: '',
+        image: 'https://images.unsplash.com/photo-1551041777-cf9bd3048993?q=80&w=2006&auto=format&fit=crop',
+    }
+];
+
+const displayTestimonial = props.testimonials.length > 0 ? props.testimonials[0] : {
+    id: 1,
+    name: 'Ahmed Hassan',
+    location: 'Pilgrim from UK',
+    content: 'The experience was absolutely spiritually uplifting. The team took care of every detail, from the visa process to the accommodations near the Haram. I felt completely at peace.',
+    rating: 5,
+    avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop',
+};
 
 const features = [
     { title: 'Tawaf', desc: 'Perform Tawaf with ease and guidance.', icon: Clock },
@@ -43,20 +142,11 @@ const features = [
     { title: 'Prayer Mat', desc: 'Premium prayer mats provided.', icon: Star },
 ];
 
-const blogs = [
-    {
-        title: 'Essential Packing Tips for Your Hajj',
-        image: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070&auto=format&fit=crop',
-    },
-    {
-        title: 'Personal Stories from the Sacred Journey',
-        image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148&auto=format&fit=crop',
-    },
-    {
-        title: 'The Ultimate Guide to Performing Umrah',
-        image: 'https://images.unsplash.com/photo-1551041777-cf9bd3048993?q=80&w=2006&auto=format&fit=crop',
-    }
-];
+// Format price display
+const formatPrice = (price: number, currency: string) => {
+    return `Start From $${price.toLocaleString()}`;
+};
+
 // Smooth scroll to packages
 const scrollToPackages = () => {
     const el = document.getElementById('packages')
@@ -137,29 +227,29 @@ const scrollToPackages = () => {
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <div v-for="(pkg, index) in packages" :key="index"
+                        <div v-for="(pkg, index) in displayPackages" :key="pkg.id"
                             class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow group">
                             <div class="relative h-48 overflow-hidden">
                                 <img :src="pkg.image" :alt="pkg.title"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 <div
                                     class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-900">
-                                    7 Days
+                                    {{ pkg.duration_days }} Days
                                 </div>
                             </div>
                             <div class="p-6">
                                 <h3 class="text-xl font-bold text-slate-900 mb-2">{{ pkg.title }}</h3>
-                                <p class="text-[#D3A762] font-semibold text-lg mb-4">{{ pkg.price }}</p>
+                                <p class="text-[#D3A762] font-semibold text-lg mb-4">{{ formatPrice(pkg.price, pkg.currency) }}</p>
                                 <ul class="space-y-2 mb-6">
                                     <li v-for="feat in pkg.features" :key="feat"
                                         class="flex items-center gap-2 text-slate-600 text-sm">
                                         <CheckCircle class="w-4 h-4 text-green-500" /> {{ feat }}
                                     </li>
                                 </ul>
-                                <button
-                                    class="w-full border border-slate-200 py-3 rounded-lg text-slate-700 font-medium hover:bg-slate-900 hover:text-white transition-colors">
+                                <a :href="`/packages/${pkg.slug}`"
+                                    class="w-full block text-center border border-slate-200 py-3 rounded-lg text-slate-700 font-medium hover:bg-slate-900 hover:text-white transition-colors">
                                     View Details
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -315,18 +405,17 @@ const scrollToPackages = () => {
                 <div class="relative z-10 max-w-7xl mx-auto px-4 md:px-16 flex items-center">
                     <div class="bg-white p-10 rounded-xl shadow-xl max-w-lg">
                         <div class="flex gap-1 mb-6">
-                            <Star v-for="i in 5" :key="i" class="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                            <Star v-for="i in displayTestimonial.rating" :key="i" class="w-5 h-5 text-yellow-500 fill-yellow-500" />
                         </div>
                         <p class="text-slate-700 text-lg italic leading-relaxed mb-8">
-                            "The experience was absolutely spiritually uplifting. The team took care of every detail,
-                            from the visa process to the accommodations near the Haram. I felt completely at peace."
+                            "{{ displayTestimonial.content }}"
                         </p>
                         <div class="flex items-center gap-4">
-                            <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop"
+                            <img :src="displayTestimonial.avatar || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop'"
                                 class="w-12 h-12 rounded-full object-cover" alt="User" />
                             <div>
-                                <h5 class="font-bold text-slate-900">Ahmed Hassan</h5>
-                                <span class="text-sm text-slate-500">Pilgrim from UK</span>
+                                <h5 class="font-bold text-slate-900">{{ displayTestimonial.name }}</h5>
+                                <span class="text-sm text-slate-500">{{ displayTestimonial.location }}</span>
                             </div>
                         </div>
                     </div>
@@ -391,19 +480,19 @@ const scrollToPackages = () => {
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div v-for="(blog, i) in blogs" :key="i"
+                        <div v-for="article in displayArticles" :key="article.id"
                             class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow group">
                             <div class="h-64 overflow-hidden">
-                                <img :src="blog.image"
+                                <img :src="article.featured_image || 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070'"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    :alt="blog.title">
+                                    :alt="article.title">
                             </div>
                             <div class="p-8">
-                                <span class="text-xs font-bold text-[#D3A762] uppercase mb-2 block">Travel Guide</span>
+                                <span class="text-xs font-bold text-[#D3A762] uppercase mb-2 block">{{ article.category || 'Travel Guide' }}</span>
                                 <h3
                                     class="text-xl font-bold text-slate-900 mb-4 group-hover:text-[#D3A762] transition-colors cursor-pointer">
-                                    {{ blog.title }}</h3>
-                                <a href="#"
+                                    {{ article.title }}</h3>
+                                <a :href="`/articles/${article.slug}`"
                                     class="text-sm font-semibold text-slate-500 hover:text-slate-900 flex items-center gap-2">Read
                                     More
                                     <ArrowRight class="w-4 h-4" />

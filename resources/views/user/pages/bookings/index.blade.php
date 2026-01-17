@@ -8,27 +8,27 @@
 
         <!-- Status Filters -->
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('user.bookings.index') }}" 
+            <a href="{{ route('user.bookings.index') }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ !$currentStatus ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 All
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['all'] }}</span>
             </a>
-            <a href="{{ route('user.bookings.index', ['status' => 'pending']) }}" 
+            <a href="{{ route('user.bookings.index', ['status' => 'pending']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Pending
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['pending'] }}</span>
             </a>
-            <a href="{{ route('user.bookings.index', ['status' => 'confirmed']) }}" 
+            <a href="{{ route('user.bookings.index', ['status' => 'confirmed']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Confirmed
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['confirmed'] }}</span>
             </a>
-            <a href="{{ route('user.bookings.index', ['status' => 'completed']) }}" 
+            <a href="{{ route('user.bookings.index', ['status' => 'completed']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'completed' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Completed
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['completed'] }}</span>
             </a>
-            <a href="{{ route('user.bookings.index', ['status' => 'cancelled']) }}" 
+            <a href="{{ route('user.bookings.index', ['status' => 'cancelled']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'cancelled' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Cancelled
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['cancelled'] }}</span>
@@ -89,7 +89,7 @@
                                     </div>
                                 </div>
                                 <div class="flex-shrink-0">
-                                    <a href="{{ route('user.bookings.show', $booking) }}" 
+                                    <a href="{{ route('user.bookings.show', $booking) }}"
                                        class="inline-flex items-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-500">
                                         View Details
                                     </a>

@@ -99,7 +99,7 @@ class AdminUserService
         return DB::transaction(function () use ($user) {
             // Remove section assignments
             $user->assignedSections()->delete();
-            
+
             // Soft delete the user
             return $user->delete();
         });

@@ -16,7 +16,7 @@
 </head>
 <body class="min-h-screen bg-gray-50 font-sans antialiased" x-data="{ sidebarOpen: false }">
     <!-- Mobile sidebar backdrop -->
-    <div x-show="sidebarOpen" 
+    <div x-show="sidebarOpen"
          x-transition:enter="transition-opacity ease-linear duration-300"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
@@ -55,7 +55,7 @@
 
         <!-- Navigation -->
         <nav class="flex-1 space-y-1 px-2 py-4">
-            <a href="{{ route('user.dashboard') }}" 
+            <a href="{{ route('user.dashboard') }}"
                class="group flex items-center rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('user.dashboard') ? 'bg-amber-100 text-amber-700' : 'text-gray-700 hover:bg-gray-100' }}">
                 <svg class="mr-3 h-5 w-5 {{ request()->routeIs('user.dashboard') ? 'text-amber-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -63,7 +63,7 @@
                 Dashboard
             </a>
 
-            <a href="{{ route('user.bookings.index') }}" 
+            <a href="{{ route('user.bookings.index') }}"
                class="group flex items-center rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('user.bookings.*') ? 'bg-amber-100 text-amber-700' : 'text-gray-700 hover:bg-gray-100' }}">
                 <svg class="mr-3 h-5 w-5 {{ request()->routeIs('user.bookings.*') ? 'text-amber-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
@@ -71,7 +71,7 @@
                 My Bookings
             </a>
 
-            <a href="{{ route('user.profile') }}" 
+            <a href="{{ route('user.profile') }}"
                class="group flex items-center rounded-lg px-3 py-2 text-sm font-medium {{ request()->routeIs('user.profile') ? 'bg-amber-100 text-amber-700' : 'text-gray-700 hover:bg-gray-100' }}">
                 <svg class="mr-3 h-5 w-5 {{ request()->routeIs('user.profile') ? 'text-amber-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>

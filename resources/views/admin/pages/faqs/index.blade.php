@@ -16,12 +16,12 @@
 
         <!-- Section Filters -->
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('admin.hajj.faqs.index', ['section' => 'hajj']) }}" 
+            <a href="{{ route('admin.hajj.faqs.index', ['section' => 'hajj']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentSection === 'hajj' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Hajj
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['hajj'] ?? 0 }}</span>
             </a>
-            <a href="{{ route('admin.hajj.faqs.index', ['section' => 'global']) }}" 
+            <a href="{{ route('admin.hajj.faqs.index', ['section' => 'global']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentSection === 'global' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 General
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['global'] ?? 0 }}</span>
@@ -44,7 +44,7 @@
 
                                 <!-- Content -->
                                 <div class="min-w-0 flex-1">
-                                    <button type="button" 
+                                    <button type="button"
                                             @click="expanded = expanded === {{ $index }} ? null : {{ $index }}"
                                             class="w-full text-left">
                                         <div class="flex items-center gap-2">
@@ -61,7 +61,7 @@
                                 </div>
 
                                 <!-- Expand Icon -->
-                                <button type="button" 
+                                <button type="button"
                                         @click="expanded = expanded === {{ $index }} ? null : {{ $index }}"
                                         class="mt-1 text-gray-400 hover:text-gray-600">
                                     <svg class="h-5 w-5 transition-transform" :class="{ 'rotate-180': expanded === {{ $index }} }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -86,7 +86,7 @@
                                             @endif
                                         </button>
                                     </form>
-                                    <a href="{{ route('admin.hajj.faqs.edit', $faq) }}" 
+                                    <a href="{{ route('admin.hajj.faqs.edit', $faq) }}"
                                        class="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
                                        title="Edit">
                                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -29,7 +29,7 @@ class SettingService
     public function get(string $key, string $section = 'hajj', mixed $default = null): mixed
     {
         $settings = $this->getAll($section);
-        
+
         if ($settings->has($key)) {
             $setting = $settings->get($key);
             return $this->castValue($setting->value, $setting->type);

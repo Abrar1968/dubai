@@ -4,7 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Services\BookingService;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class DashboardController extends Controller
 {
@@ -15,10 +16,10 @@ class DashboardController extends Controller
     /**
      * Display the user dashboard.
      */
-    public function index(): View
+    public function index(): Response
     {
         $user = auth()->user();
-        
+
         // Get user's booking stats
         $stats = [
             'total_bookings' => $user->bookings()->count(),
@@ -34,9 +35,10 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('user.pages.dashboard', [
+        return Inertia::render('user/Dashboard', [
             'stats' => $stats,
             'recentBookings' => $recentBookings,
+            'user' => $user,
         ]);
     }
 }

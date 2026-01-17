@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->enum('section', ['hajj', 'tour', 'typing']);
             $table->foreignId('assigned_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->timestamp('assigned_at');
+            $table->timestamp('assigned_at')->nullable();
             $table->timestamps();
 
             $table->unique(['user_id', 'section']);

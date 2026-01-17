@@ -45,7 +45,7 @@
                         <div class="p-4">
                             <h3 class="font-semibold text-gray-900">{{ $member->name }}</h3>
                             <p class="text-sm text-amber-600">{{ $member->designation }}</p>
-                            
+
                             @if($member->email || $member->phone)
                                 <div class="mt-2 space-y-1 text-xs text-gray-500">
                                     @if($member->email)

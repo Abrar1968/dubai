@@ -16,19 +16,19 @@
 
         <!-- Status Filters -->
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('admin.hajj.testimonials.index') }}" 
+            <a href="{{ route('admin.hajj.testimonials.index') }}"
                class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium {{ !$currentStatus ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 All
             </a>
-            <a href="{{ route('admin.hajj.testimonials.index', ['status' => 'pending']) }}" 
+            <a href="{{ route('admin.hajj.testimonials.index', ['status' => 'pending']) }}"
                class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Pending
             </a>
-            <a href="{{ route('admin.hajj.testimonials.index', ['status' => 'approved']) }}" 
+            <a href="{{ route('admin.hajj.testimonials.index', ['status' => 'approved']) }}"
                class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'approved' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Approved
             </a>
-            <a href="{{ route('admin.hajj.testimonials.index', ['status' => 'rejected']) }}" 
+            <a href="{{ route('admin.hajj.testimonials.index', ['status' => 'rejected']) }}"
                class="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 Rejected
             </a>

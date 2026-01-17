@@ -5,19 +5,19 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ProfileController extends Controller
 {
     /**
      * Display the profile page.
      */
-    public function show(): View
+    public function show(): Response
     {
-        return view('user.pages.profile', [
+        return Inertia::render('user/Profile', [
             'user' => auth()->user(),
         ]);
     }
@@ -33,12 +33,19 @@ class ProfileController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'phone' => ['nullable', 'string', 'max:50'],
+            'address' => ['nullable', 'string', 'max:500'],
+            'city' => ['nullable', 'string', 'max:100'],
+            'country' => ['nullable', 'string', 'max:100'],
+            'date_of_birth' => ['nullable', 'date'],
+            'nationality' => ['nullable', 'string', 'max:100'],
+            'passport_number' => ['nullable', 'string', 'max:50'],
+            'passport_expiry' => ['nullable', 'date'],
         ]);
 
         $user->update($validated);
 
         return redirect()
-            ->route('user.profile')
+            ->route('user.profile.show')
             ->with('success', 'Profile updated successfully.');
     }
 
@@ -57,7 +64,7 @@ class ProfileController extends Controller
         ]);
 
         return redirect()
-            ->route('user.profile')
+            ->route('user.profile.show')
             ->with('success', 'Password updated successfully.');
     }
 }
