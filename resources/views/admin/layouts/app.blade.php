@@ -1,5 +1,3 @@
-@props(['title' => 'Admin Panel'])
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
@@ -7,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title }} - Dubai Tourism & Travel</title>
+    <title>@yield('title', 'Admin Panel') - Dubai Tourism & Travel</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -40,7 +38,7 @@
         <!-- Main content area -->
         <div class="lg:pl-64">
             <!-- Header -->
-            <x-admin.layout.header :title="$title ?? 'Dashboard'" />
+            <x-admin.layout.header :title="View::yieldContent('title', 'Dashboard')" />
 
             <!-- Page content -->
             <main class="py-6">
@@ -90,7 +88,7 @@
                         </div>
                     @endif
 
-                    {{ $slot }}
+                    @yield('content')
                 </div>
             </main>
         </div>

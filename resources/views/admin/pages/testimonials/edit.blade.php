@@ -24,7 +24,7 @@
                     <!-- Photo Upload -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Customer Photo</label>
-                        <div class="mt-2" x-data="{ preview: '{{ $testimonial->photo ? Storage::url($testimonial->photo) : '' }}' }">
+                        <div class="mt-2" x-data="{ preview: '{{ $testimonial->avatar ? Storage::url($testimonial->avatar) : '' }}' }">
                             <div class="flex items-center gap-4">
                                 <div class="h-16 w-16 overflow-hidden rounded-full bg-gray-100">
                                     <template x-if="preview">
@@ -32,18 +32,18 @@
                                     </template>
                                     <template x-if="!preview">
                                         <div class="flex h-full items-center justify-center">
-                                            <span class="text-lg font-medium text-gray-400">{{ substr($testimonial->customer_name, 0, 1) }}</span>
+                                            <span class="text-lg font-medium text-gray-400">{{ substr($testimonial->name, 0, 1) }}</span>
                                         </div>
                                     </template>
                                 </div>
                                 <div>
-                                    <input type="file" name="photo" id="photo" accept="image/*" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
-                                    <label for="photo" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
+                                    <input type="file" name="avatar" id="avatar" accept="image/*" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
+                                    <label for="avatar" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
                                         Change Photo
                                     </label>
                                 </div>
                             </div>
-                            @error('photo')
+                            @error('avatar')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
@@ -52,17 +52,17 @@
                     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <!-- Customer Name -->
                         <x-admin.ui.input
-                            name="customer_name"
+                            name="name"
                             label="Customer Name"
-                            :value="old('customer_name', $testimonial->customer_name)"
+                            :value="old('name', $testimonial->name)"
                             required
                         />
 
                         <!-- Location -->
                         <x-admin.ui.input
-                            name="customer_location"
+                            name="location"
                             label="Location"
-                            :value="old('customer_location', $testimonial->customer_location)"
+                            :value="old('location', $testimonial->location)"
                         />
                     </div>
                 </div>

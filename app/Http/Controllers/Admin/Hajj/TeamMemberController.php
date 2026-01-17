@@ -43,10 +43,10 @@ class TeamMemberController extends Controller
     {
         $data = $request->validated();
 
-        // Handle photo upload
-        if ($request->hasFile('photo')) {
-            $data['photo'] = $this->mediaService->uploadImage(
-                $request->file('photo'),
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $data['image'] = $this->mediaService->uploadImage(
+                $request->file('image'),
                 'team',
                 ['width' => 400, 'height' => 400]
             );
@@ -78,15 +78,15 @@ class TeamMemberController extends Controller
     {
         $data = $request->validated();
 
-        // Handle photo upload
-        if ($request->hasFile('photo')) {
-            // Delete old photo
-            if ($team->photo) {
-                $this->mediaService->deleteImage($team->photo);
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image
+            if ($team->image) {
+                $this->mediaService->deleteImage($team->image);
             }
 
-            $data['photo'] = $this->mediaService->uploadImage(
-                $request->file('photo'),
+            $data['image'] = $this->mediaService->uploadImage(
+                $request->file('image'),
                 'team',
                 ['width' => 400, 'height' => 400]
             );
@@ -108,9 +108,9 @@ class TeamMemberController extends Controller
      */
     public function destroy(TeamMember $team): RedirectResponse
     {
-        // Delete photo
-        if ($team->photo) {
-            $this->mediaService->deleteImage($team->photo);
+        // Delete image
+        if ($team->image) {
+            $this->mediaService->deleteImage($team->image);
         }
 
         $this->teamMemberService->delete($team);

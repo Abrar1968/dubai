@@ -49,10 +49,10 @@ class TestimonialController extends Controller
     {
         $data = $request->validated();
 
-        // Handle photo upload
-        if ($request->hasFile('photo')) {
-            $data['photo'] = $this->mediaService->upload(
-                $request->file('photo'),
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            $data['avatar'] = $this->mediaService->upload(
+                $request->file('avatar'),
                 'testimonials',
                 ['width' => 200, 'height' => 200]
             );
@@ -85,14 +85,14 @@ class TestimonialController extends Controller
         $testimonial = $this->testimonialService->getById($id);
         $data = $request->validated();
 
-        // Handle photo upload
-        if ($request->hasFile('photo')) {
-            // Delete old photo
-            if ($testimonial->photo) {
-                $this->mediaService->delete($testimonial->photo);
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            // Delete old avatar
+            if ($testimonial->avatar) {
+                $this->mediaService->delete($testimonial->avatar);
             }
-            $data['photo'] = $this->mediaService->upload(
-                $request->file('photo'),
+            $data['avatar'] = $this->mediaService->upload(
+                $request->file('avatar'),
                 'testimonials',
                 ['width' => 200, 'height' => 200]
             );
@@ -112,9 +112,9 @@ class TestimonialController extends Controller
     {
         $testimonial = $this->testimonialService->getById($id);
 
-        // Delete photo
-        if ($testimonial->photo) {
-            $this->mediaService->delete($testimonial->photo);
+        // Delete avatar
+        if ($testimonial->avatar) {
+            $this->mediaService->delete($testimonial->avatar);
         }
 
         $this->testimonialService->delete($testimonial);

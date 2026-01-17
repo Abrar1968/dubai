@@ -24,7 +24,7 @@
                     <!-- Photo Upload -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Photo</label>
-                        <div class="mt-2" x-data="{ preview: '{{ $member->photo ? Storage::url($member->photo) : '' }}' }">
+                        <div class="mt-2" x-data="{ preview: '{{ $member->image ? Storage::url($member->image) : '' }}' }">
                             <div class="flex items-center gap-4">
                                 <div class="h-24 w-24 overflow-hidden rounded-full bg-gray-100">
                                     <template x-if="preview">
@@ -39,14 +39,14 @@
                                     </template>
                                 </div>
                                 <div>
-                                    <input type="file" name="photo" id="photo" accept="image/*" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
-                                    <label for="photo" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
+                                    <input type="file" name="image" id="image" accept="image/*" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
+                                    <label for="image" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
                                         Change Photo
                                     </label>
                                     <p class="mt-1 text-xs text-gray-500">JPG, PNG or WebP. Max 2MB.</p>
                                 </div>
                             </div>
-                            @error('photo')
+                            @error('image')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
@@ -60,11 +60,11 @@
                         required
                     />
 
-                    <!-- Designation -->
+                    <!-- Role -->
                     <x-admin.ui.input
-                        name="designation"
-                        label="Designation"
-                        :value="old('designation', $member->designation)"
+                        name="role"
+                        label="Role"
+                        :value="old('role', $member->role)"
                         required
                     />
 

@@ -3,6 +3,10 @@
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
+beforeEach(function () {
+    $this->withoutVite();
+});
+
 /*
 |--------------------------------------------------------------------------
 | User Dashboard Routes Tests

@@ -43,11 +43,11 @@
                             <div class="flex items-start gap-4">
                                 <!-- Customer Photo -->
                                 <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-gray-100">
-                                    @if($testimonial->photo)
-                                        <img src="{{ Storage::url($testimonial->photo) }}" alt="{{ $testimonial->customer_name }}" class="h-full w-full object-cover">
+                                    @if($testimonial->avatar)
+                                        <img src="{{ Storage::url($testimonial->avatar) }}" alt="{{ $testimonial->name }}" class="h-full w-full object-cover">
                                     @else
                                         <div class="flex h-full items-center justify-center">
-                                            <span class="text-lg font-medium text-gray-400">{{ substr($testimonial->customer_name, 0, 1) }}</span>
+                                            <span class="text-lg font-medium text-gray-400">{{ substr($testimonial->name, 0, 1) }}</span>
                                         </div>
                                     @endif
                                 </div>
@@ -56,9 +56,9 @@
                                 <div class="flex-1">
                                     <div class="flex items-start justify-between">
                                         <div>
-                                            <h3 class="font-semibold text-gray-900">{{ $testimonial->customer_name }}</h3>
-                                            @if($testimonial->customer_location)
-                                                <p class="text-sm text-gray-500">{{ $testimonial->customer_location }}</p>
+                                            <h3 class="font-semibold text-gray-900">{{ $testimonial->name }}</h3>
+                                            @if($testimonial->location)
+                                                <p class="text-sm text-gray-500">{{ $testimonial->location }}</p>
                                             @endif
                                         </div>
 

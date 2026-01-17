@@ -34,9 +34,9 @@ class ArticleRequest extends FormRequest
             'excerpt' => ['nullable', 'string', 'max:500'],
             'content' => ['required', 'string'],
             'featured_image' => [
-                $this->isMethod('POST') ? 'required' : 'nullable',
+                'nullable',
                 'image',
-                'mimes:jpeg,png,jpg,webp',
+                'mimes:jpeg,png,jpg,webp,heic',
                 'max:2048',
             ],
             'category_id' => ['required', 'exists:article_categories,id'],

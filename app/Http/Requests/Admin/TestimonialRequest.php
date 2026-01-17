@@ -20,22 +20,17 @@ class TestimonialRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'customer_name' => ['required', 'string', 'max:255'],
-            'customer_location' => ['nullable', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:100'],
+            'location' => ['nullable', 'string', 'max:100'],
             'content' => ['required', 'string', 'max:2000'],
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
-            'package_type' => ['nullable', 'string', 'in:hajj,umrah'],
-            'travel_date' => ['nullable', 'date'],
+            'package_id' => ['nullable', 'integer', 'exists:packages,id'],
             'is_featured' => ['boolean'],
-            'status' => ['nullable', 'string', 'in:pending,approved,rejected'],
+            'is_approved' => ['boolean'],
         ];
 
-        // Photo required on create, optional on update
-        if ($this->isMethod('POST')) {
-            $rules['photo'] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'];
-        } else {
-            $rules['photo'] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'];
-        }
+        // Avatar optional on both create and update
+        $rules['avatar'] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,heic', 'max:2048'];
 
         return $rules;
     }
@@ -46,13 +41,13 @@ class TestimonialRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'customer_name' => 'customer name',
-            'customer_location' => 'location',
+            'name' => 'customer name',
+            'location' => 'location',
             'content' => 'testimonial content',
             'rating' => 'star rating',
-            'package_type' => 'package type',
-            'travel_date' => 'travel date',
+            'package_id' => 'package',
             'is_featured' => 'featured status',
+            'is_approved' => 'approval status',
         ];
     }
 

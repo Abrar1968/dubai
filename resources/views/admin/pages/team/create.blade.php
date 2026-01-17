@@ -22,7 +22,7 @@
                 <div class="space-y-4">
                     <!-- Photo Upload -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Photo <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-gray-700">Photo</label>
                         <div class="mt-2" x-data="{ preview: null }">
                             <div class="flex items-center gap-4">
                                 <div class="h-24 w-24 overflow-hidden rounded-full bg-gray-100">
@@ -38,14 +38,14 @@
                                     </template>
                                 </div>
                                 <div>
-                                    <input type="file" name="photo" id="photo" accept="image/*" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
-                                    <label for="photo" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
+                                    <input type="file" name="image" id="image" accept="image/*" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
+                                    <label for="image" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
                                         Choose Photo
                                     </label>
                                     <p class="mt-1 text-xs text-gray-500">JPG, PNG or WebP. Max 2MB.</p>
                                 </div>
                             </div>
-                            @error('photo')
+                            @error('image')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
@@ -60,11 +60,11 @@
                         placeholder="John Doe"
                     />
 
-                    <!-- Designation -->
+                    <!-- Role -->
                     <x-admin.ui.input
-                        name="designation"
-                        label="Designation"
-                        :value="old('designation')"
+                        name="role"
+                        label="Role"
+                        :value="old('role')"
                         required
                         placeholder="Senior Travel Consultant"
                     />

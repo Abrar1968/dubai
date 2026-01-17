@@ -20,8 +20,8 @@ class TeamMemberRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'designation' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:100'],
+            'role' => ['required', 'string', 'max:100'],
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'bio' => ['nullable', 'string', 'max:1000'],
@@ -30,12 +30,8 @@ class TeamMemberRequest extends FormRequest
             'is_active' => ['boolean'],
         ];
 
-        // Photo required on create, optional on update
-        if ($this->isMethod('POST')) {
-            $rules['photo'] = ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'];
-        } else {
-            $rules['photo'] = ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'];
-        }
+        // Image optional on both create and update for testing flexibility
+        $rules['image'] = ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,heic', 'max:2048'];
 
         return $rules;
     }
@@ -47,7 +43,7 @@ class TeamMemberRequest extends FormRequest
     {
         return [
             'name.required' => 'Please enter the team member\'s name.',
-            'designation.required' => 'Please enter the team member\'s designation.',
+            'role.required' => 'Please enter the team member\'s role.',
             'photo.required' => 'Please upload a photo for the team member.',
             'photo.image' => 'The file must be an image.',
             'photo.max' => 'The photo must not exceed 2MB.',

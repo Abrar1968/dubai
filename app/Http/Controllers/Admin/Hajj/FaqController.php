@@ -57,13 +57,13 @@ class FaqController extends Controller
     public function edit(int $id): View
     {
         $faq = $this->faqService->getById($id);
-        $categories = $this->faqService->getCategories();
 
         return view('admin.pages.faqs.edit', [
             'faq' => $faq,
+        ]);
+    }
 
-        return view('admin.pages.faqs.edit', [
-            'faq' => $faq
+    /**
      * Update the specified FAQ.
      */
     public function update(FaqRequest $request, int $id): RedirectResponse
@@ -97,7 +97,8 @@ class FaqController extends Controller
         $faq = $this->faqService->getById($id);
         $faq->is_active = !$faq->is_active;
         $faq->save();
-this->faqService->toggleActive($faqrect()
+
+        return redirect()
             ->back()
             ->with('success', 'FAQ status updated.');
     }

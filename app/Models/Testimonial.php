@@ -81,4 +81,13 @@ class Testimonial extends Model
         }
         return $stars;
     }
+
+    /**
+     * Get the status string based on is_approved.
+     * Maps boolean to: 'approved', 'pending'
+     */
+    public function getStatusAttribute(): string
+    {
+        return $this->is_approved ? 'approved' : 'pending';
+    }
 }

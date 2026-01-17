@@ -27,14 +27,17 @@ class TestimonialService
     /**
      * Get paginated testimonials.
      */
-    public function paginate(int $perPage = 15, ?bool $approvedOnly = null): LengthAwarePaginator
+    public function paginate(int $perPage = 15, ?array $filters = null): LengthAwarePaginator
     {
         $query = Testimonial::with('package')->orderBy('created_at', 'desc');
 
-        if ($approvedOnly === true) {
-            $query->approved();
-        } elseif ($approvedOnly === false) {
-            $query->pending();
+        if ($filters && isset($filters['status'])) {
+            $status = $filters['status'];
+            if ($status === 'approved') {
+                $query->approved();
+            } elseif ($status === 'pending') {
+                $query->pending();
+            }
         }
 
         return $query->paginate($perPage);
