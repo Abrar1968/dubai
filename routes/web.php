@@ -54,4 +54,21 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// ==========================================
+// User Dashboard Routes (Blade)
+// ==========================================
+Route::prefix('user')->name('user.')->middleware(['auth', 'verified'])->group(function () {
+    // Dashboard
+    Route::get('/', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('dashboard');
+
+    // Bookings
+    Route::get('bookings', [\App\Http\Controllers\User\BookingController::class, 'index'])->name('bookings.index');
+    Route::get('bookings/{booking}', [\App\Http\Controllers\User\BookingController::class, 'show'])->name('bookings.show');
+
+    // Profile
+    Route::get('profile', [\App\Http\Controllers\User\ProfileController::class, 'show'])->name('profile.show');
+    Route::put('profile', [\App\Http\Controllers\User\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/password', [\App\Http\Controllers\User\ProfileController::class, 'updatePassword'])->name('profile.password');
+});
+
 require __DIR__ . '/settings.php';

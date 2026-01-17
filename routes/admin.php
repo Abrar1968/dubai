@@ -80,37 +80,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('article-categories', \App\Http\Controllers\Admin\Hajj\ArticleCategoryController::class)->except(['show']);
 
             // ==========================================
-            // Day 3 Controllers (To be implemented)
+            // Day 3 Controllers
             // ==========================================
-            // TODO: Uncomment when Day 3 is implemented
-            
+
             // Team Members
-            // Route::resource('team', \App\Http\Controllers\Admin\Hajj\TeamMemberController::class);
-            // Route::post('team/reorder', [\App\Http\Controllers\Admin\Hajj\TeamMemberController::class, 'reorder'])->name('team.reorder');
+            Route::resource('team', \App\Http\Controllers\Admin\Hajj\TeamMemberController::class);
+            Route::patch('team/{team}/toggle-active', [\App\Http\Controllers\Admin\Hajj\TeamMemberController::class, 'toggleActive'])->name('team.toggle-active');
+            Route::post('team/reorder', [\App\Http\Controllers\Admin\Hajj\TeamMemberController::class, 'reorder'])->name('team.reorder');
 
             // Testimonials
-            // Route::resource('testimonials', \App\Http\Controllers\Admin\Hajj\TestimonialController::class);
-            // Route::post('testimonials/{testimonial}/approve', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'approve'])->name('testimonials.approve');
-            // Route::post('testimonials/{testimonial}/reject', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'reject'])->name('testimonials.reject');
-            // Route::post('testimonials/{testimonial}/toggle-featured', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'toggleFeatured'])->name('testimonials.toggle-featured');
+            Route::resource('testimonials', \App\Http\Controllers\Admin\Hajj\TestimonialController::class);
+            Route::patch('testimonials/{testimonial}/approve', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'approve'])->name('testimonials.approve');
+            Route::patch('testimonials/{testimonial}/reject', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'reject'])->name('testimonials.reject');
+            Route::patch('testimonials/{testimonial}/toggle-featured', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'toggleFeatured'])->name('testimonials.toggle-featured');
 
             // Contact Inquiries
-            // Route::resource('inquiries', \App\Http\Controllers\Admin\Hajj\ContactInquiryController::class)->only(['index', 'show', 'destroy']);
-            // Route::post('inquiries/{inquiry}/mark-read', [\App\Http\Controllers\Admin\Hajj\ContactInquiryController::class, 'markAsRead'])->name('inquiries.mark-read');
-            // Route::post('inquiries/{inquiry}/respond', [\App\Http\Controllers\Admin\Hajj\ContactInquiryController::class, 'respond'])->name('inquiries.respond');
-            // Route::post('inquiries/{inquiry}/close', [\App\Http\Controllers\Admin\Hajj\ContactInquiryController::class, 'close'])->name('inquiries.close');
+            Route::resource('inquiries', \App\Http\Controllers\Admin\Hajj\InquiryController::class)->only(['index', 'show', 'destroy']);
+            Route::patch('inquiries/{inquiry}/mark-read', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'markRead'])->name('inquiries.mark-read');
+            Route::patch('inquiries/{inquiry}/mark-responded', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'markResponded'])->name('inquiries.mark-responded');
+            Route::delete('inquiries', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'bulkDestroy'])->name('inquiries.bulk-destroy');
 
             // FAQs
-            // Route::resource('faqs', \App\Http\Controllers\Admin\Hajj\FaqController::class)->except(['show']);
-            // Route::post('faqs/reorder', [\App\Http\Controllers\Admin\Hajj\FaqController::class, 'reorder'])->name('faqs.reorder');
+            Route::resource('faqs', \App\Http\Controllers\Admin\Hajj\FaqController::class)->except(['show']);
+            Route::patch('faqs/{faq}/toggle-active', [\App\Http\Controllers\Admin\Hajj\FaqController::class, 'toggleActive'])->name('faqs.toggle-active');
+            Route::post('faqs/reorder', [\App\Http\Controllers\Admin\Hajj\FaqController::class, 'reorder'])->name('faqs.reorder');
 
             // Settings
-            // Route::get('settings', [\App\Http\Controllers\Admin\Hajj\SettingsController::class, 'index'])->name('settings.index');
-            // Route::put('settings', [\App\Http\Controllers\Admin\Hajj\SettingsController::class, 'update'])->name('settings.update');
-
-            // Office Locations
-            // Route::resource('locations', \App\Http\Controllers\Admin\Hajj\OfficeLocationController::class)->except(['show']);
-            // Route::post('locations/reorder', [\App\Http\Controllers\Admin\Hajj\OfficeLocationController::class, 'reorder'])->name('locations.reorder');
+            Route::get('settings', [\App\Http\Controllers\Admin\Hajj\SettingController::class, 'index'])->name('settings.index');
+            Route::put('settings', [\App\Http\Controllers\Admin\Hajj\SettingController::class, 'update'])->name('settings.update');
         });
 
         // ==========================================
@@ -134,18 +131,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         // ==========================================
-        // Super Admin Only Routes (Day 3)
+        // Super Admin Only Routes
         // ==========================================
-        // TODO: Uncomment when Day 3 is implemented
-        // Route::prefix('system')->name('system.')->middleware('super_admin')->group(function () {
-        //     // Admin Management
-        //     Route::resource('admins', \App\Http\Controllers\Admin\System\AdminController::class);
-        //     Route::post('admins/{admin}/toggle-active', [\App\Http\Controllers\Admin\System\AdminController::class, 'toggleActive'])->name('admins.toggle-active');
-        //     Route::put('admins/{admin}/sections', [\App\Http\Controllers\Admin\System\AdminController::class, 'updateSections'])->name('admins.update-sections');
-
-        //     // Global Settings
-        //     Route::get('settings', [\App\Http\Controllers\Admin\System\SettingsController::class, 'index'])->name('settings.index');
-        //     Route::put('settings', [\App\Http\Controllers\Admin\System\SettingsController::class, 'update'])->name('settings.update');
-        // });
+        Route::middleware('super_admin')->group(function () {
+            // Admin Management
+            Route::resource('admins', \App\Http\Controllers\Admin\AdminUserController::class);
+            Route::patch('admins/{admin}/toggle-active', [\App\Http\Controllers\Admin\AdminUserController::class, 'toggleActive'])->name('admins.toggle-active');
+        });
     });
 });
