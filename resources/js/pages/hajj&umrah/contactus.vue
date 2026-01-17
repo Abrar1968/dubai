@@ -1,4 +1,4 @@
-<template>
+Ôªø<template>
     <section class="bg-[#eef8ef] py-16 sm:py-20">
         <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <!-- Heading -->
@@ -40,15 +40,15 @@
 
                             <ul class="mt-4 space-y-3 text-sm text-white/75">
                                 <li class="flex gap-3">
-                                    <span class="mt-[2px] text-[#55c06a]">Ì≥ç</span>
+                                    <span class="mt-[2px] text-[#55c06a]"></span>
                                     <span>{{ office.address }}</span>
                                 </li>
                                 <li class="flex gap-3">
-                                    <span class="mt-[2px] text-[#55c06a]">Ì≥û</span>
+                                    <span class="mt-[2px] text-[#55c06a]"></span>
                                     <span>{{ office.phone }}</span>
                                 </li>
                                 <li class="flex gap-3">
-                                    <span class="mt-[2px] text-[#55c06a]">‚úâÔ∏è</span>
+                                    <span class="mt-[2px] text-[#55c06a]"></span>
                                     <span>{{ office.email }}</span>
                                 </li>
                             </ul>

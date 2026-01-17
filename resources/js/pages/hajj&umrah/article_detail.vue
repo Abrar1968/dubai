@@ -63,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3'
 import HajjUmrahLayout from '@/layouts/HajjUmrahLayout.vue'
 
@@ -84,6 +85,8 @@ interface Article {
     featured_image: string | null;
     published_at: string | null;
     author?: Author;
+    views_count?: number;
+    tags?: string[];
 }
 
 const props = withDefaults(defineProps<{
@@ -101,8 +104,8 @@ const defaultContent = `
 <p>In the meantime, explore our other articles about Hajj and Umrah to prepare for your spiritual journey.</p>
 `;
 
-// Fallback article data
-const displayArticle = props.article || {
+// Reactive article data using computed
+const displayArticle = computed(() => props.article || {
     id: 1,
     title: 'Article Detail',
     slug: props.slug || 'article',
@@ -112,29 +115,34 @@ const displayArticle = props.article || {
     featured_image: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070',
     published_at: null,
     author: undefined,
-};
+});
 
-// Fallback related articles
-const displayRelatedArticles = props.relatedArticles.length > 0 ? props.relatedArticles : [
-    {
-        id: 2,
-        slug: 'essential-packing-tips',
-        category: 'TRAVEL GUIDE',
-        title: 'Essential Packing Tips for Hajj',
-        excerpt: 'What to pack for your spiritual journey.',
-        featured_image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148',
-        published_at: null,
-    },
-    {
-        id: 3,
-        slug: 'umrah-guide',
-        category: 'TRAVEL GUIDE',
-        title: 'Complete Umrah Guide',
-        excerpt: 'Step-by-step guide to performing Umrah.',
-        featured_image: 'https://images.unsplash.com/photo-1551041777-cf9bd3048993?q=80&w=2006',
-        published_at: null,
-    },
-];
+// Reactive related articles
+const displayRelatedArticles = computed(() => {
+    if (props.relatedArticles && props.relatedArticles.length > 0) {
+        return props.relatedArticles;
+    }
+    return [
+        {
+            id: 2,
+            slug: 'essential-packing-tips',
+            category: 'TRAVEL GUIDE',
+            title: 'Essential Packing Tips for Hajj',
+            excerpt: 'What to pack for your spiritual journey.',
+            featured_image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148',
+            published_at: null,
+        },
+        {
+            id: 3,
+            slug: 'umrah-guide',
+            category: 'TRAVEL GUIDE',
+            title: 'Complete Umrah Guide',
+            excerpt: 'Step-by-step guide to performing Umrah.',
+            featured_image: 'https://images.unsplash.com/photo-1551041777-cf9bd3048993?q=80&w=2006',
+            published_at: null,
+        },
+    ];
+});
 
 const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

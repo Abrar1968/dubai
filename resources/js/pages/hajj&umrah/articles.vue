@@ -1,4 +1,4 @@
-<template>
+﻿<template>
     <div class="bg-[#fbf6ef]">
         <!-- Header -->
         <section class="py-14 sm:py-16">
@@ -45,7 +45,7 @@
                                     class="inline-flex items-center gap-2 text-slate-600 font-semibold hover:text-slate-900 transition">
                                     Read More
                                     <span
-                                        class="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                                        class="inline-block transition-transform duration-300 group-hover:translate-x-1"></span>
                                 </Link>
                             </div>
                         </div>
