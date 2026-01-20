@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin\Hajj;
 
+use App\Enums\InquiryStatus;
 use App\Http\Controllers\Controller;
 use App\Services\ContactInquiryService;
 use Illuminate\Http\RedirectResponse;
@@ -19,19 +20,21 @@ class InquiryController extends Controller
      */
     public function index(Request $request): View
     {
-        $status = $request->get('status');
+        $statusFilter = $request->get('status');
+        $status = $statusFilter ? InquiryStatus::from($statusFilter) : null;
+        
         $inquiries = $this->inquiryService->paginate(
             perPage: 20,
-            filters: $status ? ['status' => $status] : []
+            status: $status
         );
 
         // Get counts for status badges
         $counts = [
             'all' => $this->inquiryService->list()->count(),
-            'new' => $this->inquiryService->list(['status' => 'new'])->count(),
-            'read' => $this->inquiryService->list(['status' => 'read'])->count(),
-            'replied' => $this->inquiryService->list(['status' => 'replied'])->count(),
-            'closed' => $this->inquiryService->list(['status' => 'closed'])->count(),
+            'new' => $this->inquiryService->list(InquiryStatus::NEW)->count(),
+            'read' => $this->inquiryService->list(InquiryStatus::READ)->count(),
+            'replied' => $this->inquiryService->list(InquiryStatus::REPLIED)->count(),
+            'closed' => $this->inquiryService->list(InquiryStatus::CLOSED)->count(),
         ];
 
         return view('admin.pages.inquiries.index', [

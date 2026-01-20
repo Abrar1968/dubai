@@ -108,6 +108,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             // Settings
             Route::get('settings', [\App\Http\Controllers\Admin\Hajj\SettingController::class, 'index'])->name('settings.index');
             Route::put('settings', [\App\Http\Controllers\Admin\Hajj\SettingController::class, 'update'])->name('settings.update');
+            Route::post('settings/clear-cache', [\App\Http\Controllers\Admin\Hajj\SettingController::class, 'clearCache'])->name('settings.clear-cache');
         });
 
         // ==========================================
