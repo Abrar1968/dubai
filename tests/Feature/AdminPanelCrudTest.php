@@ -21,7 +21,7 @@ beforeEach(function () {
         'email_verified_at' => now(),
         'is_active' => true,
     ]);
-    
+
     // Assign hajj section
     $this->superAdmin->assignedSections()->create([
         'section' => 'hajj',
@@ -42,7 +42,7 @@ describe('Package Management', function () {
             'is_active' => true,
             'features' => ['Feature 1', 'Feature 2'],
         ]);
-        
+
         $this->umrahPackage = Package::create([
             'title' => 'Test Umrah Package',
             'slug' => 'test-umrah-package',

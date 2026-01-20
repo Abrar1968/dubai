@@ -2,7 +2,7 @@
 
 /**
  * Comprehensive Tests for Hajj & Umrah Admin Section
- * 
+ *
  * Tests all CRUD operations for:
  * - Packages (Create, Read, Update, Delete, Toggle Status, Toggle Featured)
  * - Bookings (Read, Update Status, Confirm, Cancel, Update Payment, Delete)
@@ -38,7 +38,7 @@ beforeEach(function () {
         'email_verified_at' => now(),
         'is_active' => true,
     ]);
-    
+
     // Assign hajj section
     $this->superAdmin->assignedSections()->create([
         'section' => 'hajj',
