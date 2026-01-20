@@ -61,6 +61,16 @@ class TeamMemberService
     }
 
     /**
+     * Toggle team member active status.
+     */
+    public function toggleActive(TeamMember $member): TeamMember
+    {
+        $member->update(['is_active' => !$member->is_active]);
+
+        return $member->fresh();
+    }
+
+    /**
      * Reorder team members.
      */
     public function reorder(array $orderedIds): void

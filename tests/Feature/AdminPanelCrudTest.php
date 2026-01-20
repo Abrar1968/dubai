@@ -364,7 +364,7 @@ describe('Public Hajj Frontend with Database Data', function () {
             ->assertStatus(200)
             ->assertInertia(fn ($page) => $page
                 ->component('hajj&umrah/articles')
-                ->has('posts')
+                ->has('articles')
             );
     });
 

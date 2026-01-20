@@ -94,12 +94,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('testimonials/{testimonial}/reject', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'reject'])->name('testimonials.reject');
             Route::patch('testimonials/{testimonial}/toggle-featured', [\App\Http\Controllers\Admin\Hajj\TestimonialController::class, 'toggleFeatured'])->name('testimonials.toggle-featured');
 
-            // Contact Inquiries
+            // Contact Inquiries - Bulk operations MUST come before resource route
+            Route::post('inquiries/bulk-mark-read', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'bulkMarkRead'])->name('inquiries.bulk-mark-read');
+            Route::delete('inquiries/bulk-delete', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'bulkDelete'])->name('inquiries.bulk-delete');
             Route::resource('inquiries', \App\Http\Controllers\Admin\Hajj\InquiryController::class)->only(['index', 'show', 'destroy']);
             Route::patch('inquiries/{inquiry}/mark-read', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'markRead'])->name('inquiries.mark-read');
             Route::patch('inquiries/{inquiry}/mark-responded', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'markResponded'])->name('inquiries.mark-responded');
-            Route::post('inquiries/bulk-mark-read', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'bulkMarkRead'])->name('inquiries.bulk-mark-read');
-            Route::delete('inquiries/bulk-delete', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'bulkDelete'])->name('inquiries.bulk-delete');
+            Route::patch('inquiries/{inquiry}/close', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'close'])->name('inquiries.close');
 
             // FAQs
             Route::resource('faqs', \App\Http\Controllers\Admin\Hajj\FaqController::class)->except(['show']);

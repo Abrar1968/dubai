@@ -265,10 +265,10 @@
                         name="gallery"
                         label="Gallery Images"
                         accept="image/jpeg,image/png,image/jpg,image/webp"
-                        maxSize="2"
-                        maxFiles="10"
+                        :maxSize="2048"
+                        :maxFiles="10"
                         hint="Upload up to 10 images"
-                        :existingImages="$package->gallery->map(fn($img) => ['url' => Storage::url($img->image_path), 'path' => $img->image_path])->toArray()"
+                        :value="$package->gallery->map(fn($img) => ['url' => Storage::url($img->image_path), 'path' => $img->image_path])->toArray()"
                     />
                 </x-admin.ui.card>
             </div>

@@ -11,6 +11,11 @@ class BookingStatusLog extends Model
 {
     use HasFactory;
 
+    /**
+     * Disable timestamps since this table only has created_at.
+     */
+    public $timestamps = false;
+
     protected $fillable = [
         'booking_id',
         'from_status',

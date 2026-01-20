@@ -52,7 +52,7 @@ class InquiryController extends Controller
         $inquiry = $this->inquiryService->getById($id);
 
         // Mark as read if new
-        if ($inquiry->status === 'new') {
+        if ($inquiry->status === InquiryStatus::NEW) {
             $this->inquiryService->markAsRead($inquiry);
             $inquiry->refresh();
         }
@@ -110,7 +110,7 @@ class InquiryController extends Controller
 
         foreach ($ids as $id) {
             $inquiry = $this->inquiryService->getById($id);
-            if ($inquiry->status === 'new') {
+            if ($inquiry->status === InquiryStatus::NEW) {
                 $this->inquiryService->markAsRead($inquiry);
             }
         }
