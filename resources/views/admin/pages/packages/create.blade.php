@@ -244,7 +244,7 @@
                         <h3 class="text-lg font-medium text-slate-900">Thumbnail</h3>
                     </x-slot>
 
-                    <x-admin.form.image-upload name="thumbnail" label="Package Thumbnail" required accept="image/jpeg,image/png,image/jpg,image/webp" maxSize="5120" hint="Recommended: 800x600px" />
+                    <x-admin.form.image-upload name="thumbnail" label="Package Thumbnail" required accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml,image/heic,image/heif" maxSize="5120" hint="Recommended: 800x600px" />
                 </x-admin.ui.card>
 
                 {{-- Gallery --}}
@@ -253,7 +253,7 @@
                         <h3 class="text-lg font-medium text-slate-900">Gallery</h3>
                     </x-slot>
 
-                    <x-admin.form.multi-image-upload name="gallery" label="Gallery Images" accept="image/jpeg,image/png,image/jpg,image/webp" maxSize="15360" maxFiles="10" hint="Upload up to 10 images" />
+                    <x-admin.form.multi-image-upload name="gallery" label="Gallery Images" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml,image/heic,image/heif" maxSize="15360" maxFiles="10" hint="Upload up to 10 images" />
                 </x-admin.ui.card>
             </div>
         </div>

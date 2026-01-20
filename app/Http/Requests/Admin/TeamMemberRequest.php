@@ -31,7 +31,7 @@ class TeamMemberRequest extends FormRequest
         ];
 
         // Image optional on both create and update for testing flexibility
-        $rules['image'] = ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,heic', 'max:5120'];
+        $rules['image'] = ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg,heic,heif', 'max:5120'];
 
         return $rules;
     }

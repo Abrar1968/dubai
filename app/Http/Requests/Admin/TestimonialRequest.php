@@ -30,7 +30,7 @@ class TestimonialRequest extends FormRequest
         ];
 
         // Avatar optional on both create and update
-        $rules['avatar'] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,heic', 'max:5120'];
+        $rules['avatar'] = ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg,heic,heif', 'max:5120'];
 
         return $rules;
     }

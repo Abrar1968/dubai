@@ -248,7 +248,7 @@
                     <x-admin.form.image-upload
                         name="thumbnail"
                         label="Package Thumbnail"
-                        accept="image/jpeg,image/png,image/jpg,image/webp"
+                        accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml,image/heic,image/heif"
                         maxSize="5120"
                         hint="Recommended: 800x600px"
                         :existingImage="($package->thumbnail ?? $package->image) ? Storage::url($package->thumbnail ?? $package->image) : null"
@@ -264,7 +264,7 @@
                     <x-admin.form.multi-image-upload
                         name="gallery"
                         label="Gallery Images"
-                        accept="image/jpeg,image/png,image/jpg,image/webp"
+                        accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml,image/heic,image/heif"
                         :maxSize="15360"
                         :maxFiles="10"
                         hint="Upload up to 10 images"

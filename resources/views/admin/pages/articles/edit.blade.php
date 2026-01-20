@@ -107,7 +107,7 @@
                     <x-admin.form.image-upload
                         name="featured_image"
                         label="Featured Image"
-                        accept="image/jpeg,image/png,image/jpg,image/webp"
+                        accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml,image/heic,image/heif"
                         maxSize="5120"
                         hint="Recommended: 1200x630px for social sharing"
                         :existingImage="$article->featured_image ? Storage::url($article->featured_image) : null"

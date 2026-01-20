@@ -37,7 +37,7 @@ class PackageRequest extends FormRequest
             'thumbnail' => [
                 $this->isMethod('POST') ? 'required' : 'nullable',
                 'image',
-                'mimes:jpeg,png,jpg,webp',
+                'mimes:jpeg,jpg,png,gif,webp,svg,heic,heif',
                 'max:5120',
             ],
             'price' => ['required', 'numeric', 'min:0'],
@@ -67,7 +67,7 @@ class PackageRequest extends FormRequest
             'is_featured' => ['boolean'],
             'is_active' => ['boolean'],
             'gallery' => ['nullable', 'array'],
-            'gallery.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:15360'],
+            'gallery.*' => ['image', 'mimes:jpeg,jpg,png,gif,webp,svg,heic,heif', 'max:15360'],
             'existing_gallery' => ['nullable', 'array'],
             'existing_gallery.*' => ['string'],
         ];

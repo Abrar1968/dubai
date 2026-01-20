@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('package_id')->constrained()->onDelete('cascade');
             $table->string('image_path', 500);
+            $table->string('alt_text', 255)->nullable();
             $table->unsignedInteger('sort_order')->default(0);
             $table->timestamps();
         });

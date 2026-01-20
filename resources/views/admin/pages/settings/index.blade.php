@@ -82,7 +82,7 @@
                                             </template>
                                         </div>
                                         <div>
-                                            <input type="file" name="company_logo" id="company_logo" accept="image/*" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
+                                            <input type="file" name="company_logo" id="company_logo" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml,image/heic,image/heif" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
                                             <label for="company_logo" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
                                                 Choose Logo
                                             </label>
@@ -198,7 +198,7 @@
                                             </template>
                                         </div>
                                         <div>
-                                            <input type="file" name="og_image" id="og_image" accept="image/*" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
+                                            <input type="file" name="og_image" id="og_image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml,image/heic,image/heif" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
                                             <label for="og_image" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
                                                 Choose Image
                                             </label>

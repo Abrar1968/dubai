@@ -36,7 +36,7 @@ class ArticleRequest extends FormRequest
             'featured_image' => [
                 'nullable',
                 'image',
-                'mimes:jpeg,png,jpg,webp,heic',
+                'mimes:jpeg,jpg,png,gif,webp,svg,heic,heif',
                 'max:5120',
             ],
             'category_id' => ['required', 'exists:article_categories,id'],
