@@ -27,10 +27,10 @@
                 Read
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['read'] }}</span>
             </a>
-            <a href="{{ route('admin.hajj.inquiries.index', ['status' => 'replied']) }}"
-               class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'replied' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
-                Replied
-                <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['replied'] }}</span>
+            <a href="{{ route('admin.hajj.inquiries.index', ['status' => 'responded']) }}"
+               class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'responded' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                Responded
+                <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['responded'] }}</span>
             </a>
             <a href="{{ route('admin.hajj.inquiries.index', ['status' => 'closed']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus === 'closed' ? 'bg-gray-200 text-gray-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
@@ -87,8 +87,8 @@
                                         @case('read')
                                             <span class="inline-block h-2.5 w-2.5 rounded-full bg-yellow-500" title="Read"></span>
                                             @break
-                                        @case('replied')
-                                            <span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500" title="Replied"></span>
+                                        @case('responded')
+                                            <span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500" title="Responded"></span>
                                             @break
                                         @case('closed')
                                             <span class="inline-block h-2.5 w-2.5 rounded-full bg-gray-400" title="Closed"></span>

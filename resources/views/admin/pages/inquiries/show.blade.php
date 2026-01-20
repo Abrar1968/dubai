@@ -24,8 +24,8 @@
                                 @case('read')
                                     <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">Read</span>
                                     @break
-                                @case('replied')
-                                    <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Replied</span>
+                                @case('responded')
+                                    <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">Responded</span>
                                     @break
                                 @case('closed')
                                     <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">Closed</span>
@@ -115,15 +115,15 @@
                     </x-slot:header>
 
                     <div class="space-y-3">
-                        @if($inquiry->status !== 'replied')
-                            <form action="{{ route('admin.hajj.inquiries.mark-replied', $inquiry) }}" method="POST">
+                        @if($inquiry->status !== 'responded')
+                            <form action="{{ route('admin.hajj.inquiries.mark-responded', $inquiry) }}" method="POST">
                                 @csrf
                                 @method('PATCH')
                                 <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-green-100 px-4 py-2 text-sm font-medium text-green-700 hover:bg-green-200">
                                     <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    Mark as Replied
+                                    Mark as Responded
                                 </button>
                             </form>
                         @endif

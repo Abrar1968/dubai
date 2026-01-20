@@ -98,7 +98,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::resource('inquiries', \App\Http\Controllers\Admin\Hajj\InquiryController::class)->only(['index', 'show', 'destroy']);
             Route::patch('inquiries/{inquiry}/mark-read', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'markRead'])->name('inquiries.mark-read');
             Route::patch('inquiries/{inquiry}/mark-responded', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'markResponded'])->name('inquiries.mark-responded');
-            Route::delete('inquiries', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'bulkDestroy'])->name('inquiries.bulk-destroy');
+            Route::post('inquiries/bulk-mark-read', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'bulkMarkRead'])->name('inquiries.bulk-mark-read');
+            Route::delete('inquiries/bulk-delete', [\App\Http\Controllers\Admin\Hajj\InquiryController::class, 'bulkDelete'])->name('inquiries.bulk-delete');
 
             // FAQs
             Route::resource('faqs', \App\Http\Controllers\Admin\Hajj\FaqController::class)->except(['show']);

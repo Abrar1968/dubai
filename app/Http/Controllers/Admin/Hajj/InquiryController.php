@@ -63,16 +63,16 @@ class InquiryController extends Controller
     }
 
     /**
-     * Mark inquiry as replied.
+     * Mark inquiry as responded.
      */
-    public function markReplied(int $id): RedirectResponse
+    public function markResponded(int $id): RedirectResponse
     {
         $inquiry = $this->inquiryService->getById($id);
-        $this->inquiryService->markAsReplied($inquiry);
+        $this->inquiryService->markAsResponded($inquiry);
 
         return redirect()
             ->back()
-            ->with('success', 'Inquiry marked as replied.');
+            ->with('success', 'Inquiry marked as responded.');
     }
 
     /**
