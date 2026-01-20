@@ -22,7 +22,7 @@ class InquiryController extends Controller
     {
         $statusFilter = $request->get('status');
         $status = $statusFilter ? InquiryStatus::from($statusFilter) : null;
-        
+
         $inquiries = $this->inquiryService->paginate(
             perPage: 20,
             status: $status
@@ -33,7 +33,7 @@ class InquiryController extends Controller
             'all' => $this->inquiryService->list()->count(),
             'new' => $this->inquiryService->list(InquiryStatus::NEW)->count(),
             'read' => $this->inquiryService->list(InquiryStatus::READ)->count(),
-            'replied' => $this->inquiryService->list(InquiryStatus::REPLIED)->count(),
+            'responded' => $this->inquiryService->list(InquiryStatus::RESPONDED)->count(),
             'closed' => $this->inquiryService->list(InquiryStatus::CLOSED)->count(),
         ];
 
