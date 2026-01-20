@@ -99,7 +99,7 @@
                                     <label class="block text-sm font-semibold text-slate-900 mb-2">
                                         Your Name
                                     </label>
-                                    <input v-model="form.name" type="text" placeholder="Input your name" 
+                                    <input v-model="form.name" type="text" placeholder="Input your name"
                                         :class="{'border-red-500': errors.name}"
                                         class="w-full rounded-full border border-slate-200 bg-white px-5 py-3.5 text-sm
                            outline-none transition focus:border-[#1b7f3a]/40 focus:ring-4 focus:ring-[#1b7f3a]/10" />
@@ -111,7 +111,7 @@
                                     <label class="block text-sm font-semibold text-slate-900 mb-2">
                                         Your Email
                                     </label>
-                                    <input v-model="form.email" type="email" placeholder="Input your email" 
+                                    <input v-model="form.email" type="email" placeholder="Input your email"
                                         :class="{'border-red-500': errors.email}"
                                         class="w-full rounded-full border border-slate-200 bg-white px-5 py-3.5 text-sm
                            outline-none transition focus:border-[#1b7f3a]/40 focus:ring-4 focus:ring-[#1b7f3a]/10" />
@@ -123,7 +123,7 @@
                                     <label class="block text-sm font-semibold text-slate-900 mb-2">
                                         Your Subject
                                     </label>
-                                    <input v-model="form.subject" type="text" placeholder="Input your subject" 
+                                    <input v-model="form.subject" type="text" placeholder="Input your subject"
                                         :class="{'border-red-500': errors.subject}"
                                         class="w-full rounded-full border border-slate-200 bg-white px-5 py-3.5 text-sm
                            outline-none transition focus:border-[#1b7f3a]/40 focus:ring-4 focus:ring-[#1b7f3a]/10" />
@@ -144,7 +144,7 @@
 
                                 <!-- Button -->
                                 <div>
-                                    <button type="submit" 
+                                    <button type="submit"
                                         :disabled="isSubmitting"
                                         class="inline-flex items-center justify-center rounded-full bg-[#0f6a25] px-10 py-3.5
                            text-white font-semibold transition
@@ -221,18 +221,18 @@ const showSuccess = ref(false);
 const submitForm = () => {
     // Clear previous errors
     Object.keys(errors).forEach(key => delete errors[key]);
-    
+
     // Basic validation
     if (!form.name.trim()) errors.name = 'Name is required';
     if (!form.email.trim()) errors.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Invalid email format';
     if (!form.subject.trim()) errors.subject = 'Subject is required';
     if (!form.message.trim()) errors.message = 'Message is required';
-    
+
     if (Object.keys(errors).length > 0) return;
-    
+
     isSubmitting.value = true;
-    
+
     router.post('/contactus', form, {
         preserveScroll: true,
         onSuccess: () => {
@@ -242,7 +242,7 @@ const submitForm = () => {
             form.subject = '';
             form.message = '';
             isSubmitting.value = false;
-            
+
             // Hide success message after 5 seconds
             setTimeout(() => {
                 showSuccess.value = false;

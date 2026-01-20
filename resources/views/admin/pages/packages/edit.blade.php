@@ -251,7 +251,7 @@
                         accept="image/jpeg,image/png,image/jpg,image/webp"
                         maxSize="2"
                         hint="Recommended: 800x600px"
-                        :existingImage="$package->thumbnail ? Storage::url($package->thumbnail) : null"
+                        :existingImage="($package->thumbnail ?? $package->image) ? Storage::url($package->thumbnail ?? $package->image) : null"
                     />
                 </x-admin.ui.card>
 

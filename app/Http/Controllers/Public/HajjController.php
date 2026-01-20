@@ -55,7 +55,7 @@ class HajjController extends Controller
                 'slug' => $article->slug,
                 'excerpt' => $article->excerpt,
                 'category' => $article->category?->name ?? 'Travel Guide',
-                'image' => $article->image ? asset('storage/' . $article->image) : '/images/blog/b1.jpg',
+                'image' => $article->featured_image ? asset('storage/' . $article->featured_image) : '/assets/img/hajj/hajjbg.jpg',
             ]);
 
         // Get approved testimonials (limit 3)
@@ -194,7 +194,7 @@ class HajjController extends Controller
                 'slug' => $article->slug,
                 'excerpt' => $article->excerpt,
                 'category' => $article->category?->name ?? 'Travel Guide',
-                'image' => $article->image ? asset('storage/' . $article->image) : '/images/blog/b1.jpg',
+                'image' => $article->featured_image ? asset('storage/' . $article->featured_image) : '/assets/img/hajj/hajjbg.jpg',
                 'published_at' => $article->published_at?->format('M d, Y'),
             ]);
 
@@ -223,7 +223,7 @@ class HajjController extends Controller
                 'id' => $a->id,
                 'title' => $a->title,
                 'slug' => $a->slug,
-                'image' => $a->image ? asset('storage/' . $a->image) : null,
+                'image' => $a->featured_image ? asset('storage/' . $a->featured_image) : null,
             ]);
 
         return Inertia::render('hajj&umrah/article_detail', [
@@ -234,7 +234,7 @@ class HajjController extends Controller
                 'excerpt' => $article->excerpt,
                 'content' => $article->content,
                 'category' => $article->category?->name ?? 'Travel Guide',
-                'image' => $article->image ? asset('storage/' . $article->image) : null,
+                'image' => $article->featured_image ? asset('storage/' . $article->featured_image) : null,
                 'author' => $article->author?->name ?? 'Admin',
                 'published_at' => $article->published_at?->format('M d, Y'),
                 'views_count' => $article->views_count,

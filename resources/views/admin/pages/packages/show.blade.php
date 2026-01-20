@@ -62,8 +62,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {{-- Main Thumbnail --}}
                     <div>
-                        @if($package->thumbnail)
-                            <img src="{{ Storage::url($package->thumbnail) }}" alt="{{ $package->title }}" class="w-full h-64 object-cover rounded-lg">
+                        @if($package->thumbnail || $package->image)
+                            <img src="{{ Storage::url($package->thumbnail ?? $package->image) }}" alt="{{ $package->title }}" class="w-full h-64 object-cover rounded-lg">
                         @else
                             <div class="w-full h-64 bg-slate-200 rounded-lg flex items-center justify-center">
                                 <svg class="h-16 w-16 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
