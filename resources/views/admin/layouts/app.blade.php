@@ -38,7 +38,13 @@
         <!-- Main content area -->
         <div class="lg:pl-64">
             <!-- Header -->
-            <x-admin.layout.header :title="View::yieldContent('title', 'Dashboard')" />
+            @if(View::hasSection('header'))
+                <div class="border-b border-gray-200 bg-white px-4 py-5 sm:px-6 lg:px-8">
+                    @yield('header')
+                </div>
+            @else
+                <x-admin.layout.header :title="View::yieldContent('title', 'Dashboard')" />
+            @endif
 
             <!-- Page content -->
             <main class="py-6">
