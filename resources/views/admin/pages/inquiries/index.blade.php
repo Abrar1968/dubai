@@ -154,7 +154,6 @@
             </div>
         @else
             <x-admin.data.empty-state
-                icon="inbox"
                 title="No inquiries yet"
                 description="Customer inquiries will appear here."
             />
