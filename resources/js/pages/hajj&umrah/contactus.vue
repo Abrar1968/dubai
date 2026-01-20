@@ -195,25 +195,10 @@ const props = withDefaults(defineProps<{
     settings: () => ({}),
 });
 
-// Fallback offices
-const displayOffices = computed(() => props.offices.length > 0 ? props.offices : [
-    {
-        id: 1,
-        name: 'Dubai Office',
-        address: 'Al Garhoud, Deira, Dubai, UAE',
-        phone: '(+971) 4 123 4567 | (+971) 50 123 4567',
-        email: 'support@jumrah.com',
-    },
-    {
-        id: 2,
-        name: 'Abu Dhabi Office',
-        address: 'Electra Street, Abu Dhabi, UAE',
-        phone: '(+971) 2 123 4567 | (+971) 50 987 6543',
-        email: 'abudhabi@jumrah.com',
-    },
-]);
+// Use props directly - data comes from backend
+const displayOffices = computed(() => props.offices);
 
-// Fallback settings
+// Settings from backend
 const displaySettings = computed(() => ({
     contact_description: props.settings?.contact_description || 'We are here to help you with your Hajj & Umrah journey. Feel free to reach out to us.',
     facebook_url: props.settings?.facebook_url || '#',

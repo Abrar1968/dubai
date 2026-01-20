@@ -58,7 +58,7 @@
                     })
                     .then(editor => {
                         this.editor = editor;
-                        
+
                         // Sync editor content with textarea
                         editor.model.document.on('change:data', () => {
                             this.content = editor.getData();

@@ -49,89 +49,10 @@ const props = withDefaults(defineProps<{
     settings: () => ({}),
 });
 
-// Fallback data if no data from backend
-const displayPackages = props.packages.length > 0 ? props.packages : [
-    {
-        id: 1,
-        title: 'Premium Hajj',
-        slug: 'premium-hajj',
-        price: 12500,
-        currency: 'USD',
-        duration_days: 7,
-        image: '/assets/img/hajj/hajjbg.jpg',
-        features: ['5 Star Hotel', 'Direct Flight', 'Visa Included', 'Full Board'],
-        type: 'hajj',
-    },
-    {
-        id: 2,
-        title: 'Ramadan Umrah',
-        slug: 'ramadan-umrah',
-        price: 2250,
-        currency: 'USD',
-        duration_days: 7,
-        image: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070&auto=format&fit=crop',
-        features: ['4 Star Hotel', 'Direct Flight', 'Visa Included', 'Breakfast'],
-        type: 'umrah',
-    },
-    {
-        id: 3,
-        title: 'Family Umrah',
-        slug: 'family-umrah',
-        price: 1850,
-        currency: 'USD',
-        duration_days: 7,
-        image: '/assets/img/hajj/family.jpg',
-        features: ['Family Room', 'City Tour', 'Visa Included', 'Guide'],
-        type: 'umrah',
-    },
-    {
-        id: 4,
-        title: 'Medina City Tour',
-        slug: 'medina-city-tour',
-        price: 850,
-        currency: 'USD',
-        duration_days: 3,
-        image: '/assets/img/hajj/madina.jpg',
-        features: ['Local Guide', 'Transport', 'Lunch Included', 'Museums'],
-        type: 'tour',
-    },
-];
-
-const displayArticles = props.articles.length > 0 ? props.articles : [
-    {
-        id: 1,
-        slug: 'essential-packing-tips',
-        title: 'Essential Packing Tips for Your Hajj',
-        category: 'Travel Guide',
-        excerpt: '',
-        image: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070&auto=format&fit=crop',
-    },
-    {
-        id: 2,
-        slug: 'personal-stories',
-        title: 'Personal Stories from the Sacred Journey',
-        category: 'Travel Guide',
-        excerpt: '',
-        image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148&auto=format&fit=crop',
-    },
-    {
-        id: 3,
-        slug: 'ultimate-guide-umrah',
-        title: 'The Ultimate Guide to Performing Umrah',
-        category: 'Travel Guide',
-        excerpt: '',
-        image: 'https://images.unsplash.com/photo-1551041777-cf9bd3048993?q=80&w=2006&auto=format&fit=crop',
-    }
-];
-
-const displayTestimonial = props.testimonials.length > 0 ? props.testimonials[0] : {
-    id: 1,
-    name: 'Ahmed Hassan',
-    location: 'Pilgrim from UK',
-    content: 'The experience was absolutely spiritually uplifting. The team took care of every detail, from the visa process to the accommodations near the Haram. I felt completely at peace.',
-    rating: 5,
-    avatar: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop',
-};
+// Use props directly - data comes from backend
+const displayPackages = props.packages;
+const displayArticles = props.articles;
+const displayTestimonial = props.testimonials.length > 0 ? props.testimonials[0] : null;
 
 const features = [
     { title: 'Tawaf', desc: 'Perform Tawaf with ease and guidance.', icon: Clock },
@@ -397,7 +318,7 @@ const scrollToPackages = () => {
             </section>
 
             <!-- Testimonial Section -->
-            <section class="relative py-24 bg-slate-900 overflow-hidden">
+            <section v-if="displayTestimonial" class="relative py-24 bg-slate-900 overflow-hidden">
                 <div class="absolute inset-0">
                     <img src="https://images.unsplash.com/photo-1627441584288-51b660c6d9c6?q=80&w=2070&auto=format&fit=crop"
                         class="w-full h-full object-cover opacity-20" alt="Background" />
@@ -411,7 +332,7 @@ const scrollToPackages = () => {
                             "{{ displayTestimonial.content }}"
                         </p>
                         <div class="flex items-center gap-4">
-                            <img :src="displayTestimonial.avatar || 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop'"
+                            <img :src="displayTestimonial.avatar || '/assets/img/hajj/hajjbg.jpg'"
                                 class="w-12 h-12 rounded-full object-cover" alt="User" />
                             <div>
                                 <h5 class="font-bold text-slate-900">{{ displayTestimonial.name }}</h5>

@@ -9,7 +9,7 @@ interface TeamMember {
     id: number;
     name: string;
     role: string;
-    photo: string | null;
+    image: string | null;
     bio?: string;
     social_links?: {
         facebook?: string;
@@ -32,39 +32,11 @@ const props = withDefaults(defineProps<{
     faqs: () => [],
 });
 
-// Fallback team members
-const displayTeamMembers = computed(() => props.teamMembers.length > 0 ? props.teamMembers : [
-    { id: 1, name: 'Mazhar', role: 'Product Designer', photo: '/assets/img/team/1.jpg' },
-    { id: 2, name: 'Ayesha', role: 'UI/UX Designer', photo: '/assets/img/team/2.jpg' },
-    { id: 3, name: 'Nafisa', role: 'Marketing Lead', photo: '/assets/img/team/3.jpg' },
-    { id: 4, name: 'Rahim', role: 'Frontend Dev', photo: '/assets/img/team/4.jpg' },
-    { id: 5, name: 'Sabbir', role: 'Backend Dev', photo: '/assets/img/team/5.jpg' },
-    { id: 6, name: 'Nabila', role: 'HR & Ops', photo: '/assets/img/team/6.jpg' },
-    { id: 7, name: 'Imran', role: 'SQA Engineer', photo: '/assets/img/team/7.jpg' },
-    { id: 8, name: 'Faysal', role: 'Support', photo: '/assets/img/team/8.jpg' },
-]);
+// Use props directly - data comes from backend
+const displayTeamMembers = computed(() => props.teamMembers);
 
-// Fallback FAQs with reactive state for accordion
-const displayFaqs = ref(props.faqs.length > 0 ? props.faqs.map((f, i) => ({ ...f, open: i === 0 })) : [
-    {
-        id: 1,
-        question: 'Opportunity to Shape the Future of Living',
-        answer: 'We believe in building experiences that bring people closer. Our team focuses on clarity, quality, and long-term impact.',
-        open: true,
-    },
-    {
-        id: 2,
-        question: 'Cross-Disciplinary Learning',
-        answer: 'Design, development, marketing, operations — we learn together and share knowledge across roles to move faster and smarter.',
-        open: false,
-    },
-    {
-        id: 3,
-        question: 'Impactful Solutions for Everyday Life',
-        answer: 'We ship practical features that solve real problems. Our goal is to make travel planning simpler, safer, and more enjoyable.',
-        open: false,
-    },
-]);
+// FAQs with reactive state for accordion
+const displayFaqs = ref(props.faqs.map((f, i) => ({ ...f, open: i === 0 })));
 
 const toggleFaq = (i: number) => {
     displayFaqs.value[i].open = !displayFaqs.value[i].open;
@@ -163,7 +135,7 @@ const toggleFaq = (i: number) => {
                    overflow-hidden hover:-translate-y-1 transition-transform duration-300">
                             <!-- image -->
                             <div class="relative bg-slate-100">
-                                <img :src="m.photo || '/assets/img/team/placeholder.jpg'" :alt="m.name" class="w-full h-[170px] sm:h-[190px] object-cover" />
+                                <img :src="m.image || '/assets/img/hajj/hajjbg.jpg'" :alt="m.name" class="w-full h-[170px] sm:h-[190px] object-cover" />
 
                                 <!-- subtle vertical label (optional like screenshot) -->
                                 <div

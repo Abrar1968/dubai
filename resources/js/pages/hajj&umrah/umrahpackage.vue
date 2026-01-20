@@ -113,53 +113,8 @@ const props = withDefaults(defineProps<{
 
 const headerBg = '/assets/img/hajj/umrahh.jpg';
 
-// Fallback data if no packages from backend
-const displayPackages = props.packages.length > 0 ? props.packages : [
-    {
-        id: 1,
-        title: 'Premium Umrah',
-        slug: 'premium-umrah',
-        price: 2250,
-        currency: 'USD',
-        duration_days: 7,
-        image: '/assets/img/hajj/umrahh.jpg',
-        features: ['Dec 10 - Dec 15', 'Document Guide', '5 Stars Hotel', 'Local Meals', 'Visa Included'],
-        type: 'umrah',
-    },
-    {
-        id: 2,
-        title: 'Ramadan Umrah',
-        slug: 'ramadan-umrah',
-        price: 2500,
-        currency: 'USD',
-        duration_days: 10,
-        image: '/assets/img/hajj/umrahh.jpg',
-        features: ['Jan 10 - Jan 15', 'Document Guide', 'Zam-Zam Hotel', 'Arabian Foods', 'Visa Included'],
-        type: 'umrah',
-    },
-    {
-        id: 3,
-        title: 'Family Umrah',
-        slug: 'family-umrah',
-        price: 1850,
-        currency: 'USD',
-        duration_days: 7,
-        image: '/assets/img/hajj/family.jpg',
-        features: ['Mar 10 - Mar 15', 'Document Guide', 'Family Room', 'Oriental Resto', 'Visa Included'],
-        type: 'umrah',
-    },
-    {
-        id: 4,
-        title: 'Economy Umrah',
-        slug: 'economy-umrah',
-        price: 999,
-        currency: 'USD',
-        duration_days: 5,
-        image: '/assets/img/hajj/umrahh.jpg',
-        features: ['Oct 10 - Oct 15', 'Document Guide', '3 Star Hotel', 'Breakfast', 'Visa Included'],
-        type: 'umrah',
-    },
-];
+// Use props directly - data comes from backend
+const displayPackages = props.packages;
 
 const onLearnMore = (pkg: Package) => {
     router.visit(`/packages/${pkg.slug}`);

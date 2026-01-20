@@ -113,53 +113,8 @@ const props = withDefaults(defineProps<{
 
 const headerBg = '/assets/img/hajj/hajjbg.jpg';
 
-// Fallback data if no packages from backend
-const displayPackages = props.packages.length > 0 ? props.packages : [
-    {
-        id: 1,
-        title: 'Premium Hajj',
-        slug: 'premium-hajj',
-        price: 590,
-        currency: 'USD',
-        duration_days: 5,
-        image: '/assets/img/hajj/hajjbg.jpg',
-        features: ['Dec 10 - Dec 15', 'Document Guide', '5 Stars Hotel', 'Local Meals', 'Visa Included'],
-        type: 'hajj',
-    },
-    {
-        id: 2,
-        title: 'Ramadan Hajj',
-        slug: 'ramadan-hajj',
-        price: 890,
-        currency: 'USD',
-        duration_days: 5,
-        image: '/assets/img/hajj/hajjbg.jpg',
-        features: ['Jan 10 - Jan 15', 'Document Guide', 'Zam-Zam Hotel', 'Arabian Foods', 'Visa Included'],
-        type: 'hajj',
-    },
-    {
-        id: 3,
-        title: 'Family Hajj',
-        slug: 'family-hajj',
-        price: 1999,
-        currency: 'USD',
-        duration_days: 7,
-        image: '/assets/img/hajj/family.jpg',
-        features: ['Mar 10 - Mar 15', 'Document Guide', 'Abu Bakr Tower', 'Oriental Resto', 'Visa Included'],
-        type: 'hajj',
-    },
-    {
-        id: 4,
-        title: 'Economy Hajj',
-        slug: 'economy-hajj',
-        price: 249,
-        currency: 'USD',
-        duration_days: 3,
-        image: '/assets/img/hajj/hajjbg.jpg',
-        features: ['Oct 10 - Oct 15', 'Document Guide', 'Uthman Hotel', 'Asian Foods', 'Visa Included'],
-        type: 'hajj',
-    },
-];
+// Use props directly - data comes from backend
+const displayPackages = props.packages;
 
 const onLearnMore = (pkg: Package) => {
     router.visit(`/packages/${pkg.slug}`);

@@ -32,7 +32,7 @@
 
             init() {
                 this.content = this.$refs.textarea.value;
-                
+
                 // Wait for CKEditor to be available
                 if (typeof window.ClassicEditor !== 'undefined') {
                     this.initCKEditor();
@@ -58,7 +58,7 @@
                     })
                     .then(editor => {
                         this.editor = editor;
-                        
+
                         // Sync editor content with textarea
                         editor.model.document.on('change:data', () => {
                             this.content = editor.getData();

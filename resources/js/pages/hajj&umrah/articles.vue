@@ -79,34 +79,6 @@ const props = withDefaults(defineProps<{
     articles: () => [],
 });
 
-// Fallback data if no articles from backend
-const displayArticles = props.articles.length > 0 ? props.articles : [
-    {
-        id: 1,
-        slug: 'essential-packing-tips-for-your-hajj',
-        category: 'TRAVEL GUIDE',
-        title: 'Essential Packing Tips for Your Hajj',
-        excerpt: 'A checklist of essentials, smart packing strategies, and what to avoid so you can travel light and stay prepared.',
-        image: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070',
-        published_at: null,
-    },
-    {
-        id: 2,
-        slug: 'personal-stories-from-the-sacred-journey',
-        category: 'TRAVEL GUIDE',
-        title: 'Personal Stories from the Sacred Journey',
-        excerpt: 'Inspirational stories from pilgrims and the lessons they learned on their spiritual journey.',
-        image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148',
-        published_at: null,
-    },
-    {
-        id: 3,
-        slug: 'ultimate-guide-to-performing-umrah',
-        category: 'TRAVEL GUIDE',
-        title: 'The Ultimate Guide to Performing Umrah',
-        excerpt: 'Step-by-step Umrah guide: preparation, Ihram, Tawaf, and practical tips to make your Umrah easy.',
-        featured_image: 'https://images.unsplash.com/photo-1551041777-cf9bd3048993?q=80&w=2006',
-        published_at: null,
-    },
-];
+// Use props directly - data comes from backend
+const displayArticles = props.articles;
 </script>
