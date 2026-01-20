@@ -5,7 +5,7 @@
 @section('header')
     <div class="flex items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-            <a href="{{ route('admin.packages.index') }}" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg">
+            <a href="{{ route('admin.hajj.packages.index') }}" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                 </svg>
@@ -33,13 +33,13 @@
             </div>
         </div>
         <div class="flex items-center gap-2">
-            <a href="{{ route('admin.packages.edit', $package) }}" class="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+            <a href="{{ route('admin.hajj.packages.edit', $package) }}" class="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
                 </svg>
                 Edit
             </a>
-            <form action="{{ route('admin.packages.destroy', $package) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this package?')">
+            <form action="{{ route('admin.hajj.packages.destroy', $package) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this package?')">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="inline-flex items-center gap-2 rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
@@ -282,7 +282,7 @@
                 </div>
 
                 @if($package->bookings->count() > 0)
-                    <a href="{{ route('admin.bookings.index', ['package_id' => $package->id]) }}" class="block w-full text-center text-sm text-amber-600 hover:text-amber-700 font-medium">
+                    <a href="{{ route('admin.hajj.bookings.index', ['package_id' => $package->id]) }}" class="block w-full text-center text-sm text-amber-600 hover:text-amber-700 font-medium">
                         View All Bookings →
                     </a>
                 @endif

@@ -5,7 +5,7 @@
 @section('header')
     <div class="flex items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-            <a href="{{ route('admin.articles.index') }}" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg">
+            <a href="{{ route('admin.hajj.articles.index') }}" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                 </svg>
@@ -29,7 +29,7 @@
         </div>
         <div class="flex items-center gap-2">
             @if($article->status === \App\Enums\PublishStatus::DRAFT)
-                <form action="{{ route('admin.articles.publish', $article) }}" method="POST" class="inline">
+                <form action="{{ route('admin.hajj.articles.publish', $article) }}" method="POST" class="inline">
                     @csrf
                     @method('PATCH')
                     <x-admin.ui.button type="submit" variant="success">
@@ -40,7 +40,7 @@
                     </x-admin.ui.button>
                 </form>
             @else
-                <form action="{{ route('admin.articles.unpublish', $article) }}" method="POST" class="inline">
+                <form action="{{ route('admin.hajj.articles.unpublish', $article) }}" method="POST" class="inline">
                     @csrf
                     @method('PATCH')
                     <x-admin.ui.button type="submit" variant="secondary">
@@ -48,13 +48,13 @@
                     </x-admin.ui.button>
                 </form>
             @endif
-            <a href="{{ route('admin.articles.edit', $article) }}" class="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+            <a href="{{ route('admin.hajj.articles.edit', $article) }}" class="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125" />
                 </svg>
                 Edit
             </a>
-            <form action="{{ route('admin.articles.destroy', $article) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this article?')">
+            <form action="{{ route('admin.hajj.articles.destroy', $article) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this article?')">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="inline-flex items-center gap-2 rounded-lg border border-red-300 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">

@@ -4,7 +4,7 @@
 
 @section('header')
     <div class="flex items-center gap-4">
-        <a href="{{ route('admin.articles.index') }}" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg">
+        <a href="{{ route('admin.hajj.articles.index') }}" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
@@ -17,7 +17,7 @@
 @endsection
 
 @section('content')
-    <form action="{{ route('admin.articles.update', $article) }}" method="POST" enctype="multipart/form-data">
+    <form action="{{ route('admin.hajj.articles.update', $article) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 
@@ -73,7 +73,7 @@
 
                     <x-slot name="footer">
                         <div class="flex items-center justify-end gap-3">
-                            <a href="{{ route('admin.articles.index') }}" class="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900">
+                            <a href="{{ route('admin.hajj.articles.index') }}" class="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900">
                                 Cancel
                             </a>
                             <x-admin.ui.button type="submit">
@@ -92,7 +92,7 @@
                     <x-admin.ui.select name="category_id" label="Article Category" :options="$categories->pluck('name', 'id')->toArray()" :value="old('category_id', $article->category_id)" required placeholder="Select a category" />
 
                     <div class="mt-3">
-                        <a href="{{ route('admin.article-categories.create') }}" class="text-sm text-amber-600 hover:text-amber-700">
+                        <a href="{{ route('admin.hajj.article-categories.create') }}" class="text-sm text-amber-600 hover:text-amber-700">
                             + Create new category
                         </a>
                     </div>

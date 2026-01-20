@@ -5,7 +5,7 @@
 @section('header')
     <div class="flex items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-            <a href="{{ route('admin.bookings.index') }}" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg">
+            <a href="{{ route('admin.hajj.bookings.index') }}" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                 </svg>
@@ -30,7 +30,7 @@
         </div>
         <div class="flex items-center gap-2">
             @if($booking->status === \App\Enums\BookingStatus::PENDING)
-                <form action="{{ route('admin.bookings.confirm', $booking) }}" method="POST">
+                <form action="{{ route('admin.hajj.bookings.confirm', $booking) }}" method="POST">
                     @csrf
                     @method('PATCH')
                     <x-admin.ui.button type="submit" variant="success">
@@ -295,7 +295,7 @@
                     <h3 class="text-lg font-medium text-slate-900">Update Status</h3>
                 </x-slot>
 
-                <form action="{{ route('admin.bookings.update-status', $booking) }}" method="POST" class="space-y-4">
+                <form action="{{ route('admin.hajj.bookings.update-status', $booking) }}" method="POST" class="space-y-4">
                     @csrf
                     @method('PATCH')
 
@@ -348,7 +348,7 @@
 
     {{-- Cancel Booking Modal --}}
     <x-admin.ui.modal name="cancel-booking" title="Cancel Booking">
-        <form action="{{ route('admin.bookings.cancel', $booking) }}" method="POST">
+        <form action="{{ route('admin.hajj.bookings.cancel', $booking) }}" method="POST">
             @csrf
             @method('PATCH')
 
@@ -369,7 +369,7 @@
 
     {{-- Update Payment Modal --}}
     <x-admin.ui.modal name="update-payment" title="Update Payment">
-        <form action="{{ route('admin.bookings.update-payment', $booking) }}" method="POST">
+        <form action="{{ route('admin.hajj.bookings.update-payment', $booking) }}" method="POST">
             @csrf
             @method('PATCH')
 

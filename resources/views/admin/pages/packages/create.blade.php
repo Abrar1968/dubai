@@ -4,7 +4,7 @@
 
 @section('header')
     <div class="flex items-center gap-4">
-        <a href="{{ route('admin.packages.index') }}" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg">
+        <a href="{{ route('admin.hajj.packages.index') }}" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg">
             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
@@ -17,7 +17,7 @@
 @endsection
 
 @section('content')
-    <form action="{{ route('admin.packages.store') }}" method="POST" enctype="multipart/form-data" x-data="packageForm()">
+    <form action="{{ route('admin.hajj.packages.store') }}" method="POST" enctype="multipart/form-data" x-data="packageForm()">
         @csrf
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -228,7 +228,7 @@
 
                     <x-slot name="footer">
                         <div class="flex items-center justify-end gap-3">
-                            <a href="{{ route('admin.packages.index') }}" class="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900">
+                            <a href="{{ route('admin.hajj.packages.index') }}" class="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900">
                                 Cancel
                             </a>
                             <x-admin.ui.button type="submit">
