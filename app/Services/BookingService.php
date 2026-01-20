@@ -89,6 +89,11 @@ class BookingService
             ]);
         }
 
+        // Increment package booking counter
+        if ($booking->package_id) {
+            Package::where('id', $booking->package_id)->increment('current_bookings');
+        }
+
         return $booking->load('travelers');
     }
 
@@ -125,6 +130,13 @@ class BookingService
                 'cancelled_at' => now(),
                 'cancellation_reason' => $notes,
             ]);
+
+            // Decrement package booking counter
+            if ($booking->package_id) {
+                Package::where('id', $booking->package_id)
+                    ->where('current_bookings', '>', 0)
+                    ->decrement('current_bookings');
+            }
         }
 
         // Log the status change

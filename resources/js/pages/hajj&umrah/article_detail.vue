@@ -2,7 +2,7 @@
     <div class="bg-[#fbf6ef] min-h-screen">
         <!-- Article Header -->
         <div class="relative h-[400px] w-full overflow-hidden">
-            <img :src="displayArticle.featured_image || 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070'"
+            <img :src="displayArticle.image || 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070'"
                  :alt="displayArticle.title"
                  class="absolute inset-0 h-full w-full object-cover" />
             <div class="absolute inset-0 bg-black/50"></div>
@@ -23,7 +23,26 @@
         <!-- Article Content -->
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <article class="bg-white rounded-2xl shadow-lg p-8 sm:p-12">
+                <!-- Tags Display -->
+                <div v-if="displayArticle.tags && displayArticle.tags.length > 0" class="mb-6 flex flex-wrap gap-2">
+                    <span v-for="tag in displayArticle.tags" :key="tag"
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 hover:bg-orange-200 transition-colors">
+                        #{{ tag }}
+                    </span>
+                </div>
+
                 <div class="prose prose-lg max-w-none" v-html="displayArticle.content || defaultContent"></div>
+
+                <!-- Views Counter -->
+                <div v-if="displayArticle.views_count" class="mt-8 pt-6 border-t border-slate-200 text-sm text-slate-500">
+                    <span class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        {{ displayArticle.views_count.toLocaleString() }} views
+                    </span>
+                </div>
             </article>
 
             <!-- Back Button -->
@@ -42,7 +61,7 @@
                 <article v-for="related in displayRelatedArticles" :key="related.id"
                     class="group rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
                     <div class="relative h-[180px] overflow-hidden">
-                        <img :src="related.featured_image || 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070'"
+                        <img :src="related.image || 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070'"
                              :alt="related.title"
                              class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
@@ -82,7 +101,7 @@ interface Article {
     excerpt: string;
     content?: string;
     category: string;
-    featured_image: string | null;
+    image: string | null;
     published_at: string | null;
     author?: Author;
     views_count?: number;
@@ -112,7 +131,7 @@ const displayArticle = computed(() => props.article || {
     excerpt: 'Article content is being prepared.',
     content: defaultContent,
     category: 'TRAVEL GUIDE',
-    featured_image: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070',
+    image: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070',
     published_at: null,
     author: undefined,
 });
@@ -129,7 +148,7 @@ const displayRelatedArticles = computed(() => {
             category: 'TRAVEL GUIDE',
             title: 'Essential Packing Tips for Hajj',
             excerpt: 'What to pack for your spiritual journey.',
-            featured_image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148',
+            image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148',
             published_at: null,
         },
         {
@@ -138,7 +157,7 @@ const displayRelatedArticles = computed(() => {
             category: 'TRAVEL GUIDE',
             title: 'Complete Umrah Guide',
             excerpt: 'Step-by-step guide to performing Umrah.',
-            featured_image: 'https://images.unsplash.com/photo-1551041777-cf9bd3048993?q=80&w=2006',
+            image: 'https://images.unsplash.com/photo-1551041777-cf9bd3048993?q=80&w=2006',
             published_at: null,
         },
     ];

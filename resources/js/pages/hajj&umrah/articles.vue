@@ -20,7 +20,7 @@
                    transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_60px_rgba(0,0,0,0.12)]">
                         <!-- Image -->
                         <div class="relative h-[220px] overflow-hidden">
-                            <img :src="post.featured_image || 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070'" :alt="post.title"
+                            <img :src="post.image || 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070'" :alt="post.title"
                                 class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
                                 loading="lazy" />
                         </div>
@@ -69,7 +69,7 @@ interface Article {
     slug: string;
     excerpt: string;
     category: string;
-    featured_image: string | null;
+    image: string | null;
     published_at: string | null;
 }
 
@@ -87,7 +87,7 @@ const displayArticles = props.articles.length > 0 ? props.articles : [
         category: 'TRAVEL GUIDE',
         title: 'Essential Packing Tips for Your Hajj',
         excerpt: 'A checklist of essentials, smart packing strategies, and what to avoid so you can travel light and stay prepared.',
-        featured_image: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070',
+        image: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070',
         published_at: null,
     },
     {
@@ -96,7 +96,7 @@ const displayArticles = props.articles.length > 0 ? props.articles : [
         category: 'TRAVEL GUIDE',
         title: 'Personal Stories from the Sacred Journey',
         excerpt: 'Inspirational stories from pilgrims and the lessons they learned on their spiritual journey.',
-        featured_image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148',
+        image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148',
         published_at: null,
     },
     {

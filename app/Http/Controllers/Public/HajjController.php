@@ -199,7 +199,7 @@ class HajjController extends Controller
             ]);
 
         return Inertia::render('hajj&umrah/articles', [
-            'posts' => $articles,
+            'articles' => $articles,
         ]);
     }
 
