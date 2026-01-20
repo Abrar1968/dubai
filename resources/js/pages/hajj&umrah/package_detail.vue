@@ -3,6 +3,7 @@
         <!-- HERO HEADER -->
         <div class="relative h-[400px] w-full overflow-hidden">
             <img :src="packageData.image || '/assets/img/hajj/hajjbg.jpg'" :alt="packageData.title"
+                @error="handleImageError"
                 class="absolute inset-0 h-full w-full object-cover" />
             <div class="absolute inset-0 bg-black/60"></div>
             <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 max-w-7xl mx-auto">
@@ -27,15 +28,15 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-20">
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                
+
                 <!-- LEFT COLUMN: CONTENT -->
                 <div class="lg:col-span-2 space-y-8">
-                    
+
                     <!-- Overview Card -->
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
                         <h2 class="text-2xl font-bold text-slate-900 mb-4">Overview</h2>
                         <div class="prose prose-slate max-w-none text-slate-600" v-html="packageData.description || 'No description available.'"></div>
-                        
+
                         <!-- Features Grid -->
                         <div v-if="packageData.features && packageData.features.length > 0" class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div v-for="(feature, idx) in packageData.features" :key="idx" class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg">
@@ -89,6 +90,19 @@
                         </div>
                     </div>
 
+                    <!-- Package Gallery -->
+                    <div v-if="galleryList.length > 0" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+                        <h2 class="text-2xl font-bold text-slate-900 mb-6">Package Gallery</h2>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            <div v-for="(img, idx) in galleryList" :key="idx" class="relative group overflow-hidden rounded-lg aspect-square">
+                                <img :src="img.url" :alt="img.alt"
+                                    @error="handleImageError"
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- RIGHT COLUMN: BOOKING CARD -->
@@ -122,7 +136,7 @@
                             Book This Package
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </button>
-                        
+
                         <p class="mt-4 text-xs text-center text-slate-400">
                             Secure your spot today with a deposit.
                         </p>
@@ -149,10 +163,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20">
              <h2 class="text-2xl font-bold text-slate-900 mb-8 border-b border-slate-200 pb-4">You May Also Like</h2>
              <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <Link v-for="related in relatedPackagesList" :key="related.id" :href="`/packages/${related.slug}`" 
+                <Link v-for="related in relatedPackagesList" :key="related.id" :href="`/packages/${related.slug}`"
                     class="group block bg-white rounded-xl shadow-sm hover:shadow-md transition border border-slate-100 overflow-hidden">
                     <div class="h-48 overflow-hidden relative">
                          <img :src="related.image || '/assets/img/hajj/hajjbg.jpg'" :alt="related.title"
+                                @error="handleImageError"
                                 class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                          <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-md text-xs font-bold shadow-sm">
                             ${{ (related.price || 0).toLocaleString() }}
@@ -175,6 +190,11 @@ import HajjUmrahLayout from '@/layouts/HajjUmrahLayout.vue';
 
 defineOptions({ layout: HajjUmrahLayout });
 
+interface GalleryImage {
+    url: string;
+    alt: string;
+}
+
 interface Package {
     id: number;
     title: string;
@@ -192,6 +212,7 @@ interface Package {
     hotel_details: any;
     departure_dates: any[];
     max_capacity: number;
+    gallery?: GalleryImage[];
 }
 
 const props = defineProps<{
@@ -219,8 +240,14 @@ const itineraryList = computed(() => {
 
 const inclusionList = computed(() => packageData.value.inclusions || ['Visa Processing', 'Accommodation', 'Transport', 'Guide']);
 const exclusionList = computed(() => packageData.value.exclusions || ['Personal Expenses', 'Flight Tickets']);
+const galleryList = computed(() => packageData.value.gallery || []);
 
 const scrollToContact = () => {
     router.visit('/contactus');
+};
+
+const handleImageError = (event: Event) => {
+    const target = event.target as HTMLImageElement;
+    target.src = '/assets/img/hajj/hajjbg.jpg';
 };
 </script>

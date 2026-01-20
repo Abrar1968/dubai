@@ -35,6 +35,7 @@
                         <!-- image -->
                         <div class="relative h-[140px] overflow-hidden">
                             <img :src="pkg.image || '/assets/img/hajj/umrahh.jpg'" :alt="pkg.title"
+                                @error="handleImageError"
                                 class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]" />
 
                             <!-- price tag -->
@@ -122,5 +123,10 @@ const onLearnMore = (pkg: Package) => {
 
 const formatPrice = (price: number) => {
     return `$${price.toLocaleString()}`;
+};
+
+const handleImageError = (event: Event) => {
+    const target = event.target as HTMLImageElement;
+    target.src = '/assets/img/hajj/umrahh.jpg';
 };
 </script>

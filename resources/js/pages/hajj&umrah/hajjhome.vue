@@ -80,6 +80,11 @@ const scrollToPackages = () => {
     })
 }
 
+const handleImageError = (event: Event) => {
+    const target = event.target as HTMLImageElement;
+    target.src = '/assets/img/hajj/hajjbg.jpg';
+}
+
 </script>
 
 <template>
@@ -152,6 +157,7 @@ const scrollToPackages = () => {
                             class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow group">
                             <div class="relative h-48 overflow-hidden">
                                 <img :src="pkg.image" :alt="pkg.title"
+                                    @error="handleImageError"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 <div
                                     class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-900">

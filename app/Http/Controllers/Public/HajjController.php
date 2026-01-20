@@ -41,7 +41,8 @@ class HajjController extends Controller
             'price' => $pkg->price,
             'currency' => $pkg->currency,
             'duration_days' => $pkg->duration_days,
-            'image' => $pkg->image ? asset('storage/' . $pkg->image) : '/assets/img/hajj/hajjbg.jpg',
+            'duration_nights' => $pkg->duration_nights,
+            'image' => $pkg->thumbnail ? asset('storage/' . $pkg->thumbnail) : ($pkg->image ? asset('storage/' . $pkg->image) : '/assets/img/hajj/hajjbg.jpg'),
             'features' => $pkg->features ?? [],
             'type' => $pkg->type->value,
         ]);
@@ -94,7 +95,8 @@ class HajjController extends Controller
                 'price' => $pkg->price,
                 'currency' => $pkg->currency,
                 'duration_days' => $pkg->duration_days,
-                'image' => $pkg->image ? asset('storage/' . $pkg->image) : '/images/packages/p1.jpg',
+                'duration_nights' => $pkg->duration_nights,
+                'image' => $pkg->thumbnail ? asset('storage/' . $pkg->thumbnail) : ($pkg->image ? asset('storage/' . $pkg->image) : '/assets/img/hajj/hajjbg.jpg'),
                 'features' => $pkg->features ?? [],
                 'departure_dates' => $pkg->departure_dates ?? [],
             ]);
@@ -121,7 +123,8 @@ class HajjController extends Controller
                 'price' => $pkg->price,
                 'currency' => $pkg->currency,
                 'duration_days' => $pkg->duration_days,
-                'image' => $pkg->image ? asset('storage/' . $pkg->image) : '/images/packages/p1.jpg',
+                'duration_nights' => $pkg->duration_nights,
+                'image' => $pkg->thumbnail ? asset('storage/' . $pkg->thumbnail) : ($pkg->image ? asset('storage/' . $pkg->image) : '/images/packages/p1.jpg'),
                 'features' => $pkg->features ?? [],
                 'departure_dates' => $pkg->departure_dates ?? [],
             ]);
@@ -155,7 +158,8 @@ class HajjController extends Controller
                 'title' => $pkg->title,
                 'slug' => $pkg->slug,
                 'price' => $pkg->price,
-                'image' => $pkg->image ? asset('storage/' . $pkg->image) : null,
+                'duration_days' => $pkg->duration_days,
+                'image' => $pkg->thumbnail ? asset('storage/' . $pkg->thumbnail) : ($pkg->image ? asset('storage/' . $pkg->image) : null),
             ])
             ->values();
 
@@ -168,7 +172,9 @@ class HajjController extends Controller
                 'price' => $package->price,
                 'currency' => $package->currency,
                 'duration_days' => $package->duration_days,
-                'image' => $package->image ? asset('storage/' . $package->image) : null,
+                'duration_nights' => $package->duration_nights,
+                'image' => $package->thumbnail ? asset('storage/' . $package->thumbnail) : ($package->image ? asset('storage/' . $package->image) : '/assets/img/hajj/hajjbg.jpg'),
+                'thumbnail' => $package->thumbnail ? asset('storage/' . $package->thumbnail) : ($package->image ? asset('storage/' . $package->image) : '/assets/img/hajj/hajjbg.jpg'),
                 'description' => $package->description,
                 'features' => $package->features ?? [],
                 'inclusions' => $package->inclusions ?? [],
@@ -177,6 +183,10 @@ class HajjController extends Controller
                 'hotel_details' => $package->hotel_details ?? [],
                 'departure_dates' => $package->departure_dates ?? [],
                 'max_capacity' => $package->max_capacity,
+                'gallery' => $package->gallery->map(fn($img) => [
+                    'url' => asset('storage/' . $img->image_path),
+                    'alt' => $img->alt_text ?? $package->title,
+                ])->toArray(),
             ],
             'relatedPackages' => $relatedPackages,
         ]);
