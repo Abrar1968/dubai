@@ -249,7 +249,7 @@
                         name="thumbnail"
                         label="Package Thumbnail"
                         accept="image/jpeg,image/png,image/jpg,image/webp"
-                        maxSize="2"
+                        maxSize="5120"
                         hint="Recommended: 800x600px"
                         :existingImage="($package->thumbnail ?? $package->image) ? Storage::url($package->thumbnail ?? $package->image) : null"
                     />
@@ -265,7 +265,7 @@
                         name="gallery"
                         label="Gallery Images"
                         accept="image/jpeg,image/png,image/jpg,image/webp"
-                        :maxSize="2048"
+                        :maxSize="15360"
                         :maxFiles="10"
                         hint="Upload up to 10 images"
                         :value="$package->gallery->map(fn($img) => ['url' => Storage::url($img->image_path), 'path' => $img->image_path])->toArray()"

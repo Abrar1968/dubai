@@ -38,7 +38,7 @@ class PackageRequest extends FormRequest
                 $this->isMethod('POST') ? 'required' : 'nullable',
                 'image',
                 'mimes:jpeg,png,jpg,webp',
-                'max:2048',
+                'max:5120',
             ],
             'price' => ['required', 'numeric', 'min:0'],
             'discounted_price' => ['nullable', 'numeric', 'min:0', 'lt:price'],
@@ -67,7 +67,7 @@ class PackageRequest extends FormRequest
             'is_featured' => ['boolean'],
             'is_active' => ['boolean'],
             'gallery' => ['nullable', 'array'],
-            'gallery.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'gallery.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:15360'],
             'existing_gallery' => ['nullable', 'array'],
             'existing_gallery.*' => ['string'],
         ];
@@ -83,14 +83,14 @@ class PackageRequest extends FormRequest
             'type.required' => 'Please select a package type.',
             'thumbnail.required' => 'Package thumbnail is required.',
             'thumbnail.image' => 'Thumbnail must be an image.',
-            'thumbnail.max' => 'Thumbnail must not exceed 2MB.',
+            'thumbnail.max' => 'Thumbnail must not exceed 5MB.',
             'price.required' => 'Package price is required.',
             'discounted_price.lt' => 'Discounted price must be less than the regular price.',
             'duration_days.required' => 'Duration (days) is required.',
             'duration_nights.required' => 'Duration (nights) is required.',
             'return_date.after' => 'Return date must be after departure date.',
             'gallery.*.image' => 'Each gallery item must be an image.',
-            'gallery.*.max' => 'Each gallery image must not exceed 2MB.',
+            'gallery.*.max' => 'Each gallery image must not exceed 15MB.',
         ];
     }
 

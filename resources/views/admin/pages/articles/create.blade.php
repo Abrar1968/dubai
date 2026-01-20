@@ -103,7 +103,7 @@
                         <h3 class="text-lg font-medium text-slate-900">Featured Image</h3>
                     </x-slot>
 
-                    <x-admin.form.image-upload name="featured_image" label="Featured Image" required accept="image/jpeg,image/png,image/jpg,image/webp" maxSize="2" hint="Recommended: 1200x630px for social sharing" />
+                    <x-admin.form.image-upload name="featured_image" label="Featured Image" required accept="image/jpeg,image/png,image/jpg,image/webp" maxSize="5120" hint="Recommended: 1200x630px for social sharing" />
                 </x-admin.ui.card>
             </div>
         </div>

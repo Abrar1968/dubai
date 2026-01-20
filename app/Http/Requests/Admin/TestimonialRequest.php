@@ -30,7 +30,7 @@ class TestimonialRequest extends FormRequest
         ];
 
         // Avatar optional on both create and update
-        $rules['avatar'] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,heic', 'max:2048'];
+        $rules['avatar'] = ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,heic', 'max:5120'];
 
         return $rules;
     }
@@ -63,7 +63,7 @@ class TestimonialRequest extends FormRequest
             'rating.required' => 'Please select a star rating.',
             'rating.min' => 'Rating must be at least 1 star.',
             'rating.max' => 'Rating cannot exceed 5 stars.',
-            'photo.max' => 'Photo size cannot exceed 2MB.',
+            'photo.max' => 'Photo size cannot exceed 5MB.',
         ];
     }
 

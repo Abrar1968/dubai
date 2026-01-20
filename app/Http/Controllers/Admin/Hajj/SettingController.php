@@ -39,7 +39,7 @@ class SettingController extends Controller
             'company_phone' => ['nullable', 'string', 'max:50'],
             'company_address' => ['nullable', 'string', 'max:500'],
             'company_description' => ['nullable', 'string', 'max:1000'],
-            'company_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,svg,webp', 'max:2048'],
+            'company_logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,svg,webp', 'max:5120'],
         ]);
 
         // Handle logo upload
@@ -73,7 +73,7 @@ class SettingController extends Controller
             'meta_description' => ['nullable', 'string', 'max:500'],
             'meta_keywords' => ['nullable', 'string', 'max:500'],
             'google_analytics' => ['nullable', 'string', 'max:50'],
-            'og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
         ]);
 
         // Handle OG image upload

@@ -108,7 +108,7 @@
                         name="featured_image"
                         label="Featured Image"
                         accept="image/jpeg,image/png,image/jpg,image/webp"
-                        maxSize="2"
+                        maxSize="5120"
                         hint="Recommended: 1200x630px for social sharing"
                         :existingImage="$article->featured_image ? Storage::url($article->featured_image) : null"
                     />

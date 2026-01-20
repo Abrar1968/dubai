@@ -31,7 +31,7 @@ class TeamMemberRequest extends FormRequest
         ];
 
         // Image optional on both create and update for testing flexibility
-        $rules['image'] = ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,heic', 'max:2048'];
+        $rules['image'] = ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,heic', 'max:5120'];
 
         return $rules;
     }
@@ -46,7 +46,7 @@ class TeamMemberRequest extends FormRequest
             'role.required' => 'Please enter the team member\'s role.',
             'photo.required' => 'Please upload a photo for the team member.',
             'photo.image' => 'The file must be an image.',
-            'photo.max' => 'The photo must not exceed 2MB.',
+            'photo.max' => 'The photo must not exceed 5MB.',
             'email.email' => 'Please enter a valid email address.',
         ];
     }

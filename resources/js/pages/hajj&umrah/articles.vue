@@ -41,7 +41,7 @@
 
                             <!-- Read More -->
                             <div class="mt-6">
-                                <Link :href="\`/articles/\${post.slug}\`"
+                                <Link :href="`/articles/${post.slug}`"
                                     class="inline-flex items-center gap-2 text-slate-600 font-semibold hover:text-slate-900 transition">
                                     Read More
                                     <span

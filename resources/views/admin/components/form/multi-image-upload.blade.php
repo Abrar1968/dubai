@@ -6,7 +6,7 @@
     'hint' => null,
     'required' => false,
     'accept' => 'image/*',
-    'maxSize' => 5120,
+    'maxSize' => 15360,
     'maxFiles' => 10,
 ])
 
