@@ -4,43 +4,16 @@
  */
 
 import Alpine from 'alpinejs';
+import './ckeditor';
 
-// Import TinyMCE and make it available globally
-import tinymce from 'tinymce/tinymce';
-import 'tinymce/themes/silver/theme';
-import 'tinymce/models/dom/model';
-import 'tinymce/icons/default/icons';
-
-// Import TinyMCE plugins
-import 'tinymce/plugins/advlist/plugin';
-import 'tinymce/plugins/autolink/plugin';
-import 'tinymce/plugins/lists/plugin';
-import 'tinymce/plugins/link/plugin';
-import 'tinymce/plugins/image/plugin';
-import 'tinymce/plugins/charmap/plugin';
-import 'tinymce/plugins/preview/plugin';
-import 'tinymce/plugins/searchreplace/plugin';
-import 'tinymce/plugins/visualblocks/plugin';
-import 'tinymce/plugins/code/plugin';
-import 'tinymce/plugins/fullscreen/plugin';
-import 'tinymce/plugins/insertdatetime/plugin';
-import 'tinymce/plugins/media/plugin';
-import 'tinymce/plugins/table/plugin';
-import 'tinymce/plugins/wordcount/plugin';
-
-// Import TinyMCE skin (required for styling)
-import 'tinymce/skins/ui/oxide/skin.css';
-
-// Make Alpine and TinyMCE available globally
+// Make Alpine available globally
 declare global {
     interface Window {
         Alpine: typeof Alpine;
-        tinymce: typeof tinymce;
     }
 }
 
 window.Alpine = Alpine;
-window.tinymce = tinymce;
 
 // Global Alpine data stores
 Alpine.store('sidebar', {

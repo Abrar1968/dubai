@@ -32,43 +32,49 @@
 
             init() {
                 this.content = this.$refs.textarea.value;
-                
-                // Wait for TinyMCE to be available
-                if (typeof window.tinymce !== 'undefined') {
-                    this.initTinyMCE();
+
+                // Wait for CKEditor to be available
+                if (typeof window.ClassicEditor !== 'undefined') {
+                    this.initCKEditor();
                 } else {
                     setTimeout(() => this.init(), 100);
                 }
             },
 
-            initTinyMCE() {
-                window.tinymce.init({
-                    target: this.$refs.editor,
-                    height: {{ $height }},
-                    menubar: false,
-                    plugins: [
-                        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                        'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                        'insertdatetime', 'media', 'table', 'wordcount'
-                    ],
-                    toolbar: 'undo redo | blocks | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat code',
-                    content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; }',
-                    placeholder: '{{ $placeholder }}',
-                    skin: false,
-                    content_css: false,
-                    setup: (editor) => {
+            initCKEditor() {
+                window.ClassicEditor
+                    .create(this.$refs.editor, {
+                        toolbar: {
+                            items: [
+                                'heading', '|',
+                                'bold', 'italic', 'underline', 'strikethrough', '|',
+                                'link', 'bulletedList', 'numberedList', '|',
+                                'outdent', 'indent', '|',
+                                'blockQuote', 'insertTable', '|',
+                                'undo', 'redo'
+                            ]
+                        },
+                        placeholder: '{{ $placeholder }}',
+                    })
+                    .then(editor => {
                         this.editor = editor;
-                        editor.on('change keyup', () => {
-                            this.content = editor.getContent();
+                        
+                        // Sync editor content with textarea
+                        editor.model.document.on('change:data', () => {
+                            this.content = editor.getData();
                             this.$refs.textarea.value = this.content;
                         });
-                    }
-                });
+                    })
+                    .catch(error => {
+                        console.error('CKEditor initialization error:', error);
+                    });
             },
 
             destroy() {
                 if (this.editor) {
-                    this.editor.destroy();
+                    this.editor.destroy().catch(error => {
+                        console.error('CKEditor destroy error:', error);
+                    });
                 }
             }
         }"
