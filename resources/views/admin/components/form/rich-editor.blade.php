@@ -32,36 +32,30 @@
 
             init() {
                 this.content = this.$refs.textarea.value;
-
-                if (typeof tinymce !== 'undefined') {
+                
+                // Wait for TinyMCE to be available
+                if (typeof window.tinymce !== 'undefined') {
                     this.initTinyMCE();
                 } else {
-                    this.loadTinyMCE();
+                    setTimeout(() => this.init(), 100);
                 }
             },
 
-            loadTinyMCE() {
-                const script = document.createElement('script');
-                script.src = 'https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js';
-                script.onload = () => this.initTinyMCE();
-                document.head.appendChild(script);
-            },
-
             initTinyMCE() {
-                tinymce.init({
+                window.tinymce.init({
                     target: this.$refs.editor,
                     height: {{ $height }},
                     menubar: false,
                     plugins: [
                         'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
                         'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                        'insertdatetime', 'media', 'table', 'code', 'wordcount'
+                        'insertdatetime', 'media', 'table', 'wordcount'
                     ],
                     toolbar: 'undo redo | blocks | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | removeformat code',
                     content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; }',
                     placeholder: '{{ $placeholder }}',
-                    branding: false,
-                    promotion: false,
+                    skin: false,
+                    content_css: false,
                     setup: (editor) => {
                         this.editor = editor;
                         editor.on('change keyup', () => {
