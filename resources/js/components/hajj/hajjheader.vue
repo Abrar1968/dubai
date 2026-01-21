@@ -35,6 +35,16 @@ const isRegularUser = () => {
     return props.auth?.user && props.auth.user.role === 'user';
 };
 
+// Check if user is logged in (any role)
+const isLoggedIn = () => {
+    return !!props.auth?.user;
+};
+
+// Check if user is admin/super_admin
+const isAdminUser = () => {
+    return props.auth?.user && (props.auth.user.role === 'admin' || props.auth.user.role === 'super_admin');
+};
+
 const logout = () => {
     router.post('/logout');
 };
@@ -155,16 +165,26 @@ const logout = () => {
               Contact Us
             </a>
 
-            <!-- Auth Buttons (when not logged in OR when admin/super_admin) -->
-            <template v-if="!isRegularUser()">
-              <Link href="/login" class="hidden sm:inline-flex items-center justify-center rounded-xl border-2 border-slate-300 hover:border-slate-400
-                       px-5 py-2.5 text-sm font-semibold text-slate-700 hover:text-slate-900 transition">
-                Login
-              </Link>
-              <Link href="/register" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-[#D3A762] hover:bg-[#c29652]
-                       px-5 py-2.5 text-sm font-semibold text-white transition active:scale-[0.98]">
-                Register
-              </Link>
+            <!-- Auth Buttons (show when NOT logged in OR when admin is logged in - admins have separate panel) -->
+            <template v-if="!isLoggedIn() || isAdminUser()">
+              <!-- Admin users see link to Admin Panel instead of Login -->
+              <template v-if="isAdminUser()">
+                <a href="/admin" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700
+                         px-5 py-2.5 text-sm font-semibold text-white transition">
+                  Admin Panel
+                </a>
+              </template>
+              <!-- Non-logged in users see Login/Register -->
+              <template v-else>
+                <Link href="/login" class="hidden sm:inline-flex items-center justify-center rounded-xl border-2 border-slate-300 hover:border-slate-400
+                         px-5 py-2.5 text-sm font-semibold text-slate-700 hover:text-slate-900 transition">
+                  Login
+                </Link>
+                <Link href="/register" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-[#D3A762] hover:bg-[#c29652]
+                         px-5 py-2.5 text-sm font-semibold text-white transition active:scale-[0.98]">
+                  Register
+                </Link>
+              </template>
             </template>
 
             <!-- User Dropdown (only for regular users with role='user') -->
