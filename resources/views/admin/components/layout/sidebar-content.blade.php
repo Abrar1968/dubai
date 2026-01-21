@@ -135,12 +135,27 @@
         </li>
         @endif
 
+        <!-- Global Admin Section (All Admin-Level Users) -->
+        <li class="mt-auto">
+            <div class="text-xs font-semibold leading-6 text-green-400 uppercase tracking-wider">Management</div>
+            <ul role="list" class="-mx-2 mt-2 space-y-1">
+                <li>
+                    <a href="{{ route('admin.users.index') }}"
+                       class="group flex gap-x-3 rounded-md p-2 text-sm leading-6 {{ str_starts_with($currentRoute, 'admin.users') ? 'bg-slate-700 text-white font-semibold' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
+                        <svg class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                        </svg>
+                        Manage Users
+                    </a>
+                </li>
+            </ul>
+        </li>
+
         <!-- Super Admin Section -->
         @if($user->isSuperAdmin())
-        <li class="mt-auto">
+        <li>
             <div class="text-xs font-semibold leading-6 text-red-400 uppercase tracking-wider">System</div>
             <ul role="list" class="-mx-2 mt-2 space-y-1">
-                @if($user->isSuperAdmin())
                 <li>
                     <a href="{{ route('admin.admins.index') }}"
                        class="group flex gap-x-3 rounded-md p-2 text-sm leading-6 {{ str_starts_with($currentRoute, 'admin.admins') ? 'bg-slate-700 text-white font-semibold' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">
@@ -150,7 +165,6 @@
                         Manage Admins
                     </a>
                 </li>
-                @endif
                 <li>
                     <a href="{{ route('admin.hajj.settings.index') }}"
                        class="group flex gap-x-3 rounded-md p-2 text-sm leading-6 {{ str_starts_with($currentRoute, 'admin.hajj.settings') ? 'bg-slate-700 text-white font-semibold' : 'text-slate-300 hover:bg-slate-700 hover:text-white' }}">

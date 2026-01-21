@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Mail, Phone, Facebook, Twitter, Instagram, Linkedin, ChevronDown, User, LogOut } from 'lucide-vue-next'
-import { router } from '@inertiajs/vue3'
+import { router, Link } from '@inertiajs/vue3'
 
 interface Settings {
     company_email?: string;
@@ -157,14 +157,14 @@ const logout = () => {
 
             <!-- Auth Buttons (when not logged in OR when admin/super_admin) -->
             <template v-if="!isRegularUser()">
-              <a href="/login" class="hidden sm:inline-flex items-center justify-center rounded-xl border-2 border-slate-300 hover:border-slate-400
+              <Link href="/login" class="hidden sm:inline-flex items-center justify-center rounded-xl border-2 border-slate-300 hover:border-slate-400
                        px-5 py-2.5 text-sm font-semibold text-slate-700 hover:text-slate-900 transition">
                 Login
-              </a>
-              <a href="/register" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-[#D3A762] hover:bg-[#c29652]
+              </Link>
+              <Link href="/register" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-[#D3A762] hover:bg-[#c29652]
                        px-5 py-2.5 text-sm font-semibold text-white transition active:scale-[0.98]">
                 Register
-              </a>
+              </Link>
             </template>
 
             <!-- User Dropdown (only for regular users with role='user') -->

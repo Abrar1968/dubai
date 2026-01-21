@@ -68,12 +68,18 @@ class Booking extends Model
         $year = date('Y');
         $month = date('m');
 
-        $lastBooking = self::whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->orderBy('id', 'desc')
+        // Find max sequence for this year-month
+        $pattern = $prefix . $year . $month . '%';
+        $lastBooking = self::withTrashed()
+            ->where('booking_number', 'like', $pattern)
+            ->orderByRaw('CAST(SUBSTRING(booking_number, -4) AS UNSIGNED) DESC')
             ->first();
 
-        $sequence = $lastBooking ? ((int) substr($lastBooking->booking_number, -4)) + 1 : 1;
+        if ($lastBooking) {
+            $sequence = ((int) substr($lastBooking->booking_number, -4)) + 1;
+        } else {
+            $sequence = 1;
+        }
 
         return $prefix . $year . $month . str_pad($sequence, 4, '0', STR_PAD_LEFT);
     }

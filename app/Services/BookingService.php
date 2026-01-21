@@ -87,7 +87,7 @@ class BookingService
         // Add travelers
         foreach ($travelers as $index => $traveler) {
             $booking->travelers()->create([
-                'name' => $traveler['name'] ?? '',
+                'full_name' => $traveler['name'] ?? $traveler['full_name'] ?? '',
                 'passport_number' => $traveler['passport_number'] ?? null,
                 'date_of_birth' => $traveler['date_of_birth'] ?? null,
                 'nationality' => $traveler['nationality'] ?? null,

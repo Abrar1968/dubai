@@ -138,6 +138,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         // ==========================================
+        // User Management (Global - All Admins)
+        // ==========================================
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['create', 'store']);
+        Route::patch('users/{user}/toggle-active', [\App\Http\Controllers\Admin\UserController::class, 'toggleActive'])->name('users.toggle-active');
+
+        // ==========================================
         // Super Admin Only Routes
         // ==========================================
         Route::middleware('super_admin')->group(function () {

@@ -50,10 +50,22 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureViews(): void
     {
+        // Get site settings for auth pages
+        $getSettings = function () {
+            try {
+                return \App\Models\SiteSetting::where('section', 'hajj')
+                    ->pluck('value', 'key')
+                    ->toArray();
+            } catch (\Exception $e) {
+                return [];
+            }
+        };
+
         Fortify::loginView(fn (Request $request) => Inertia::render('auth/Login', [
             'canResetPassword' => Features::enabled(Features::resetPasswords()),
             'canRegister' => Features::enabled(Features::registration()),
             'status' => $request->session()->get('status'),
+            'settings' => $getSettings(),
         ]));
 
         Fortify::resetPasswordView(fn (Request $request) => Inertia::render('auth/ResetPassword', [
@@ -69,7 +81,9 @@ class FortifyServiceProvider extends ServiceProvider
             'status' => $request->session()->get('status'),
         ]));
 
-        Fortify::registerView(fn () => Inertia::render('auth/Register'));
+        Fortify::registerView(fn () => Inertia::render('auth/Register', [
+            'settings' => $getSettings(),
+        ]));
 
         Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/TwoFactorChallenge'));
 

@@ -44,8 +44,8 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Number of Travelers *</label>
                                     <select v-model="bookingForm.traveler_count" @change="updateTravelers" required
-                                        class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
-                                        <option v-for="n in 10" :key="n" :value="n">{{ n }} traveler{{ n > 1 ? 's' : '' }}</option>
+                                        class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white text-gray-900">
+                                        <option v-for="n in 10" :key="n" :value="n" class="text-gray-900 bg-white">{{ n }} traveler{{ n > 1 ? 's' : '' }}</option>
                                     </select>
                                 </div>
 
@@ -77,10 +77,10 @@
                                             <div>
                                                 <label class="block text-xs font-medium text-gray-600">Gender</label>
                                                 <select v-model="traveler.gender"
-                                                    class="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none">
-                                                    <option value="">Select</option>
-                                                    <option value="male">Male</option>
-                                                    <option value="female">Female</option>
+                                                    class="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none bg-white text-gray-900">
+                                                    <option value="" class="text-gray-900">Select</option>
+                                                    <option value="male" class="text-gray-900">Male</option>
+                                                    <option value="female" class="text-gray-900">Female</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -354,19 +354,34 @@ const props = defineProps<{
 }>();
 
 const page = usePage();
-const auth = computed(() => page.props.auth as { user?: { id: number; name: string; email: string } } | undefined);
+const auth = computed(() => page.props.auth as { user?: { id: number; name: string; email: string; phone?: string; role?: string } } | undefined);
 
 // Booking Modal State
 const showBookingModal = ref(false);
 const isSubmitting = ref(false);
 const bookingError = ref('');
 
+// Initialize first traveler with user data if logged in
+const getInitialTraveler = (): Traveler => {
+    const user = auth.value?.user;
+    if (user && user.role === 'user') {
+        return {
+            name: user.name || '',
+            passport_number: '',
+            date_of_birth: '',
+            nationality: '',
+            gender: '',
+        };
+    }
+    return { name: '', passport_number: '', date_of_birth: '', nationality: '', gender: '' };
+};
+
 const bookingForm = ref({
     package_id: props.package.id,
     departure_date: '',
     traveler_count: 1,
     special_requests: '',
-    travelers: [{ name: '', passport_number: '', date_of_birth: '', nationality: '', gender: '' }] as Traveler[],
+    travelers: [getInitialTraveler()] as Traveler[],
 });
 
 // Compute minimum date (tomorrow)
@@ -399,13 +414,22 @@ const updateTravelers = () => {
 
 // Handle book button click
 const handleBookClick = () => {
-    if (!auth.value?.user) {
-        // Not logged in - redirect to login with return URL
-        router.visit('/login', {
-            data: { redirect: `/packages/${props.package.slug}` },
-        });
+    const user = auth.value?.user;
+
+    // Not logged in - redirect to login
+    if (!user) {
+        router.visit('/login');
         return;
     }
+
+    // Must be a regular user (not admin or super_admin)
+    if (user.role !== 'user') {
+        bookingError.value = 'Please login with a customer account to book packages. Admin accounts cannot make bookings.';
+        return;
+    }
+
+    // Re-initialize first traveler with user data when opening modal
+    bookingForm.value.travelers[0] = getInitialTraveler();
 
     // User is logged in - show booking modal
     showBookingModal.value = true;
