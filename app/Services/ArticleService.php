@@ -87,8 +87,19 @@ class ArticleService
      */
     public function update(Article $article, array $data): Article
     {
-        if (isset($data['title']) && !isset($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
+        // Only regenerate slug if title changed and slug not provided
+        if (isset($data['title']) && !isset($data['slug']) && $data['title'] !== $article->title) {
+            $baseSlug = Str::slug($data['title']);
+            $slug = $baseSlug;
+            $counter = 1;
+
+            // Ensure unique slug (excluding current article)
+            while (Article::where('slug', $slug)->where('id', '!=', $article->id)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+
+            $data['slug'] = $slug;
         }
 
         // Handle publishing

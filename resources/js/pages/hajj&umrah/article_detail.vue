@@ -136,31 +136,12 @@ const displayArticle = computed(() => props.article || {
     author: undefined,
 });
 
-// Reactive related articles
+// Reactive related articles - no mock data
 const displayRelatedArticles = computed(() => {
     if (props.relatedArticles && props.relatedArticles.length > 0) {
         return props.relatedArticles;
     }
-    return [
-        {
-            id: 2,
-            slug: 'essential-packing-tips',
-            category: 'TRAVEL GUIDE',
-            title: 'Essential Packing Tips for Hajj',
-            excerpt: 'What to pack for your spiritual journey.',
-            image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148',
-            published_at: null,
-        },
-        {
-            id: 3,
-            slug: 'umrah-guide',
-            category: 'TRAVEL GUIDE',
-            title: 'Complete Umrah Guide',
-            excerpt: 'Step-by-step guide to performing Umrah.',
-            image: 'https://images.unsplash.com/photo-1551041777-cf9bd3048993?q=80&w=2006',
-            published_at: null,
-        },
-    ];
+    return [];
 });
 
 const formatDate = (dateString: string) => {

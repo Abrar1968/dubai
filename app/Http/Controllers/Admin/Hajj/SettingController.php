@@ -35,25 +35,59 @@ class SettingController extends Controller
     {
         $validated = $request->validate([
             'company_name' => ['nullable', 'string', 'max:255'],
+            'company_tagline' => ['nullable', 'string', 'max:255'],
             'company_email' => ['nullable', 'email', 'max:255'],
             'company_phone' => ['nullable', 'string', 'max:50'],
+            'company_whatsapp' => ['nullable', 'string', 'max:50'],
             'company_address' => ['nullable', 'string', 'max:500'],
             'company_description' => ['nullable', 'string', 'max:1000'],
-            'company_logo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg,heic,heif', 'max:5120'],
+            'company_logo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg,heic,heif', 'max:5120'],            'banner_image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg,heic,heif', 'max:10240'],            'hero_image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp,svg,heic,heif', 'max:10240'],
         ]);
 
         // Handle logo upload
         if ($request->hasFile('company_logo')) {
             $oldLogo = $this->settingService->get('company_logo', 'hajj');
             if ($oldLogo) {
-                $this->mediaService->delete($oldLogo);
+                $this->mediaService->deleteImage($oldLogo);
             }
-            $validated['company_logo'] = $this->mediaService->upload(
+            $validated['company_logo'] = $this->mediaService->uploadImage(
                 $request->file('company_logo'),
                 'settings'
             );
         } else {
             unset($validated['company_logo']);
+        }
+
+        // Handle banner image upload
+        if ($request->hasFile('banner_image')) {
+            $oldBannerImage = $this->settingService->get('banner_image', 'hajj');
+            if ($oldBannerImage) {
+                $this->mediaService->deleteImage($oldBannerImage);
+            }
+            $validated['banner_image'] = $this->mediaService->uploadImage(
+                $request->file('banner_image'),
+                'settings/banner',
+                1920,
+                200
+            );
+        } else {
+            unset($validated['banner_image']);
+        }
+
+        // Handle hero image upload
+        if ($request->hasFile('hero_image')) {
+            $oldHeroImage = $this->settingService->get('hero_image', 'hajj');
+            if ($oldHeroImage) {
+                $this->mediaService->deleteImage($oldHeroImage);
+            }
+            $validated['hero_image'] = $this->mediaService->uploadImage(
+                $request->file('hero_image'),
+                'settings/hero',
+                1920,
+                1080
+            );
+        } else {
+            unset($validated['hero_image']);
         }
 
         $this->settingService->setMany($validated, 'hajj');
@@ -80,12 +114,13 @@ class SettingController extends Controller
         if ($request->hasFile('og_image')) {
             $oldImage = $this->settingService->get('og_image', 'hajj');
             if ($oldImage) {
-                $this->mediaService->delete($oldImage);
+                $this->mediaService->deleteImage($oldImage);
             }
-            $validated['og_image'] = $this->mediaService->upload(
+            $validated['og_image'] = $this->mediaService->uploadImage(
                 $request->file('og_image'),
                 'settings',
-                ['width' => 1200, 'height' => 630]
+                1200,
+                630
             );
         } else {
             unset($validated['og_image']);
@@ -104,12 +139,12 @@ class SettingController extends Controller
     public function updateSocial(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'facebook_url' => ['nullable', 'url', 'max:255'],
-            'twitter_url' => ['nullable', 'url', 'max:255'],
-            'instagram_url' => ['nullable', 'url', 'max:255'],
-            'linkedin_url' => ['nullable', 'url', 'max:255'],
-            'youtube_url' => ['nullable', 'url', 'max:255'],
-            'whatsapp_number' => ['nullable', 'string', 'max:50'],
+            'social_facebook' => ['nullable', 'url', 'max:255'],
+            'social_twitter' => ['nullable', 'url', 'max:255'],
+            'social_instagram' => ['nullable', 'url', 'max:255'],
+            'social_linkedin' => ['nullable', 'url', 'max:255'],
+            'social_youtube' => ['nullable', 'url', 'max:255'],
+            'contact_description' => ['nullable', 'string', 'max:1000'],
         ]);
 
         $this->settingService->setMany($validated, 'hajj');

@@ -91,11 +91,15 @@ class SettingService
         return [
             'company' => [
                 'company_name' => $this->get('company_name', $section, ''),
+                'company_tagline' => $this->get('company_tagline', $section, ''),
                 'company_email' => $this->get('company_email', $section, ''),
                 'company_phone' => $this->get('company_phone', $section, ''),
+                'company_whatsapp' => $this->get('company_whatsapp', $section, ''),
                 'company_address' => $this->get('company_address', $section, ''),
                 'company_logo' => $this->get('company_logo', $section, ''),
                 'company_description' => $this->get('company_description', $section, ''),
+                'banner_image' => $this->get('banner_image', $section, ''),
+                'hero_image' => $this->get('hero_image', $section, ''),
             ],
             'seo' => [
                 'meta_title' => $this->get('meta_title', $section, ''),
@@ -105,12 +109,12 @@ class SettingService
                 'google_analytics' => $this->get('google_analytics', $section, ''),
             ],
             'social' => [
-                'facebook_url' => $this->get('facebook_url', $section, ''),
-                'twitter_url' => $this->get('twitter_url', $section, ''),
-                'instagram_url' => $this->get('instagram_url', $section, ''),
-                'linkedin_url' => $this->get('linkedin_url', $section, ''),
-                'youtube_url' => $this->get('youtube_url', $section, ''),
-                'whatsapp_number' => $this->get('whatsapp_number', $section, ''),
+                'social_facebook' => $this->get('social_facebook', $section, ''),
+                'social_twitter' => $this->get('social_twitter', $section, ''),
+                'social_instagram' => $this->get('social_instagram', $section, ''),
+                'social_linkedin' => $this->get('social_linkedin', $section, ''),
+                'social_youtube' => $this->get('social_youtube', $section, ''),
+                'contact_description' => $this->get('contact_description', $section, ''),
             ],
             'booking' => [
                 'booking_email' => $this->get('booking_email', $section, ''),

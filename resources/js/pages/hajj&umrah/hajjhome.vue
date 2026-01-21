@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import HajjHeader from '@/components/hajj/hajjheader.vue';
 import HajjFooter from '@/components/hajj/hajjfooter.vue';
 import {
     MapPin, Calendar, Users, Star, ArrowRight, ShieldCheck,
-    Clock, Heart, Menu, Phone, Mail, CheckCircle, ArrowUpRight
+    Clock, Heart, Menu, Phone, Mail, CheckCircle, ArrowUpRight, MessageCircle, ChevronDown, ChevronUp
 } from 'lucide-vue-next';
 
 // Props from backend
@@ -37,15 +39,23 @@ interface Testimonial {
     avatar: string | null;
 }
 
+interface Faq {
+    id: number;
+    question: string;
+    answer: string;
+}
+
 const props = withDefaults(defineProps<{
     packages?: Package[];
     articles?: Article[];
     testimonials?: Testimonial[];
+    faqs?: Faq[];
     settings?: Record<string, string>;
 }>(), {
     packages: () => [],
     articles: () => [],
     testimonials: () => [],
+    faqs: () => [],
     settings: () => ({}),
 });
 
@@ -53,6 +63,11 @@ const props = withDefaults(defineProps<{
 const displayPackages = props.packages;
 const displayArticles = props.articles;
 const displayTestimonial = props.testimonials.length > 0 ? props.testimonials[0] : null;
+const displayFaqs = ref(props.faqs.map((f, i) => ({ ...f, open: i === 0 })));
+
+const toggleFaq = (i: number) => {
+    displayFaqs.value[i].open = !displayFaqs.value[i].open;
+};
 
 const features = [
     { title: 'Tawaf', desc: 'Perform Tawaf with ease and guidance.', icon: Clock },
@@ -85,19 +100,38 @@ const handleImageError = (event: Event) => {
     target.src = '/assets/img/hajj/hajjbg.jpg';
 }
 
+// Get hero background image
+const heroImage = props.settings.hero_image ? `/storage/${props.settings.hero_image}` : '/assets/img/hajj/hajjbg.jpg';
+
+// Get SEO meta tags
+const pageTitle = props.settings.meta_title || 'Dubai Hajj & Umrah Services | Premium Pilgrimage Packages';
+const pageDescription = props.settings.meta_description || 'Book premium Hajj and Umrah packages from Dubai. 5-star hotels, expert guides, all-inclusive services.';
+
+// WhatsApp link
+const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.settings.company_whatsapp.replace(/[^0-9]/g, '')}` : null;
+
 </script>
 
 <template>
     <div class="font-sans text-slate-800">
-        <HajjHeader />
+        <!-- SEO Meta Tags -->
+        <Head>
+            <title>{{ pageTitle }}</title>
+            <meta name="description" :content="pageDescription" />
+            <meta property="og:title" :content="pageTitle" />
+            <meta property="og:description" :content="pageDescription" />
+            <meta property="og:type" content="website" />
+        </Head>
+
+        <HajjHeader :settings="settings" :auth="$page.props.auth" />
 
         <main>
             <!-- Hero Section -->
             <section class="relative h-[85vh] w-full bg-slate-900 group overflow-hidden">
                 <!-- Background Image -->
                 <div class="absolute inset-0">
-                    <img src="/assets/img/hajj/hajjbg.jpg" alt="Makkah" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform
-                    duration-1000" />
+                    <img :src="heroImage" alt="Makkah" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform
+                    duration-1000" @error="handleImageError" />
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent">
                     </div>
                 </div>
@@ -109,7 +143,7 @@ const handleImageError = (event: Event) => {
                         of Allah</span>
                     <h1
                         class="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-8 leading-tight max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-                        Hajj & Umrah with Ease,<br>Faith with Peace
+                        {{ settings.company_tagline || 'Hajj & Umrah with Ease, Faith with Peace' }}
                     </h1>
                     <button @click="scrollToPackages"
                         class="bg-[#D3A762] hover:bg-[#c29652] text-white px-8 py-4 rounded-md font-semibold tracking-wide transition-all transform hover:scale-105 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
@@ -184,7 +218,7 @@ const handleImageError = (event: Event) => {
             </section>
 
             <!-- Your Spiritual Voyage -->
-            <section class="py-20 bg-white">
+            <section id="services" class="py-20 bg-white">
                 <div class="max-w-7xl mx-auto px-4 md:px-16">
                     <div class="mb-12 flex items-end justify-between">
                         <div>
@@ -292,7 +326,7 @@ const handleImageError = (event: Event) => {
             </section>
 
             <!-- Elevate Your Faith -->
-            <section class="py-20 bg-gray-50">
+            <section id="features" class="py-20 bg-gray-50">
                 <div class="max-w-7xl mx-auto px-4 md:px-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div class="relative h-[600px] rounded-2xl overflow-hidden shadow-2xl">
                         <img src="/assets/img/hajj/whyus.jpg" class="w-full h-full object-cover"
@@ -324,7 +358,7 @@ const handleImageError = (event: Event) => {
             </section>
 
             <!-- Testimonial Section -->
-            <section v-if="displayTestimonial" class="relative py-24 bg-slate-900 overflow-hidden">
+            <section id="testimonials" v-if="displayTestimonial" class="relative py-24 bg-slate-900 overflow-hidden">
                 <div class="absolute inset-0">
                     <img src="https://images.unsplash.com/photo-1627441584288-51b660c6d9c6?q=80&w=2070&auto=format&fit=crop"
                         class="w-full h-full object-cover opacity-20" alt="Background" />
@@ -410,7 +444,7 @@ const handleImageError = (event: Event) => {
                         <div v-for="article in displayArticles" :key="article.id"
                             class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow group">
                             <div class="h-64 overflow-hidden">
-                                <img :src="article.featured_image || 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070'"
+                                <img :src="article.image || 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070'"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     :alt="article.title">
                             </div>
@@ -430,25 +464,58 @@ const handleImageError = (event: Event) => {
                 </div>
             </section>
 
-            <!-- Newsletter CTA (Extra nice touch) -->
-            <section class="py-20 bg-[#D3A762]">
-                <!-- <div class="max-w-4xl mx-auto px-4 text-center text-white">
-                    <h2 class="text-3xl font-serif font-bold mb-4">Subscribe for Updates</h2>
-                    <p class="mb-8 text-white/90">Join our community to get the latest news and special offers for Hajj
-                        & Umrah packages.</p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <input type="email" placeholder="Your email address"
-                            class="px-6 py-4 rounded-full text-slate-900 w-full sm:w-96 focus:outline-none shadow-lg">
-                        <button
-                            class="bg-slate-900 text-white px-8 py-4 rounded-full font-bold hover:bg-slate-800 transition-colors shadow-lg">Subscribe</button>
+            <!-- FAQ Section -->
+            <section v-if="displayFaqs.length > 0" class="py-20 bg-white">
+                <div class="max-w-4xl mx-auto px-4 md:px-16">
+                    <div class="text-center mb-12">
+                        <span class="text-[#D3A762] uppercase tracking-wider text-sm font-semibold">FAQs</span>
+                        <h2 class="text-4xl font-serif mt-2 text-slate-900">Frequently Asked Questions</h2>
+                        <p class="mt-4 text-slate-600">Find answers to common questions about our Hajj & Umrah packages</p>
                     </div>
-                </div> -->
 
-                <img src="https://images.unsplash.com/photo-1596726284620-830238e8f643?q=80&w=2684&auto=format&fit=crop"
-                    class="rounded-2xl shadow-2xl w-full" alt="Kaaba" />
+                    <div class="space-y-4">
+                        <div v-for="(faq, i) in displayFaqs" :key="faq.id"
+                             class="bg-white border border-slate-200 rounded-xl overflow-hidden transition-all hover:shadow-md">
+                            <button
+                                @click="toggleFaq(i)"
+                                class="w-full px-6 py-5 flex items-center justify-between text-left group">
+                                <span class="font-semibold text-slate-900 group-hover:text-[#D3A762] transition text-lg pr-4">
+                                    {{ faq.question }}
+                                </span>
+                                <span class="flex-shrink-0 text-slate-500 transition-transform duration-300"
+                                      :class="{ 'rotate-180': faq.open }">
+                                    <ChevronDown class="w-5 h-5" />
+                                </span>
+                            </button>
+                            <div v-show="faq.open" class="px-6 pb-5 text-slate-600 leading-relaxed">
+                                {{ faq.answer }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Banner Section -->
+            <section class="w-full bg-[#D3A762]">
+                <img v-if="settings.banner_image"
+                     :src="`/storage/${settings.banner_image}`"
+                     alt="Banner"
+                     class="w-full h-[200px] object-cover" />
+                <img v-else
+                     src="https://images.unsplash.com/photo-1596726284620-830238e8f643?q=80&w=2684&auto=format&fit=crop"
+                     alt="Kaaba"
+                     class="w-full h-[200px] object-cover" />
             </section>
         </main>
 
-        <HajjFooter />
+        <HajjFooter :settings="settings" />
+
+        <!-- WhatsApp Floating Button -->
+        <a v-if="whatsappUrl" :href="whatsappUrl" target="_blank" rel="noopener noreferrer"
+           class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl transition-all hover:scale-110 z-50 flex items-center gap-2 group"
+           aria-label="Chat on WhatsApp">
+            <MessageCircle class="w-6 h-6" />
+            <span class="hidden group-hover:inline-block text-sm font-semibold pr-2">Chat with us</span>
+        </a>
     </div>
 </template>

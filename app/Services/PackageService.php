@@ -121,6 +121,28 @@ class PackageService
     }
 
     /**
+     * Toggle active status.
+     */
+    public function toggleStatus(Package $package): Package
+    {
+        $package->is_active = !$package->is_active;
+        $package->save();
+
+        return $package->fresh();
+    }
+
+    /**
+     * Toggle featured status.
+     */
+    public function toggleFeatured(Package $package): Package
+    {
+        $package->is_featured = !$package->is_featured;
+        $package->save();
+
+        return $package->fresh();
+    }
+
+    /**
      * Get package statistics.
      */
     public function getStats(): array

@@ -19,7 +19,7 @@
                     </h1>
 
                     <p class="mt-4 max-w-xl text-white/80 text-sm sm:text-base">
-                        Lorem ipsum dolor sit amet, consectetur dolore magna adipiscing elit.
+                        Discover our premium Hajj packages with 5-star accommodations and expert guides.
                     </p>
                 </div>
             </div>

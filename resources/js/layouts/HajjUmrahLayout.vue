@@ -1,17 +1,22 @@
 <script setup lang="ts">
-// import AppLayout from '@/layouts/AppLayout.vue'
+import { computed } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 import HajjHeader from '@/components/hajj/hajjheader.vue'
 import HajjFooter from '@/components/hajj/hajjfooter.vue'
+
+// Get settings from page props (passed from controller)
+const page = usePage();
+const settings = computed(() => page.props.settings || {});
 </script>
 
 <template>
   <div class="min-h-screen flex flex-col">
-    <HajjHeader />
+    <HajjHeader :settings="settings" />
 
     <main class="flex-1 w-full">
       <slot />
     </main>
 
-    <HajjFooter />
+    <HajjFooter :settings="settings" />
   </div>
 </template>

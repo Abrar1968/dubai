@@ -77,14 +77,21 @@ class BookingService
      */
     public function create(array $data, array $travelers = []): Booking
     {
-        $data['travelers_count'] = count($travelers) ?: 1;
+        $data['travelers_count'] = count($travelers) ?: ($data['travelers_count'] ?? 1);
+
+        // Remove travelers from data if passed there
+        unset($data['travelers']);
 
         $booking = Booking::create($data);
 
         // Add travelers
         foreach ($travelers as $index => $traveler) {
             $booking->travelers()->create([
-                ...$traveler,
+                'name' => $traveler['name'] ?? '',
+                'passport_number' => $traveler['passport_number'] ?? null,
+                'date_of_birth' => $traveler['date_of_birth'] ?? null,
+                'nationality' => $traveler['nationality'] ?? null,
+                'gender' => $traveler['gender'] ?? null,
                 'is_primary' => $index === 0,
             ]);
         }

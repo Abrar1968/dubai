@@ -64,6 +64,7 @@
             <div x-show="activeTab === 'company'" x-cloak class="mt-6">
                 <form action="{{ route('admin.hajj.settings.update-company') }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
                     <x-admin.ui.card>
                         <div class="space-y-6">
                             <!-- Logo -->
@@ -98,6 +99,14 @@
                                 placeholder="Dubai Hajj & Umrah Services"
                             />
 
+                            <x-admin.ui.input
+                                name="company_tagline"
+                                label="Company Tagline"
+                                :value="$settings['company']['company_tagline'] ?? ''"
+                                placeholder="Your Trusted Partner for Sacred Journeys"
+                                hint="Displayed in homepage hero section"
+                            />
+
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <x-admin.ui.input
                                     type="email"
@@ -115,6 +124,14 @@
                                 />
                             </div>
 
+                            <x-admin.ui.input
+                                name="company_whatsapp"
+                                label="WhatsApp Number"
+                                :value="$settings['company']['company_whatsapp'] ?? ''"
+                                placeholder="+971501234567"
+                                hint="Floating WhatsApp button on homepage (include country code)"
+                            />
+
                             <x-admin.ui.textarea
                                 name="company_address"
                                 label="Company Address"
@@ -130,6 +147,64 @@
                                 rows="3"
                                 placeholder="Brief description for footer and about sections..."
                             />
+
+                            <!-- Banner Image -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Top Banner Image</label>
+                                <p class="mt-1 text-sm text-gray-500">Upload banner image for top section (recommended: 1920x200px, max 10MB)</p>
+                                <div class="mt-2" x-data="{ preview: '{{ $settings['company']['banner_image'] ?? '' ? Storage::url($settings['company']['banner_image']) : '' }}' }">
+                                    <div class="space-y-4">
+                                        <div class="h-24 w-full overflow-hidden rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
+                                            <template x-if="preview">
+                                                <img :src="preview" class="h-full w-full object-cover">
+                                            </template>
+                                            <template x-if="!preview">
+                                                <div class="flex h-full flex-col items-center justify-center text-gray-400">
+                                                    <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    <span class="mt-2 text-xs">No banner image</span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div>
+                                            <input type="file" name="banner_image" id="banner_image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/heic,image/heif" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
+                                            <label for="banner_image" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
+                                                Choose Banner Image
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hero Image -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Homepage Hero Background</label>
+                                <p class="mt-1 text-sm text-gray-500">Upload large hero image for homepage (recommended: 1920x1080px, max 10MB)</p>
+                                <div class="mt-2" x-data="{ preview: '{{ $settings['company']['hero_image'] ?? '' ? Storage::url($settings['company']['hero_image']) : '' }}' }">
+                                    <div class="space-y-4">
+                                        <div class="h-48 w-full overflow-hidden rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
+                                            <template x-if="preview">
+                                                <img :src="preview" class="h-full w-full object-cover">
+                                            </template>
+                                            <template x-if="!preview">
+                                                <div class="flex h-full flex-col items-center justify-center text-gray-400">
+                                                    <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    <span class="mt-2 text-sm">No hero background image</span>
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div>
+                                            <input type="file" name="hero_image" id="hero_image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/heic,image/heif" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
+                                            <label for="hero_image" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
+                                                Choose Hero Image
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <x-slot:footer>
@@ -147,6 +222,7 @@
             <div x-show="activeTab === 'seo'" x-cloak class="mt-6">
                 <form action="{{ route('admin.hajj.settings.update-seo') }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
                     <x-admin.ui.card>
                         <div class="space-y-6">
                             <x-admin.ui.input
@@ -223,57 +299,58 @@
             <div x-show="activeTab === 'social'" x-cloak class="mt-6">
                 <form action="{{ route('admin.hajj.settings.update-social') }}" method="POST">
                     @csrf
+                    @method('PUT')
                     <x-admin.ui.card>
                         <div class="space-y-6">
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <x-admin.ui.input
                                     type="url"
-                                    name="facebook_url"
+                                    name="social_facebook"
                                     label="Facebook URL"
-                                    :value="$settings['social']['facebook_url']"
+                                    :value="$settings['social']['social_facebook'] ?? ''"
                                     placeholder="https://facebook.com/yourpage"
                                 />
 
                                 <x-admin.ui.input
                                     type="url"
-                                    name="twitter_url"
+                                    name="social_twitter"
                                     label="Twitter / X URL"
-                                    :value="$settings['social']['twitter_url']"
+                                    :value="$settings['social']['social_twitter'] ?? ''"
                                     placeholder="https://twitter.com/yourhandle"
                                 />
 
                                 <x-admin.ui.input
                                     type="url"
-                                    name="instagram_url"
+                                    name="social_instagram"
                                     label="Instagram URL"
-                                    :value="$settings['social']['instagram_url']"
+                                    :value="$settings['social']['social_instagram'] ?? ''"
                                     placeholder="https://instagram.com/yourprofile"
                                 />
 
                                 <x-admin.ui.input
                                     type="url"
-                                    name="linkedin_url"
+                                    name="social_linkedin"
                                     label="LinkedIn URL"
-                                    :value="$settings['social']['linkedin_url']"
+                                    :value="$settings['social']['social_linkedin'] ?? ''"
                                     placeholder="https://linkedin.com/company/yourcompany"
                                 />
 
                                 <x-admin.ui.input
                                     type="url"
-                                    name="youtube_url"
+                                    name="social_youtube"
                                     label="YouTube URL"
-                                    :value="$settings['social']['youtube_url']"
+                                    :value="$settings['social']['social_youtube'] ?? ''"
                                     placeholder="https://youtube.com/@yourchannel"
                                 />
-
-                                <x-admin.ui.input
-                                    name="whatsapp_number"
-                                    label="WhatsApp Number"
-                                    :value="$settings['social']['whatsapp_number']"
-                                    placeholder="+971501234567"
-                                    hint="Include country code without spaces"
-                                />
                             </div>
+
+                            <x-admin.ui.textarea
+                                name="contact_description"
+                                label="Contact Page Description"
+                                :value="$settings['social']['contact_description'] ?? ''"
+                                rows="3"
+                                placeholder="Brief description for contact page..."
+                            />
                         </div>
 
                         <x-slot:footer>
@@ -291,6 +368,7 @@
             <div x-show="activeTab === 'booking'" x-cloak class="mt-6">
                 <form action="{{ route('admin.hajj.settings.update-booking') }}" method="POST">
                     @csrf
+                    @method('PUT')
                     <div class="space-y-6">
                         <x-admin.ui.card>
                             <x-slot:header>

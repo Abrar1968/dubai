@@ -71,6 +71,17 @@ class HajjController extends Controller
                 'avatar' => $t->avatar ? asset('storage/' . $t->avatar) : null,
             ]);
 
+        // Get active FAQs (limit 6 for homepage)
+        $faqs = $this->faqService->list('hajj')
+            ->where('is_active', true)
+            ->take(6)
+            ->map(fn($faq) => [
+                'id' => $faq->id,
+                'question' => $faq->question,
+                'answer' => $faq->answer,
+            ])
+            ->values();
+
         // Get site settings
         $settings = $this->getSettings('hajj');
 
@@ -78,6 +89,7 @@ class HajjController extends Controller
             'packages' => $packages,
             'articles' => $articles,
             'testimonials' => $testimonials,
+            'faqs' => $faqs,
             'settings' => $settings,
         ]);
     }
@@ -189,6 +201,7 @@ class HajjController extends Controller
                 ])->toArray(),
             ],
             'relatedPackages' => $relatedPackages,
+            'settings' => $this->getSettings('hajj'),
         ]);
     }
 
@@ -210,6 +223,7 @@ class HajjController extends Controller
 
         return Inertia::render('hajj&umrah/articles', [
             'articles' => $articles,
+            'settings' => $this->getSettings('hajj'),
         ]);
     }
 
@@ -251,6 +265,7 @@ class HajjController extends Controller
                 'tags' => $article->tags ?? [],
             ],
             'relatedArticles' => $relatedArticles,
+            'settings' => $this->getSettings('hajj'),
         ]);
     }
 
@@ -283,6 +298,7 @@ class HajjController extends Controller
         return Inertia::render('hajj&umrah/team', [
             'teamMembers' => $teamMembers,
             'faqs' => $faqs,
+            'settings' => $this->getSettings('hajj'),
         ]);
     }
 

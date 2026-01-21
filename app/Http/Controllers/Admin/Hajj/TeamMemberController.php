@@ -48,7 +48,8 @@ class TeamMemberController extends Controller
             $data['image'] = $this->mediaService->uploadImage(
                 $request->file('image'),
                 'team',
-                ['width' => 400, 'height' => 400]
+                400,
+                400
             );
         }
 
@@ -88,7 +89,8 @@ class TeamMemberController extends Controller
             $data['image'] = $this->mediaService->uploadImage(
                 $request->file('image'),
                 'team',
-                ['width' => 400, 'height' => 400]
+                400,
+                400
             );
         }
 

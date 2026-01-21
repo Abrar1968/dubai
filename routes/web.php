@@ -28,25 +28,25 @@ Route::post('/contactus', [HajjController::class, 'contactSubmit'])->name('conta
 Route::get('/articles', [HajjController::class, 'articles'])->name('articles');
 Route::get('/articles/{slug}', [HajjController::class, 'articleShow'])->name('blog.show');
 Route::get('/packages/{slug}', [HajjController::class, 'packageShow'])->name('packages.show');
+Route::post('/packages/{slug}/book', [\App\Http\Controllers\User\BookingController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('packages.book');
 
 Route::get('/typing', function () {
     return Inertia::render('typing/typinghome');
 })->name('typing.index');
 
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 // ==========================================
 // User Dashboard Routes (Vue + Inertia)
 // ==========================================
-Route::prefix('user')->name('user.')->middleware(['auth', 'verified'])->group(function () {
+Route::prefix('user')->name('user.')->middleware(['auth', 'verified', 'user'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('dashboard');
 
     // Bookings
     Route::get('/bookings', [\App\Http\Controllers\User\BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/{booking}', [\App\Http\Controllers\User\BookingController::class, 'show'])->name('bookings.show');
+    Route::post('/bookings', [\App\Http\Controllers\User\BookingController::class, 'store'])->name('bookings.store');
 
     // Profile
     Route::get('/profile', [\App\Http\Controllers\User\ProfileController::class, 'show'])->name('profile.show');

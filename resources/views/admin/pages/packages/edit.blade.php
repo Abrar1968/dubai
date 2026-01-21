@@ -251,7 +251,7 @@
                         accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml,image/heic,image/heif"
                         maxSize="5120"
                         hint="Recommended: 800x600px"
-                        :existingImage="($package->thumbnail ?? $package->image) ? Storage::url($package->thumbnail ?? $package->image) : null"
+                        :value="$package->thumbnail ?? $package->image"
                     />
                 </x-admin.ui.card>
 
@@ -268,7 +268,7 @@
                         :maxSize="15360"
                         :maxFiles="10"
                         hint="Upload up to 10 images"
-                        :value="$package->gallery->map(fn($img) => ['url' => Storage::url($img->image_path), 'path' => $img->image_path])->toArray()"
+                        :value="$package->gallery->pluck('image_path')->toArray()"
                     />
                 </x-admin.ui.card>
             </div>

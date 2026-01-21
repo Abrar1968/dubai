@@ -19,7 +19,7 @@
                     </h1>
 
                     <p class="mt-4 max-w-xl text-white/80 text-sm sm:text-base">
-                        Lorem ipsum dolor sit amet, consectetur dolore magna adipiscing elit.
+                        Explore our exclusive Umrah packages available throughout the year.
                     </p>
                 </div>
             </div>

@@ -60,27 +60,27 @@
 
                             <div class="mt-4 flex items-center gap-3">
                                 <!-- Facebook -->
-                                <a :href="displaySettings.facebook_url || '#'" aria-label="Facebook" class="h-10 w-10 rounded-full bg-[#1f8c3f] flex items-center justify-center
+                                <a v-if="displaySettings.social_facebook" :href="displaySettings.social_facebook" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="h-10 w-10 rounded-full bg-[#1f8c3f] flex items-center justify-center
              text-white transition hover:brightness-110 active:scale-[0.95]">
                                     <Facebook class="w-5 h-5" />
                                 </a>
 
                                 <!-- Twitter -->
-                                <a :href="displaySettings.twitter_url || '#'" aria-label="Twitter" class="h-10 w-10 rounded-full bg-white/10 border border-white/15
+                                <a v-if="displaySettings.social_twitter" :href="displaySettings.social_twitter" target="_blank" rel="noopener noreferrer" aria-label="Twitter" class="h-10 w-10 rounded-full bg-white/10 border border-white/15
              flex items-center justify-center text-white
              transition hover:bg-white/15 active:scale-[0.95]">
                                     <Twitter class="w-5 h-5" />
                                 </a>
 
                                 <!-- Instagram -->
-                                <a :href="displaySettings.instagram_url || '#'" aria-label="Instagram" class="h-10 w-10 rounded-full bg-white/10 border border-white/15
+                                <a v-if="displaySettings.social_instagram" :href="displaySettings.social_instagram" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="h-10 w-10 rounded-full bg-white/10 border border-white/15
              flex items-center justify-center text-white
              transition hover:bg-white/15 active:scale-[0.95]">
                                     <Instagram class="w-5 h-5" />
                                 </a>
 
                                 <!-- LinkedIn -->
-                                <a :href="displaySettings.linkedin_url || '#'" aria-label="LinkedIn" class="h-10 w-10 rounded-full bg-white/10 border border-white/15
+                                <a v-if="displaySettings.social_linkedin" :href="displaySettings.social_linkedin" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="h-10 w-10 rounded-full bg-white/10 border border-white/15
              flex items-center justify-center text-white
              transition hover:bg-white/15 active:scale-[0.95]">
                                     <Linkedin class="w-5 h-5" />
@@ -201,10 +201,10 @@ const displayOffices = computed(() => props.offices);
 // Settings from backend
 const displaySettings = computed(() => ({
     contact_description: props.settings?.contact_description || 'We are here to help you with your Hajj & Umrah journey. Feel free to reach out to us.',
-    facebook_url: props.settings?.facebook_url || '#',
-    twitter_url: props.settings?.twitter_url || '#',
-    instagram_url: props.settings?.instagram_url || '#',
-    linkedin_url: props.settings?.linkedin_url || '#',
+    social_facebook: props.settings?.social_facebook || '',
+    social_twitter: props.settings?.social_twitter || '',
+    social_instagram: props.settings?.social_instagram || '',
+    social_linkedin: props.settings?.social_linkedin || '',
 }));
 
 const form = reactive({
