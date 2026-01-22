@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Public\HajjController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -14,44 +15,43 @@ Route::get('/tour-travel', function () {
     return Inertia::render('tour&travel/tourhome');
 })->name('tour-travel.index');
 
-Route::get('/hajjhome', function () {
-    return Inertia::render('hajj&umrah/hajjhome');
-})->name('hajjhome.index');
-
-Route::get('/hajj-umrah', function () {
-    return Inertia::render('hajj&umrah/hajjhome');
-})->name('hajj-umrah.index');
-
-Route::get('/hajj-umrah/team', function () {
-    return Inertia::render('hajj&umrah/team');
-})->name('hajj-umrah.team');
-
-Route::get('/hajjpackage', function () {
-    return Inertia::render('hajj&umrah/hajjpackage');
-})->name('hajjpackage');
-
-Route::get('/umrahpackage', function () {
-    return Inertia::render('hajj&umrah/umrahpackage');
-})->name('umrahpackage');
-
-Route::get('/contactus', function () {
-    return Inertia::render('hajj&umrah/contactus');
-})->name('contactus');
-
-Route::get('/articles', function () {
-    return Inertia::render('hajj&umrah/articles');
-})->name('articles');
-
-Route::get('/articles/{slug}', function ($slug) {
-    return Inertia::render('hajj&umrah/article_detail', ['slug' => $slug]);
-})->name('blog.show');
+// ==========================================
+// Hajj & Umrah Public Routes (Dynamic Data)
+// ==========================================
+Route::get('/hajjhome', [HajjController::class, 'home'])->name('hajjhome.index');
+Route::get('/hajj-umrah', [HajjController::class, 'home'])->name('hajj-umrah.index');
+Route::get('/hajj-umrah/team', [HajjController::class, 'team'])->name('hajj-umrah.team');
+Route::get('/hajjpackage', [HajjController::class, 'hajjPackages'])->name('hajjpackage');
+Route::get('/umrahpackage', [HajjController::class, 'umrahPackages'])->name('umrahpackage');
+Route::get('/contactus', [HajjController::class, 'contact'])->name('contactus');
+Route::post('/contactus', [HajjController::class, 'contactSubmit'])->name('contact.submit');
+Route::get('/articles', [HajjController::class, 'articles'])->name('articles');
+Route::get('/articles/{slug}', [HajjController::class, 'articleShow'])->name('blog.show');
+Route::get('/packages/{slug}', [HajjController::class, 'packageShow'])->name('packages.show');
+Route::post('/packages/{slug}/book', [\App\Http\Controllers\User\BookingController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('packages.book');
 
 Route::get('/typing', function () {
     return Inertia::render('typing/typinghome');
 })->name('typing.index');
 
-Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// ==========================================
+// User Dashboard Routes (Vue + Inertia)
+// ==========================================
+Route::prefix('user')->name('user.')->middleware(['auth', 'verified', 'user'])->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [\App\Http\Controllers\User\DashboardController::class, 'index'])->name('dashboard');
+
+    // Bookings
+    Route::get('/bookings', [\App\Http\Controllers\User\BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/bookings/{booking}', [\App\Http\Controllers\User\BookingController::class, 'show'])->name('bookings.show');
+    Route::post('/bookings', [\App\Http\Controllers\User\BookingController::class, 'store'])->name('bookings.store');
+
+    // Profile
+    Route::get('/profile', [\App\Http\Controllers\User\ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profile', [\App\Http\Controllers\User\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/password', [\App\Http\Controllers\User\ProfileController::class, 'updatePassword'])->name('profile.password');
+});
 
 require __DIR__ . '/settings.php';

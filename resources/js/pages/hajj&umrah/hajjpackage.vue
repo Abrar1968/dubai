@@ -19,7 +19,7 @@
                     </h1>
 
                     <p class="mt-4 max-w-xl text-white/80 text-sm sm:text-base">
-                        Lorem ipsum dolor sit amet, consectetur dolore magna adipiscing elit.
+                        Discover our premium Hajj packages with 5-star accommodations and expert guides.
                     </p>
                 </div>
             </div>
@@ -29,18 +29,19 @@
         <section class="py-14 sm:py-16">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    <article v-for="pkg in packages" :key="pkg.id"
+                    <article v-for="pkg in displayPackages" :key="pkg.id"
                         class="group rounded-2xl border border-slate-200 bg-white shadow-[0_14px_40px_rgba(0,0,0,0.08)]
                    overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                         <!-- image -->
                         <div class="relative h-[140px] overflow-hidden">
-                            <img :src="pkg.image" :alt="pkg.title"
+                            <img :src="pkg.image || '/assets/img/hajj/hajjbg.jpg'" :alt="pkg.title"
+                                @error="handleImageError"
                                 class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]" />
 
                             <!-- price tag -->
                             <div class="absolute top-3 right-3 rounded-full bg-[#f2e8dc] px-3 py-1 text-xs font-extrabold text-slate-800
                        shadow-[0_10px_20px_rgba(0,0,0,0.18)]">
-                                ${{ pkg.price }}
+                                {{ formatPrice(pkg.price) }}
                             </div>
                         </div>
 
@@ -77,77 +78,55 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import HajjUmrahLayout from '@/layouts/HajjUmrahLayout.vue'
+import { router } from '@inertiajs/vue3'
 
 defineOptions({ layout: HajjUmrahLayout })
 
-
-const headerBg = '/images/packages/header.jpg'
-
-
-const packages = [
-    {
-        id: 1,
-        title: 'Premium Hajj',
-        price: 590,
-        image: '/images/packages/p1.jpg',
-        features: ['Dec 10 - Dec 15', 'Document Guide', '5 Stars Hotel', 'Local Meals', 'Visa Included'],
-    },
-    {
-        id: 2,
-        title: 'Ramadan Umrah',
-        price: 890,
-        image: '/images/packages/p2.jpg',
-        features: ['Jan 10 - Jan 15', 'Document Guide', 'Zam-Zam Hotel', 'Arabian Foods', 'Visa Included'],
-    },
-    {
-        id: 3,
-        title: 'Family Umrah',
-        price: 199,
-        image: '/images/packages/p3.jpg',
-        features: ['Mar 10 - Mar 15', 'Document Guide', 'Abu Bakr Tower', 'Oriental Resto', 'Visa Included'],
-    },
-    {
-        id: 4,
-        title: 'Medina City Tour',
-        price: 249,
-        image: '/images/packages/p4.jpg',
-        features: ['Oct 10 - Oct 15', 'Document Guide', 'Uthman Hotel', 'Asian Foods', 'Visa Included'],
-    },
-    {
-        id: 5,
-        title: 'Nabawi Tour',
-        price: 590,
-        image: '/images/packages/p5.jpg',
-        features: ['Dec 10 - Dec 15', 'Document Guide', '5 Stars Hotel', 'Local Meals', 'Visa Included'],
-    },
-    {
-        id: 6,
-        title: 'Umrah Group',
-        price: 890,
-        image: '/images/packages/p6.jpg',
-        features: ['Jan 10 - Jan 15', 'Document Guide', 'Zam-Zam Hotel', 'Arabian Foods', 'Visa Included'],
-    },
-    {
-        id: 7,
-        title: 'Saudi Tour',
-        price: 199,
-        image: '/images/packages/p7.jpg',
-        features: ['Mar 10 - Mar 15', 'Document Guide', 'Abu Bakr Tower', 'Oriental Resto', 'Visa Included'],
-    },
-    {
-        id: 8,
-        title: 'Rawdha Package',
-        price: 249,
-        image: '/images/packages/p8.jpg',
-        features: ['Oct 10 - Oct 15', 'Document Guide', 'Uthman Hotel', 'Asian Foods', 'Visa Included'],
-    },
-]
-
-const onLearnMore = (pkg) => {
-    // Later you can use Inertia route:
-    // router.visit(route('packages.show', pkg.id))
-    console.log('Learn more:', pkg)
+// TypeScript interfaces
+interface Package {
+    id: number;
+    title: string;
+    slug: string;
+    price: number;
+    currency: string;
+    duration_days: number;
+    image: string;
+    features: string[];
+    type: string;
+    departure_date?: string;
 }
+
+interface Settings {
+    page_title?: string;
+    page_subtitle?: string;
+    page_description?: string;
+}
+
+const props = withDefaults(defineProps<{
+    packages?: Package[];
+    settings?: Settings;
+}>(), {
+    packages: () => [],
+    settings: () => ({}),
+});
+
+const headerBg = '/assets/img/hajj/hajjbg.jpg';
+
+// Use props directly - data comes from backend
+const displayPackages = props.packages;
+
+const onLearnMore = (pkg: Package) => {
+    router.visit(`/packages/${pkg.slug}`);
+};
+
+const formatPrice = (price: number) => {
+    return `$${price.toLocaleString()}`;
+};
+
+const handleImageError = (event: Event) => {
+    const target = event.target as HTMLImageElement;
+    target.src = '/assets/img/hajj/hajjbg.jpg';
+};
 </script>

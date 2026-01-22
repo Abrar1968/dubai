@@ -1,38 +1,73 @@
 <script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import HajjHeader from '@/components/hajj/hajjheader.vue';
 import HajjFooter from '@/components/hajj/hajjfooter.vue';
 import {
     MapPin, Calendar, Users, Star, ArrowRight, ShieldCheck,
-    Clock, Heart, Menu, Phone, Mail, CheckCircle, ArrowUpRight
+    Clock, Heart, Menu, Phone, Mail, CheckCircle, ArrowUpRight, MessageCircle, ChevronDown, ChevronUp
 } from 'lucide-vue-next';
 
-// Placeholder data for Packages
-const packages = [
-    {
-        title: 'Premium Hajj',
-        price: 'Start From $12,500',
-        image: '/assets/img/hajj/hajjbg.jpg', // Kaaba
-        features: ['5 Star Hotel', 'Direct Flight', 'Visa Included', 'Full Board']
-    },
-    {
-        title: 'Ramadan Umrah',
-        price: 'Start From $2,250',
-        image: 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070&auto=format&fit=crop', // Mosque interior
-        features: ['4 Star Hotel', 'Direct Flight', 'Visa Included', 'Breakfast']
-    },
-    {
-        title: 'Family Umrah',
-        price: 'Start From $1,850',
-        image: '/assets/img/hajj/family.jpg', // Dates/Food
-        features: ['Family Room', 'City Tour', 'Visa Included', 'Guide']
-    },
-    {
-        title: 'Medina City Tour',
-        price: 'Start From $850',
-        image: '/assets/img/hajj/madina.jpg', // Prophet's Mosque
-        features: ['Local Guide', 'Transport', 'Lunch Included', 'Museums']
-    },
-];
+// Props from backend
+interface Package {
+    id: number;
+    title: string;
+    slug: string;
+    price: number;
+    currency: string;
+    duration_days: number;
+    image: string;
+    features: string[];
+    type: string;
+}
+
+interface Article {
+    id: number;
+    title: string;
+    slug: string;
+    excerpt: string;
+    category: string;
+    image: string;
+}
+
+interface Testimonial {
+    id: number;
+    name: string;
+    location: string;
+    content: string;
+    rating: number;
+    avatar: string | null;
+}
+
+interface Faq {
+    id: number;
+    question: string;
+    answer: string;
+}
+
+const props = withDefaults(defineProps<{
+    packages?: Package[];
+    articles?: Article[];
+    testimonials?: Testimonial[];
+    faqs?: Faq[];
+    settings?: Record<string, string>;
+}>(), {
+    packages: () => [],
+    articles: () => [],
+    testimonials: () => [],
+    faqs: () => [],
+    settings: () => ({}),
+});
+
+// Use props directly - data comes from backend
+const displayPackages = props.packages;
+const displayArticles = props.articles;
+const displayTestimonial = props.testimonials.length > 0 ? props.testimonials[0] : null;
+const displayFaqs = ref(props.faqs.map((f, i) => ({ ...f, open: i === 0 })));
+
+const toggleFaq = (i: number) => {
+    displayFaqs.value[i].open = !displayFaqs.value[i].open;
+};
 
 const features = [
     { title: 'Tawaf', desc: 'Perform Tawaf with ease and guidance.', icon: Clock },
@@ -43,20 +78,11 @@ const features = [
     { title: 'Prayer Mat', desc: 'Premium prayer mats provided.', icon: Star },
 ];
 
-const blogs = [
-    {
-        title: 'Essential Packing Tips for Your Hajj',
-        image: 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070&auto=format&fit=crop',
-    },
-    {
-        title: 'Personal Stories from the Sacred Journey',
-        image: 'https://images.unsplash.com/photo-1606233282833-87bb161d9042?q=80&w=2148&auto=format&fit=crop',
-    },
-    {
-        title: 'The Ultimate Guide to Performing Umrah',
-        image: 'https://images.unsplash.com/photo-1551041777-cf9bd3048993?q=80&w=2006&auto=format&fit=crop',
-    }
-];
+// Format price display
+const formatPrice = (price: number, currency: string) => {
+    return `Start From $${price.toLocaleString()}`;
+};
+
 // Smooth scroll to packages
 const scrollToPackages = () => {
     const el = document.getElementById('packages')
@@ -69,19 +95,43 @@ const scrollToPackages = () => {
     })
 }
 
+const handleImageError = (event: Event) => {
+    const target = event.target as HTMLImageElement;
+    target.src = '/assets/img/hajj/hajjbg.jpg';
+}
+
+// Get hero background image
+const heroImage = props.settings.hero_image ? `/storage/${props.settings.hero_image}` : '/assets/img/hajj/hajjbg.jpg';
+
+// Get SEO meta tags
+const pageTitle = props.settings.meta_title || 'Dubai Hajj & Umrah Services | Premium Pilgrimage Packages';
+const pageDescription = props.settings.meta_description || 'Book premium Hajj and Umrah packages from Dubai. 5-star hotels, expert guides, all-inclusive services.';
+
+// WhatsApp link
+const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.settings.company_whatsapp.replace(/[^0-9]/g, '')}` : null;
+
 </script>
 
 <template>
     <div class="font-sans text-slate-800">
-        <HajjHeader />
+        <!-- SEO Meta Tags -->
+        <Head>
+            <title>{{ pageTitle }}</title>
+            <meta name="description" :content="pageDescription" />
+            <meta property="og:title" :content="pageTitle" />
+            <meta property="og:description" :content="pageDescription" />
+            <meta property="og:type" content="website" />
+        </Head>
+
+        <HajjHeader :settings="settings" :auth="$page.props.auth" />
 
         <main>
             <!-- Hero Section -->
             <section class="relative h-[85vh] w-full bg-slate-900 group overflow-hidden">
                 <!-- Background Image -->
                 <div class="absolute inset-0">
-                    <img src="/assets/img/hajj/hajjbg.jpg" alt="Makkah" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform
-                    duration-1000" />
+                    <img :src="heroImage" alt="Makkah" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform
+                    duration-1000" @error="handleImageError" />
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent">
                     </div>
                 </div>
@@ -93,7 +143,7 @@ const scrollToPackages = () => {
                         of Allah</span>
                     <h1
                         class="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-8 leading-tight max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-                        Hajj & Umrah with Ease,<br>Faith with Peace
+                        {{ settings.company_tagline || 'Hajj & Umrah with Ease, Faith with Peace' }}
                     </h1>
                     <button @click="scrollToPackages"
                         class="bg-[#D3A762] hover:bg-[#c29652] text-white px-8 py-4 rounded-md font-semibold tracking-wide transition-all transform hover:scale-105 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
@@ -137,29 +187,30 @@ const scrollToPackages = () => {
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <div v-for="(pkg, index) in packages" :key="index"
+                        <div v-for="(pkg, index) in displayPackages" :key="pkg.id"
                             class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow group">
                             <div class="relative h-48 overflow-hidden">
                                 <img :src="pkg.image" :alt="pkg.title"
+                                    @error="handleImageError"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 <div
                                     class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-900">
-                                    7 Days
+                                    {{ pkg.duration_days }} Days
                                 </div>
                             </div>
                             <div class="p-6">
                                 <h3 class="text-xl font-bold text-slate-900 mb-2">{{ pkg.title }}</h3>
-                                <p class="text-[#D3A762] font-semibold text-lg mb-4">{{ pkg.price }}</p>
+                                <p class="text-[#D3A762] font-semibold text-lg mb-4">{{ formatPrice(pkg.price, pkg.currency) }}</p>
                                 <ul class="space-y-2 mb-6">
                                     <li v-for="feat in pkg.features" :key="feat"
                                         class="flex items-center gap-2 text-slate-600 text-sm">
                                         <CheckCircle class="w-4 h-4 text-green-500" /> {{ feat }}
                                     </li>
                                 </ul>
-                                <button
-                                    class="w-full border border-slate-200 py-3 rounded-lg text-slate-700 font-medium hover:bg-slate-900 hover:text-white transition-colors">
+                                <a :href="`/packages/${pkg.slug}`"
+                                    class="w-full block text-center border border-slate-200 py-3 rounded-lg text-slate-700 font-medium hover:bg-slate-900 hover:text-white transition-colors">
                                     View Details
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -167,7 +218,7 @@ const scrollToPackages = () => {
             </section>
 
             <!-- Your Spiritual Voyage -->
-            <section class="py-20 bg-white">
+            <section id="services" class="py-20 bg-white">
                 <div class="max-w-7xl mx-auto px-4 md:px-16">
                     <div class="mb-12 flex items-end justify-between">
                         <div>
@@ -275,7 +326,7 @@ const scrollToPackages = () => {
             </section>
 
             <!-- Elevate Your Faith -->
-            <section class="py-20 bg-gray-50">
+            <section id="features" class="py-20 bg-gray-50">
                 <div class="max-w-7xl mx-auto px-4 md:px-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div class="relative h-[600px] rounded-2xl overflow-hidden shadow-2xl">
                         <img src="/assets/img/hajj/whyus.jpg" class="w-full h-full object-cover"
@@ -307,7 +358,7 @@ const scrollToPackages = () => {
             </section>
 
             <!-- Testimonial Section -->
-            <section class="relative py-24 bg-slate-900 overflow-hidden">
+            <section id="testimonials" v-if="displayTestimonial" class="relative py-24 bg-slate-900 overflow-hidden">
                 <div class="absolute inset-0">
                     <img src="https://images.unsplash.com/photo-1627441584288-51b660c6d9c6?q=80&w=2070&auto=format&fit=crop"
                         class="w-full h-full object-cover opacity-20" alt="Background" />
@@ -315,18 +366,17 @@ const scrollToPackages = () => {
                 <div class="relative z-10 max-w-7xl mx-auto px-4 md:px-16 flex items-center">
                     <div class="bg-white p-10 rounded-xl shadow-xl max-w-lg">
                         <div class="flex gap-1 mb-6">
-                            <Star v-for="i in 5" :key="i" class="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                            <Star v-for="i in displayTestimonial.rating" :key="i" class="w-5 h-5 text-yellow-500 fill-yellow-500" />
                         </div>
                         <p class="text-slate-700 text-lg italic leading-relaxed mb-8">
-                            "The experience was absolutely spiritually uplifting. The team took care of every detail,
-                            from the visa process to the accommodations near the Haram. I felt completely at peace."
+                            "{{ displayTestimonial.content }}"
                         </p>
                         <div class="flex items-center gap-4">
-                            <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=1780&auto=format&fit=crop"
+                            <img :src="displayTestimonial.avatar || '/assets/img/hajj/hajjbg.jpg'"
                                 class="w-12 h-12 rounded-full object-cover" alt="User" />
                             <div>
-                                <h5 class="font-bold text-slate-900">Ahmed Hassan</h5>
-                                <span class="text-sm text-slate-500">Pilgrim from UK</span>
+                                <h5 class="font-bold text-slate-900">{{ displayTestimonial.name }}</h5>
+                                <span class="text-sm text-slate-500">{{ displayTestimonial.location }}</span>
                             </div>
                         </div>
                     </div>
@@ -391,19 +441,19 @@ const scrollToPackages = () => {
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div v-for="(blog, i) in blogs" :key="i"
+                        <div v-for="article in displayArticles" :key="article.id"
                             class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow group">
                             <div class="h-64 overflow-hidden">
-                                <img :src="blog.image"
+                                <img :src="article.image || 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070'"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    :alt="blog.title">
+                                    :alt="article.title">
                             </div>
                             <div class="p-8">
-                                <span class="text-xs font-bold text-[#D3A762] uppercase mb-2 block">Travel Guide</span>
+                                <span class="text-xs font-bold text-[#D3A762] uppercase mb-2 block">{{ article.category || 'Travel Guide' }}</span>
                                 <h3
                                     class="text-xl font-bold text-slate-900 mb-4 group-hover:text-[#D3A762] transition-colors cursor-pointer">
-                                    {{ blog.title }}</h3>
-                                <a href="#"
+                                    {{ article.title }}</h3>
+                                <a :href="`/articles/${article.slug}`"
                                     class="text-sm font-semibold text-slate-500 hover:text-slate-900 flex items-center gap-2">Read
                                     More
                                     <ArrowRight class="w-4 h-4" />
@@ -414,25 +464,58 @@ const scrollToPackages = () => {
                 </div>
             </section>
 
-            <!-- Newsletter CTA (Extra nice touch) -->
-            <section class="py-20 bg-[#D3A762]">
-                <!-- <div class="max-w-4xl mx-auto px-4 text-center text-white">
-                    <h2 class="text-3xl font-serif font-bold mb-4">Subscribe for Updates</h2>
-                    <p class="mb-8 text-white/90">Join our community to get the latest news and special offers for Hajj
-                        & Umrah packages.</p>
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                        <input type="email" placeholder="Your email address"
-                            class="px-6 py-4 rounded-full text-slate-900 w-full sm:w-96 focus:outline-none shadow-lg">
-                        <button
-                            class="bg-slate-900 text-white px-8 py-4 rounded-full font-bold hover:bg-slate-800 transition-colors shadow-lg">Subscribe</button>
+            <!-- FAQ Section -->
+            <section v-if="displayFaqs.length > 0" class="py-20 bg-white">
+                <div class="max-w-4xl mx-auto px-4 md:px-16">
+                    <div class="text-center mb-12">
+                        <span class="text-[#D3A762] uppercase tracking-wider text-sm font-semibold">FAQs</span>
+                        <h2 class="text-4xl font-serif mt-2 text-slate-900">Frequently Asked Questions</h2>
+                        <p class="mt-4 text-slate-600">Find answers to common questions about our Hajj & Umrah packages</p>
                     </div>
-                </div> -->
 
-                <img src="https://images.unsplash.com/photo-1596726284620-830238e8f643?q=80&w=2684&auto=format&fit=crop"
-                    class="rounded-2xl shadow-2xl w-full" alt="Kaaba" />
+                    <div class="space-y-4">
+                        <div v-for="(faq, i) in displayFaqs" :key="faq.id"
+                             class="bg-white border border-slate-200 rounded-xl overflow-hidden transition-all hover:shadow-md">
+                            <button
+                                @click="toggleFaq(i)"
+                                class="w-full px-6 py-5 flex items-center justify-between text-left group">
+                                <span class="font-semibold text-slate-900 group-hover:text-[#D3A762] transition text-lg pr-4">
+                                    {{ faq.question }}
+                                </span>
+                                <span class="flex-shrink-0 text-slate-500 transition-transform duration-300"
+                                      :class="{ 'rotate-180': faq.open }">
+                                    <ChevronDown class="w-5 h-5" />
+                                </span>
+                            </button>
+                            <div v-show="faq.open" class="px-6 pb-5 text-slate-600 leading-relaxed">
+                                {{ faq.answer }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Banner Section -->
+            <section class="w-full bg-[#D3A762]">
+                <img v-if="settings.banner_image"
+                     :src="`/storage/${settings.banner_image}`"
+                     alt="Banner"
+                     class="w-full h-[200px] object-cover" />
+                <img v-else
+                     src="https://images.unsplash.com/photo-1596726284620-830238e8f643?q=80&w=2684&auto=format&fit=crop"
+                     alt="Kaaba"
+                     class="w-full h-[200px] object-cover" />
             </section>
         </main>
 
-        <HajjFooter />
+        <HajjFooter :settings="settings" />
+
+        <!-- WhatsApp Floating Button -->
+        <a v-if="whatsappUrl" :href="whatsappUrl" target="_blank" rel="noopener noreferrer"
+           class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl transition-all hover:scale-110 z-50 flex items-center gap-2 group"
+           aria-label="Chat on WhatsApp">
+            <MessageCircle class="w-6 h-6" />
+            <span class="hidden group-hover:inline-block text-sm font-semibold pr-2">Chat with us</span>
+        </a>
     </div>
 </template>
