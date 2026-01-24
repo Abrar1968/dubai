@@ -1578,6 +1578,187 @@ No direct hardware interfaces required. System operates entirely through web bro
 
 ---
 
+## Addendum — Codebase Additions (since v2.0)
+
+The following features, data structures, and implementation details are present in the codebase but were not captured in SRS v2.0. They are recorded here to bring the SRS in line with the current implementation (targeting SRS v2.1).
+
+### Summary of additions
+- Package gallery support (`package_gallery` table and admin/gallery UI)
+- Booking travelers details (`booking_travelers` table and user input validation)
+- Booking status audit trail (`booking_status_logs` table and status logging)
+- Office locations management (`office_locations` table and admin UI)
+- FAQ module with reordering and public display (`faqs` table and `FaqService`)
+- User dashboard and bookings UI implemented with Vue + Inertia (routes under `/user`)
+- Two-Factor Authentication (2FA) support via Laravel Fortify and settings controllers
+- New services and controllers reflecting the above (e.g., `OfficeLocationService`, `FaqService`, `AdminSectionService`, `AdminUserService`, `SiteSettingService`)
+
+---
+
+### A. Package Gallery
+**Purpose:** Attach multiple ordered images to a package (public gallery + admin ordering).
+
+**DB Table:** `package_gallery`
+**Key fields:**
+- `id` (PK)
+- `package_id` (FK -> packages)
+- `image_path` (string)
+- `alt_text` (string, nullable)
+- `sort_order` (unsigned int)
+- `created_at`, `updated_at`
+
+**Acceptance Criteria:**
+- Admin can upload multiple gallery images for a package
+- Images are displayed in `sort_order` on public package pages
+- Deleting a package removes its gallery items
+
+**References:** migration `2026_01_17_055941_create_package_gallery_table.php`, `PackageGallery` model
+
+---
+
+### B. Booking Travelers
+**Purpose:** Store traveler/passenger information per booking.
+
+**DB Table:** `booking_travelers`
+**Key fields:**
+- `id` (PK)
+- `booking_id` (FK -> bookings)
+- `full_name` (string)
+- `passport_number` (string, nullable)
+- `passport_expiry` (date, nullable)
+- `date_of_birth` (date, nullable)
+- `nationality` (string, nullable)
+- `gender` (enum: male, female, other, nullable)
+- `is_primary` (boolean)
+- `created_at`, `updated_at`
+
+**Acceptance Criteria / Business Rules:**
+- Each booking can have one or many travelers
+- At least one traveler is required when creating a booking
+- Traveler validations enforced on booking submission (name, DOB, optional passport details)
+
+**References:** migration `2026_01_17_055943_create_booking_travelers_table.php`, `BookingController@store`, `BookingService`
+
+---
+
+### C. Booking Status Logs
+**Purpose:** Maintain an audit trail of booking status transitions.
+
+**DB Table:** `booking_status_logs`
+**Key fields:**
+- `id` (PK)
+- `booking_id` (FK -> bookings)
+- `from_status` (string, nullable)
+- `to_status` (string)
+- `changed_by` (FK -> users, nullable)
+- `notes` (text, nullable)
+- `created_at` (timestamp)
+
+**Acceptance Criteria:**
+- Status changes are recorded each time a booking status is updated
+- Logs include who changed the status (user) and optional notes
+- Admin and user views can show status history for a booking
+
+**References:** migration `2026_01_17_055944_create_booking_status_logs_table.php`, `Booking` model relation `statusLogs`
+
+---
+
+### D. Office Locations
+**Purpose:** Manage office branches per section (contact addresses, map coords).
+
+**DB Table:** `office_locations`
+**Key fields:**
+- `id` (PK)
+- `section` (enum: hajj, tour, typing, global)
+- `name` (string)
+- `address` (text)
+- `phone` (string, nullable)
+- `email` (string, nullable)
+- `map_lat`, `map_lng` (decimal, nullable)
+- `sort_order` (unsigned int)
+- `is_active` (boolean)
+- `created_at`, `updated_at`
+
+**Acceptance Criteria:**
+- Admin can create/edit/delete office locations and set active/inactive
+- Public site can display office locations by section
+- Office locations can be ordered via `sort_order`
+
+**References:** migration `2026_01_17_055951_create_office_locations_table.php`, `OfficeLocationService`
+
+---
+
+### E. FAQ Module
+**Purpose:** Manage frequently asked questions per section, with admin CRUD and public display.
+
+**DB Table:** `faqs`
+**Key behaviors:**
+- Reordering of FAQs (for display order)
+- Active/Inactive toggles
+- Public controllers fetch section-specific FAQs
+
+**Acceptance Criteria:**
+- Admin UI provides create/edit/delete and reordering actions
+- Public pages display active FAQs for the relevant section (e.g., Hajj)
+
+**References:** migration `2026_01_17_055952_create_faqs_table.php`, `FaqService`, `Admin/Hajj/FaqController`, public controllers using FAQs
+
+---
+
+### F. User Dashboard Implementation (Changed)
+**Previous SRS Note:** User Dashboard (Blade + Alpine.js) - NOT YET IMPLEMENTED
+
+**Current Implementation (codebase):**
+- Implemented as Vue + Inertia pages under `/user/*` routes (see `routes/web.php`)
+- Features include:
+  - Dashboard stats (total/pending/confirmed/completed bookings)
+  - Bookings listing and filtering (`/user/bookings`)
+  - Booking details showing travelers and status logs (`/user/bookings/{id}`)
+  - Create booking (public package booking route posts to `User\BookingController@store`)
+  - Profile management routes for viewing/updating profile and password
+
+**Acceptance Criteria:**
+- Users can authenticate, view dashboard, place bookings (with travelers), and view booking histories
+- Dashboard displays accurate stats and recent bookings
+
+**References:** `User\DashboardController`, `User\BookingController`, Inertia pages `resources/js/pages/user/*`, routes prefixed with `user.`
+
+---
+
+### G. Two-Factor Authentication (2FA)
+**Purpose:** Optional 2FA for enhanced account security (Fortify integration).
+
+**Behavioral Notes:**
+- 2FA is supported via Laravel Fortify
+- Controllers and Views exist for enabling/disabling 2FA, regenerating recovery codes, and QR code provisioning
+- Settings for profile, password, and 2FA are present under `app/Http/Controllers/Settings/*`
+
+**Acceptance Criteria:**
+- Users can enable/disable 2FA from their account settings
+- Recovery codes are available and stored securely
+- Admin users may be required to use 2FA (configurable)
+
+**References:** `FortifyServiceProvider`, `Settings\TwoFactorAuthenticationController`, `TwoFactorAuthenticatable` support on `User` model
+
+---
+
+### H. Services / Controllers (New or Expanded)
+**Notable services/controllers added or expanded in codebase:**
+- `AdminSectionService`, `AdminUserService` (admin management and section assignment)
+- `FaqService` (FAQ management and reordering)
+- `OfficeLocationService` (office CRUD)
+- `SiteSettingService` / `SettingService` (site configs and section-specific settings)
+- `BookingService` (booking creation with traveler handling and status updates)
+
+**Acceptance Criteria:**
+- Services follow the project's Service Pattern and expose `list()`, `getById()`, `create()`, `update()`, `delete()` patterns
+- Controllers use services and FormRequests for validation
+
+---
+
+**Revision note:** These additions will be incorporated into SRS v2.1 (date: 2026-01-24) to reflect the current implementation. Any future code changes should be reflected in the SRS via the same addendum mechanism.
+
+---
+
 ## 12. Appendices
 
 ### Appendix A: Glossary
