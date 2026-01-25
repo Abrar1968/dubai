@@ -8,6 +8,22 @@
                 <div class="absolute inset-0 bg-black/25"></div>
             </section>
 
+            <!-- ✅ SERVICES GRID -->
+            <section class="py-10 bg-white">
+                <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+                    <h3 class="text-2xl font-semibold text-slate-900 mb-2">Our Typing Services</h3>
+                    <p class="text-slate-600 mb-6 text-sm">Quick access to common services — click a card to learn more.</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <article v-for="s in services" :key="s.url" class="rounded-lg border border-slate-200 p-5 bg-slate-50">
+                            <h4 class="font-semibold text-slate-900 mb-2">{{ s.title }}</h4>
+                            <p class="text-sm text-slate-700 mb-4">{{ s.desc }}</p>
+                            <a :href="s.url" class="inline-flex items-center rounded-md bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm">Learn more</a>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
             <!-- ✅ WELCOME + INTRO -->
             <section class="py-14 sm:py-16">
                 <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -15,7 +31,7 @@
                         <div
                             class="flex items-center justify-center gap-3 text-[11px] tracking-[0.25em] font-bold uppercase text-emerald-700">
                             <span class="h-[1px] w-10 bg-emerald-700/60"></span>
-                            Welcome to Al Nahda Centre
+                            Welcome to SS Group Travels & Typing
                             <span class="h-[1px] w-10 bg-emerald-700/60"></span>
                         </div>
 
@@ -78,6 +94,23 @@
 <script setup>
 import TypingLayout from '@/layouts/TypingLayout.vue';
 
-// Put your banner image in: public/assets/img/typing/home-hero.jpg
-const heroImage = '/assets/img/typing/home-hero.jpg'
+// Hero image from site settings (public/storage)
+const heroImage = '/storage/settings/hero/kabah_1768984201_PGeKumrh.webp'
+
+// Services shown in the grid below the hero
+const services = [
+  { title: 'Immigration', desc: 'Emirates ID, residency and immigration document services.', url: '/typing/services/immigration' },
+  { title: 'Labour Ministry', desc: 'MOHRE and labour-related transactions and queries.', url: '/typing/services/labour-ministry' },
+  { title: 'Tasheel Services', desc: 'Tasheel centre transactions, contract typing and document submission.', url: '/typing/services/tasheel-services' },
+  { title: 'Domestic Workers Visa', desc: 'Visa processing and documentation for domestic workers.', url: '/typing/services/domestic-workers-visa' },
+  { title: 'Family Visa', desc: 'Family visa flow, renewals, newborn registration and cancellations.', url: '/typing/services/family-visa-process' },
+  { title: 'Health Insurance', desc: 'Medical fitness and health insurance coordination for visa processing.', url: '/typing/services/health-insurance' },
+  { title: 'Ministry of Interior', desc: 'MOI-related permits, Emirates ID and clearance services.', url: '/typing/services/ministry-of-interior' },
+  { title: 'Certificate Attestation', desc: 'Document attestation and legalisation services.', url: '/typing/services/certificate-attestation' },
+  { title: 'VAT Registration', desc: 'VAT registration and tax compliance assistance.', url: '/typing/services/vat-registration' },
+  { title: 'CT Registration', desc: 'Corporate tax (CT) registration and support.', url: '/typing/services/ct-registration' },
+  { title: 'Passport Renewal', desc: 'Passport renewal guidance and document handling.', url: '/typing/services/passport-renewal' },
+  { title: 'Immigration Card', desc: 'Immigration card and Emirates ID assistance and replacement.', url: '/typing/services/immigration-card' },
+]
+
 </script>

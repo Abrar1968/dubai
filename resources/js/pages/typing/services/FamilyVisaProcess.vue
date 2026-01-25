@@ -38,17 +38,28 @@
           <!-- Right: Actions + Details -->
           <div class="md:col-span-2">
             <div class="flex flex-col items-end gap-4 mb-6">
-              <a :href="applyLink('new_residency')" class="inline-flex items-center justify-center rounded-md bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 font-semibold">Apply for New Residency / Entry Permit</a>
+              <a :href="applyLinkToPage('new_residency')" class="inline-flex items-center justify-center rounded-md bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 font-semibold">Apply for New Residency / Entry Permit</a>
               <div class="flex flex-col items-end gap-3 w-full md:w-auto">
-                <a :href="applyLink('renewal')" class="inline-flex items-center justify-center rounded-md bg-blue-500 hover:bg-blue-600 text-white px-5 py-2">Residency Renewal</a>
-                <a :href="applyLink('new_born')" class="inline-flex items-center justify-center rounded-md bg-blue-500 hover:bg-blue-600 text-white px-5 py-2">New Born Baby</a>
-                <a :href="applyLink('cancellation')" class="inline-flex items-center justify-center rounded-md bg-blue-500 hover:bg-blue-600 text-white px-5 py-2">Cancellation</a>
+                <a :href="applyLinkToPage('renewal')" class="inline-flex items-center justify-center rounded-md bg-blue-500 hover:bg-blue-600 text-white px-5 py-2">Residency Renewal</a>
+                <a :href="applyLinkToPage('new_born')" class="inline-flex items-center justify-center rounded-md bg-blue-500 hover:bg-blue-600 text-white px-5 py-2">New Born Baby</a>
+                <a :href="applyLinkToPage('cancellation')" class="inline-flex items-center justify-center rounded-md bg-blue-500 hover:bg-blue-600 text-white px-5 py-2">Cancellation</a>
               </div>
             </div>
 
             <div class="space-y-8">
               <div v-for="em in emirates" :key="em.slug" v-show="selectedEmirate === em.slug">
-                <!-- Visa type cards removed per request -->
+                <h2 class="text-2xl font-bold text-slate-900">{{ em.name }}</h2>
+                <p class="mt-2 text-slate-700">{{ em.description }}</p>
+
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div v-for="item in em.services" :key="item.key" class="rounded-md p-4 border border-slate-100 bg-slate-50">
+                    <h3 class="font-bold text-slate-900">{{ item.title }}</h3>
+                    <p class="mt-2 text-slate-700">{{ item.desc }}</p>
+                    <div class="mt-3">
+                      <a :href="applyLinkToPage(item.key)" class="inline-flex items-center rounded-md bg-[#D3A762] hover:bg-[#c29652] px-4 py-2 text-white font-semibold">Apply</a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -150,7 +161,19 @@ const selectEmirate = (slug) => {
 
 const selected = computed(() => emirates.find(e => e.slug === selectedEmirate.value))
 
+const typeToPath = {
+  new_residency: 'new-residency',
+  renewal: 'residency-renewal',
+  new_born: 'new-born-baby',
+  cancellation: 'cancellation',
+}
+
 const applyLink = (type) => {
   return `/contactus?service=family-visa&emirate=${selectedEmirate.value}&type=${encodeURIComponent(type)}`
+}
+
+const applyLinkToPage = (type) => {
+  const path = typeToPath[type] ?? type
+  return `/typing/services/family/${path}?emirate=${selectedEmirate.value}`
 }
 </script>

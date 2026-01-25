@@ -57,6 +57,23 @@ Route::get('/typing/services/family-visa-process', function () {
     return Inertia::render('typing/services/FamilyVisaProcess');
 })->name('typing.services.family-visa-process');
 
+// Family visa sub-pages
+Route::get('/typing/services/family/new-residency', function () {
+    return Inertia::render('typing/services/family/NewResidency');
+})->name('typing.services.family.new-residency');
+
+Route::get('/typing/services/family/residency-renewal', function () {
+    return Inertia::render('typing/services/family/ResidencyRenewal');
+})->name('typing.services.family.residency-renewal');
+
+Route::get('/typing/services/family/new-born-baby', function () {
+    return Inertia::render('typing/services/family/NewBornBaby');
+})->name('typing.services.family.new-born-baby');
+
+Route::get('/typing/services/family/cancellation', function () {
+    return Inertia::render('typing/services/family/Cancellation');
+})->name('typing.services.family.cancellation');
+
 Route::get('/typing/services/health-insurance', function () {
     return Inertia::render('typing/services/HealthInsurance');
 })->name('typing.services.health-insurance');
