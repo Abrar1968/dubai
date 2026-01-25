@@ -133,20 +133,23 @@ const logout = () => {
                 <ChevronDown class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
               </a>
 
-              <div class="absolute left-0 top-full mt-3 w-48 rounded-xl bg-white border border-slate-200
+              <div class="absolute left-0 top-full mt-3 w-56 rounded-xl bg-white border border-slate-200
            shadow-[0_20px_40px_rgba(0,0,0,0.12)]
            opacity-0 invisible translate-y-2
            group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
            transition-all duration-200 z-50">
-                <a href="/typing/services/typing"
-                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-t-xl transition">
-                  Typing Services
-                </a>
-
-                <a href="/typing/services/legalization"
-                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-b-xl transition">
-                  Legalization
-                </a>
+                <a href="/typing/services/immigration" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">Immigration</a>
+                <a href="/typing/services/labour-ministry" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">Labour Ministry</a>
+                <a href="/typing/services/tasheel-services" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">Tasheel Services</a>
+                <a href="/typing/services/domestic-workers-visa" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">Domestic Workers Visa Apply</a>
+                <a href="/typing/services/family-visa-process" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">Family Visa Process</a>
+                <a href="/typing/services/health-insurance" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">Health Insurance</a>
+                <a href="/typing/services/ministry-of-interior" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">Ministry of Interior</a>
+                <a href="/typing/services/certificate-attestation" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">Certificate Attestation</a>
+                <a href="/typing/services/vat-registration" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">VAT Registration</a>
+                <a href="/typing/services/ct-registration" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">CT Registration</a>
+                <a href="/typing/services/passport-renewal" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">Passport Renewal</a>
+                <a href="/typing/services/immigration-card" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition rounded-b-xl">Immigration Card</a>
               </div>
             </div>
 
@@ -241,14 +244,18 @@ const logout = () => {
                 </button>
 
                 <div v-show="mobileServicesOpen" class="border-t border-slate-200">
-                    <a href="/typing/services/typing"
-                        class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">
-                        Typing Services
-                    </a>
-                    <a href="/typing/services/legalization"
-                        class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">
-                        Legalization
-                    </a>
+                    <a href="/typing/services/immigration" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Immigration</a>
+                    <a href="/typing/services/labour-ministry" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Labour Ministry</a>
+                    <a href="/typing/services/tasheel-services" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Tasheel Services</a>
+                    <a href="/typing/services/domestic-workers-visa" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Domestic Workers Visa Apply</a>
+                    <a href="/typing/services/family-visa-process" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Family Visa Process</a>
+                    <a href="/typing/services/health-insurance" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Health Insurance</a>
+                    <a href="/typing/services/ministry-of-interior" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Ministry of Interior</a>
+                    <a href="/typing/services/certificate-attestation" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Certificate Attestation</a>
+                    <a href="/typing/services/vat-registration" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">VAT Registration</a>
+                    <a href="/typing/services/ct-registration" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">CT Registration</a>
+                    <a href="/typing/services/passport-renewal" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Passport Renewal</a>
+                    <a href="/typing/services/immigration-card" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Immigration Card</a>
                 </div>
 
                 <a href="/contact" class="block px-4 py-3 text-sm text-slate-800 hover:bg-slate-50">Contact

@@ -36,6 +36,55 @@ Route::get('/typing', function () {
     return Inertia::render('typing/typinghome');
 })->name('typing.index');
 
+// Typing Service pages
+Route::get('/typing/services/immigration', function () {
+    return Inertia::render('typing/services/Immigration');
+})->name('typing.services.immigration');
+
+Route::get('/typing/services/labour-ministry', function () {
+    return Inertia::render('typing/services/LabourMinistry');
+})->name('typing.services.labour-ministry');
+
+Route::get('/typing/services/tasheel-services', function () {
+    return Inertia::render('typing/services/TasheelServices');
+})->name('typing.services.tasheel-services');
+
+Route::get('/typing/services/domestic-workers-visa', function () {
+    return Inertia::render('typing/services/DomesticWorkersVisa');
+})->name('typing.services.domestic-workers-visa');
+
+Route::get('/typing/services/family-visa-process', function () {
+    return Inertia::render('typing/services/FamilyVisaProcess');
+})->name('typing.services.family-visa-process');
+
+Route::get('/typing/services/health-insurance', function () {
+    return Inertia::render('typing/services/HealthInsurance');
+})->name('typing.services.health-insurance');
+
+Route::get('/typing/services/ministry-of-interior', function () {
+    return Inertia::render('typing/services/MinistryOfInterior');
+})->name('typing.services.ministry-of-interior');
+
+Route::get('/typing/services/certificate-attestation', function () {
+    return Inertia::render('typing/services/CertificateAttestation');
+})->name('typing.services.certificate-attestation');
+
+Route::get('/typing/services/vat-registration', function () {
+    return Inertia::render('typing/services/VATRegistration');
+})->name('typing.services.vat-registration');
+
+Route::get('/typing/services/ct-registration', function () {
+    return Inertia::render('typing/services/CTRegistration');
+})->name('typing.services.ct-registration');
+
+Route::get('/typing/services/passport-renewal', function () {
+    return Inertia::render('typing/services/PassportRenewal');
+})->name('typing.services.passport-renewal');
+
+Route::get('/typing/services/immigration-card', function () {
+    return Inertia::render('typing/services/ImmigrationCard');
+})->name('typing.services.immigration-card');
+
 // ==========================================
 // User Dashboard Routes (Vue + Inertia)
 // ==========================================
