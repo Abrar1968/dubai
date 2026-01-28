@@ -139,4 +139,29 @@ class ContactInquiryService
             'closed' => ContactInquiry::status(InquiryStatus::CLOSED)->count(),
         ];
     }
+
+    /**
+     * Get inquiry statistics by section.
+     */
+    public function getStatsBySection(string $section): array
+    {
+        return [
+            'total' => ContactInquiry::where('section', $section)->count(),
+            'new' => ContactInquiry::where('section', $section)->status(InquiryStatus::NEW)->count(),
+            'read' => ContactInquiry::where('section', $section)->status(InquiryStatus::READ)->count(),
+            'responded' => ContactInquiry::where('section', $section)->status(InquiryStatus::RESPONDED)->count(),
+            'closed' => ContactInquiry::where('section', $section)->status(InquiryStatus::CLOSED)->count(),
+        ];
+    }
+
+    /**
+     * Get recent inquiries by section.
+     */
+    public function getRecentBySection(string $section, int $limit = 5): Collection
+    {
+        return ContactInquiry::where('section', $section)
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get();
+    }
 }

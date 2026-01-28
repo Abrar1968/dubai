@@ -46,8 +46,8 @@
                             <div v-if="service.image_url || service.image" class="mb-3 h-32 overflow-hidden rounded-md">
                                 <img :src="service.image_url || getImageUrl(service.image)" :alt="service.title" class="w-full h-full object-cover" @error="handleImageError" />
                             </div>
-                            <div v-else-if="service.icon" class="mb-3 text-3xl text-teal-600">
-                                <i :class="service.icon"></i>
+                            <div v-else-if="service.icon" class="mb-3 text-3xl">
+                                <span>{{ service.icon }}</span>
                             </div>
                             <h4 class="font-semibold text-slate-900 mb-2">{{ service.title }}</h4>
                             <p class="text-sm text-slate-700 mb-4 line-clamp-2">{{ service.short_description }}</p>

@@ -44,7 +44,7 @@
                                 <!-- Customer Photo -->
                                 <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-full bg-gray-100">
                                     @if($testimonial->avatar)
-                                        <img src="{{ Storage::url($testimonial->avatar) }}" alt="{{ $testimonial->name }}" class="h-full w-full object-cover">
+                                        <img src="{{ \Illuminate\Support\Facades\Storage::url($testimonial->avatar) }}" alt="{{ $testimonial->name }}" class="h-full w-full object-cover">
                                     @else
                                         <div class="flex h-full items-center justify-center">
                                             <span class="text-lg font-medium text-gray-400">{{ substr($testimonial->name, 0, 1) }}</span>

@@ -80,7 +80,7 @@
                 <tr class="hover:bg-slate-50">
                     <td class="px-4 py-4">
                         @if($package->thumbnail || $package->image)
-                            <img src="{{ Storage::url($package->thumbnail ?? $package->image) }}" alt="{{ $package->title }}" class="h-12 w-16 object-cover rounded-lg">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($package->thumbnail ?? $package->image) }}" alt="{{ $package->title }}" class="h-12 w-16 object-cover rounded-lg">
                         @else
                             <div class="h-12 w-16 bg-slate-200 rounded-lg flex items-center justify-center">
                                 <svg class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

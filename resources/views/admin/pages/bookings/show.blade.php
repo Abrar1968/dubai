@@ -68,7 +68,7 @@
 
                     <div class="flex gap-4">
                         @if($booking->package->thumbnail || $booking->package->image)
-                            <img src="{{ Storage::url($booking->package->thumbnail ?? $booking->package->image) }}" alt="{{ $booking->package->title }}" class="h-24 w-32 object-cover rounded-lg flex-shrink-0">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($booking->package->thumbnail ?? $booking->package->image) }}" alt="{{ $booking->package->title }}" class="h-24 w-32 object-cover rounded-lg flex-shrink-0">
                         @endif
                         <div>
                             <h4 class="font-medium text-slate-900">{{ $booking->package->title }}</h4>

@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\FamilyVisaEmirate;
+use App\Models\FamilyVisaType;
 use App\Models\SiteSetting;
 use App\Models\TypingService;
 use App\Models\User;
@@ -18,6 +20,7 @@ class TypingSectionSeeder extends Seeder
     {
         $this->seedTypingAdmin();
         $this->seedTypingServices();
+        $this->seedFamilyVisaData();
         $this->seedTypingSettings();
     }
 
@@ -57,7 +60,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'immigration',
                 'short_description' => 'Emirates ID, residency and immigration document services.',
                 'long_description' => 'We help individuals and companies with UAE immigration and residency processes.',
-                'icon' => 'passport',
+                'icon' => '🛂',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'Establishment card', 'description' => 'Register your company as a legal sponsor. Requirements typically include a valid trade licence, company documents and passport copies of authorized signatories. The Establishment Card is required for processing visas and labour services.'],
@@ -80,7 +83,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'labour-ministry',
                 'short_description' => 'MOHRE and labour-related transactions and queries.',
                 'long_description' => 'Assistance with MOHRE and labour-related processes for employers and employees.',
-                'icon' => 'briefcase',
+                'icon' => '💼',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'Ministry Of Human Resource / Business Setup', 'description' => 'Employer registration and company setup guidance. We help link company records with MOHRE so you can hire staff, issue labour contracts and apply for work permits.'],
@@ -102,7 +105,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'tasheel-services',
                 'short_description' => 'Tasheel centre transactions, contract typing and document submission.',
                 'long_description' => 'Services provided at Tasheel service centres including labour transactions and contract typing.',
-                'icon' => 'building',
+                'icon' => '🏢',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'Service Centre Transactions', 'description' => 'Document submission, fee payments and status tracking for labour-related transactions processed through Tasheel centres.'],
@@ -123,7 +126,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'domestic-workers-visa',
                 'short_description' => 'Visa processing and documentation for domestic workers.',
                 'long_description' => 'Support for sponsoring and applying for domestic worker visas including documentation and sponsor obligations.',
-                'icon' => 'home',
+                'icon' => '🏠',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'Eligibility & Requirements', 'description' => 'Guidance on eligibility, required documents, sponsor responsibilities and welfare obligations for domestic workers.'],
@@ -145,7 +148,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'family-visa-process',
                 'short_description' => 'Family visa flow, renewals, newborn registration and cancellations.',
                 'long_description' => 'Your Gateway to Reuniting Families. We understand the significance of family and the joy that comes with being together. Our mission is to simplify the visa application process, making it easier for families to reunite and create lasting memories.',
-                'icon' => 'users',
+                'icon' => '👨‍👩‍👧‍👦',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'Apply for New Residency / Entry Permit', 'description' => 'Start a new family residency application with sponsor documents, entry permits and medical fitness tests.'],
@@ -167,7 +170,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'health-insurance',
                 'short_description' => 'Medical fitness and health insurance coordination for visa processing.',
                 'long_description' => 'Provision of mandatory and voluntary health insurance policies for residents and employees.',
-                'icon' => 'heart',
+                'icon' => '❤️',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'Policy Types', 'description' => 'Guidance on selecting third-party or comprehensive plans suitable for individuals, families or corporate groups.'],
@@ -188,7 +191,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'ministry-of-interior',
                 'short_description' => 'MOI-related permits, Emirates ID and clearance services.',
                 'long_description' => 'Key services provided through the Ministry of Interior: police clearance, vehicle services, insurance and driving licence support.',
-                'icon' => 'shield',
+                'icon' => '🛡️',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'POLICE CLEARANCE CERTIFICATE', 'description' => 'Obtain good conduct certificates required for employment and residency. The process usually requires identity verification and an online application; timelines vary by nationality and whether additional attestations are needed.'],
@@ -210,7 +213,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'certificate-attestation',
                 'short_description' => 'Document attestation and legalisation services.',
                 'long_description' => 'Document attestation and legalization services for personal and corporate certificates.',
-                'icon' => 'file-check',
+                'icon' => '📋',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'Document Collection & Verification', 'description' => 'Assist with collecting required documents, verifying signatures and preparing files for attestation.'],
@@ -231,7 +234,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'vat-registration',
                 'short_description' => 'VAT registration and tax compliance assistance.',
                 'long_description' => 'Registration and ongoing compliance services for Value Added Tax (VAT) regimes.',
-                'icon' => 'calculator',
+                'icon' => '🧮',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'Registration Process', 'description' => 'Guidance on VAT registration thresholds, document requirements, and submission to the tax authority.'],
@@ -252,7 +255,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'ct-registration',
                 'short_description' => 'Corporate tax (CT) registration and support.',
                 'long_description' => 'Commercial / corporate tax registration and compliance support services.',
-                'icon' => 'building-2',
+                'icon' => '🏛️',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'CT Registration Steps', 'description' => 'Assistance with registration steps, submission of required documents and initial tax setup for businesses.'],
@@ -273,7 +276,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'passport-renewal',
                 'short_description' => 'Passport renewal guidance and document handling.',
                 'long_description' => 'Assistance with passport renewal for residents and citizens, including document collection and processing.',
-                'icon' => 'id-card',
+                'icon' => '🪪',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'Eligibility & Requirements', 'description' => 'Information on eligibility, required documents, and conditions for passport renewal or extension.'],
@@ -294,7 +297,7 @@ class TypingSectionSeeder extends Seeder
                 'slug' => 'immigration-card',
                 'short_description' => 'Immigration card and Emirates ID assistance and replacement.',
                 'long_description' => 'Services related to the issuance, renewal and replacement of immigration/residency cards.',
-                'icon' => 'credit-card',
+                'icon' => '💳',
                 'image' => null,
                 'sub_services' => [
                     ['name' => 'Card Issuance', 'description' => 'Assistance with initial issuance and first-time enrolment for immigration/residency cards, including biometrics coordination.'],
@@ -316,6 +319,235 @@ class TypingSectionSeeder extends Seeder
                 ['slug' => $serviceData['slug']],
                 $serviceData
             );
+        }
+    }
+
+    /**
+     * Seed Family Visa Emirates and Visa Types.
+     * This populates the dynamic family visa system with all 7 UAE emirates
+     * and their respective visa types (New Residency, Renewal, New Born, Cancellation).
+     */
+    protected function seedFamilyVisaData(): void
+    {
+        $emirates = [
+            [
+                'name' => 'Sharjah',
+                'slug' => 'sharjah',
+                'description' => 'Sharjah processes family visas in accordance with federal immigration rules and local authority procedures. Processing times vary and some emirate-specific requirements may apply.',
+                'intro_text' => 'Complete family visa services for Sharjah residents and sponsors.',
+                'sort_order' => 1,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Dubai',
+                'slug' => 'dubai',
+                'description' => 'Dubai follows federal visa rules and has specific timelines for medical testing and Emirates ID issuance. We coordinate appointments and document submissions to comply with Dubai-specific procedures.',
+                'intro_text' => 'Professional family visa assistance for Dubai sponsors.',
+                'sort_order' => 2,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Ajman',
+                'slug' => 'ajman',
+                'description' => 'Ajman processes follow the federal guidelines with local administrative steps; we assist with document submission and local office visits.',
+                'intro_text' => 'Family visa support for Ajman-based sponsors.',
+                'sort_order' => 3,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Abu Dhabi',
+                'slug' => 'abu-dhabi',
+                'description' => 'Large-scale processing hub with specific health insurance and medical checks; we ensure all steps are completed accurately for Abu Dhabi authorities.',
+                'intro_text' => 'Comprehensive family visa services in the capital.',
+                'sort_order' => 4,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Ras Al Khaimah',
+                'slug' => 'ras-al-khaimah',
+                'description' => 'Ras Al Khaimah follows federal immigration processes and we offer end-to-end support for family visa matters in the emirate.',
+                'intro_text' => 'Family visa assistance for RAK residents.',
+                'sort_order' => 5,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Umm Al Quwain',
+                'slug' => 'umm-al-quwain',
+                'description' => 'We assist with family visas in Umm Al Quwain, including coordination of medical tests and Emirates ID steps.',
+                'intro_text' => 'Family visa support in Umm Al Quwain.',
+                'sort_order' => 6,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Fujairah',
+                'slug' => 'fujairah',
+                'description' => 'Fujairah family visa processing support with local knowledge to speed up document handling and approvals.',
+                'intro_text' => 'Expert family visa services for Fujairah sponsors.',
+                'sort_order' => 7,
+                'is_active' => true,
+            ],
+        ];
+
+        // Common visa types for all emirates
+        $visaTypes = [
+            [
+                'name' => 'Apply for New Residency / Entry Permit',
+                'slug' => 'new-residency',
+                'short_description' => 'Start a new family residency application with sponsor documents, entry permits and medical fitness tests.',
+                'long_description' => '<p>Start a new family residency application with sponsor documents, entry permits and medical fitness tests. We guide you through each step and coordinate appointments for Emirates ID and medical fitness tests to minimize delays.</p><p>Our experienced team ensures all documentation is prepared correctly, reducing the risk of rejection or processing delays.</p>',
+                'requirements' => [
+                    'Valid sponsor residency visa',
+                    'Original passport of family member',
+                    'Passport-size photographs',
+                    'Marriage certificate (attested)',
+                    'Birth certificates for children (attested)',
+                    'Sponsor salary certificate or income proof',
+                    'Tenancy contract (Ejari or equivalent)',
+                ],
+                'documents' => [
+                    'Sponsor Emirates ID copy',
+                    'Sponsor passport copy with visa page',
+                    'Family member passport (original)',
+                    'Attested marriage/birth certificates',
+                    'Sponsor employment contract',
+                    'Bank statements (3 months)',
+                    'Tenancy contract',
+                    'Medical fitness certificate (upon arrival)',
+                ],
+                'process_steps' => [
+                    'Submit sponsor documents and family member details',
+                    'Receive entry permit approval',
+                    'Family member enters UAE on entry permit',
+                    'Complete medical fitness test',
+                    'Emirates ID biometric enrollment',
+                    'Visa stamping in passport',
+                    'Receive residency card',
+                ],
+                'processing_time' => '7-14 working days',
+                'price_range' => 'AED 1,500 - 3,000',
+                'cta_text' => 'Apply Now',
+                'cta_link' => '/typing/contact',
+                'sort_order' => 1,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Residency Renewal',
+                'slug' => 'residency-renewal',
+                'short_description' => 'Renew existing family residency permits before expiry to avoid penalties.',
+                'long_description' => '<p>Renew existing family residency permits before expiry. We handle renewal applications, coordinate required medical checks and ensure timely Emirates ID updates.</p><p>Avoid overstay fines and immigration penalties by renewing on time with our proactive reminder and fast-track services.</p>',
+                'requirements' => [
+                    'Valid sponsor residency visa',
+                    'Current family member residency (within renewal window)',
+                    'Updated medical fitness results',
+                    'Active health insurance',
+                    'Valid tenancy contract',
+                ],
+                'documents' => [
+                    'Family member passport (original)',
+                    'Current residency visa page',
+                    'Sponsor Emirates ID',
+                    'Medical fitness certificate',
+                    'Health insurance certificate',
+                    'Updated tenancy contract (Ejari)',
+                ],
+                'process_steps' => [
+                    'Submit renewal application',
+                    'Complete medical fitness test',
+                    'Update health insurance',
+                    'Emirates ID renewal/update',
+                    'New visa stamping',
+                ],
+                'processing_time' => '5-10 working days',
+                'price_range' => 'AED 1,200 - 2,500',
+                'cta_text' => 'Renew Now',
+                'cta_link' => '/typing/contact',
+                'sort_order' => 2,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'New Born Baby',
+                'slug' => 'new-born-baby',
+                'short_description' => 'Register and sponsor newborns with required birth documentation and medical certificates.',
+                'long_description' => '<p>Register and sponsor newborns with required birth documentation and medical certificates. We assist with hospital paperwork, birth certificates and adding the newborn to the family residency visa.</p><p>Our team ensures seamless coordination between hospitals, embassies (if needed) and immigration authorities.</p>',
+                'requirements' => [
+                    'Parent residency visas (both valid)',
+                    'Hospital birth certificate',
+                    'Marriage certificate (attested)',
+                    'Parent passports',
+                    'Newborn passport (from home country embassy)',
+                ],
+                'documents' => [
+                    'Hospital birth notification',
+                    'Birth certificate from municipality',
+                    'Attested marriage certificate',
+                    'Parent passports and Emirates IDs',
+                    'Newborn passport',
+                    'Parent visa pages',
+                ],
+                'process_steps' => [
+                    'Obtain hospital birth certificate',
+                    'Register birth with municipality',
+                    'Apply for newborn passport at embassy',
+                    'Submit residency application for newborn',
+                    'Medical checkup if required',
+                    'Emirates ID enrollment',
+                    'Visa stamping',
+                ],
+                'processing_time' => '10-21 working days',
+                'price_range' => 'AED 1,500 - 3,500',
+                'cta_text' => 'Register Baby',
+                'cta_link' => '/typing/contact',
+                'sort_order' => 3,
+                'is_active' => true,
+            ],
+            [
+                'name' => 'Cancellation',
+                'slug' => 'cancellation',
+                'short_description' => 'Assist with visa cancellations and related clearance if the sponsor requests it.',
+                'long_description' => '<p>Assist with visa cancellations and related clearance if the sponsor requests it. We manage exit formalities, clearance letters and coordination with authorities to close cases quickly.</p><p>Whether for departure, status change, or other reasons, we ensure proper cancellation to avoid future complications.</p>',
+                'requirements' => [
+                    'Family member current residency visa',
+                    'Reason for cancellation',
+                    'No outstanding fines or violations',
+                    'Sponsor consent (if applicable)',
+                ],
+                'documents' => [
+                    'Family member passport (original)',
+                    'Current visa page',
+                    'Emirates ID',
+                    'Sponsor Emirates ID (if required)',
+                    'Cancellation request letter',
+                ],
+                'process_steps' => [
+                    'Submit cancellation application',
+                    'Return Emirates ID card',
+                    'Receive cancellation stamp',
+                    'Obtain exit permit if required',
+                    'Complete departure within grace period',
+                ],
+                'processing_time' => '2-5 working days',
+                'price_range' => 'AED 500 - 1,200',
+                'cta_text' => 'Start Cancellation',
+                'cta_link' => '/typing/contact',
+                'sort_order' => 4,
+                'is_active' => true,
+            ],
+        ];
+
+        // Create emirates and their visa types
+        foreach ($emirates as $emirateData) {
+            $emirate = FamilyVisaEmirate::updateOrCreate(
+                ['slug' => $emirateData['slug']],
+                $emirateData
+            );
+
+            // Create visa types for each emirate
+            foreach ($visaTypes as $typeData) {
+                FamilyVisaType::updateOrCreate(
+                    ['emirate_id' => $emirate->id, 'slug' => $typeData['slug']],
+                    array_merge($typeData, ['emirate_id' => $emirate->id])
+                );
+            }
         }
     }
 

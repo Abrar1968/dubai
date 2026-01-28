@@ -206,10 +206,10 @@
                                 <p class="mt-1 text-xs text-gray-500">Optional: emoji icon for the service</p>
                             </div>
 
-                            <!-- Image -->
+                            <!-- Featured Image -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Service Image</label>
-                                <div class="mt-2" x-data="{ preview: '{{ $service->image ? Storage::url($service->image) : '' }}' }">
+                                <label class="block text-sm font-medium text-gray-700">Featured Image</label>
+                                <div class="mt-2" x-data="{ preview: '{{ $service->featured_image_url ?: '' }}' }">
                                     <div class="space-y-3">
                                         <div class="h-40 w-full overflow-hidden rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
                                             <template x-if="preview">
@@ -225,13 +225,62 @@
                                             </template>
                                         </div>
                                         <div>
-                                            <input type="file" name="image" id="image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
-                                            <label for="image" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
-                                                Choose Image
+                                            <input type="file" name="featured_image" id="featured_image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" class="hidden" @change="preview = URL.createObjectURL($event.target.files[0])">
+                                            <label for="featured_image" class="cursor-pointer rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50">
+                                                Choose Featured Image
                                             </label>
                                         </div>
                                     </div>
                                 </div>
+                                <p class="mt-1 text-xs text-gray-500">Main image displayed on service page header</p>
+                            </div>
+
+                            <!-- Gallery Images -->
+                            <div x-data="galleryUpload()">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Gallery Images</label>
+                                <p class="text-xs text-gray-500 mb-3">Upload government documents or reference images</p>
+
+                                <!-- Existing Gallery -->
+                                @if($service->gallery_images && count($service->gallery_images) > 0)
+                                <div class="mb-3">
+                                    <p class="text-xs text-gray-600 mb-2">Current Gallery:</p>
+                                    <div class="grid grid-cols-3 gap-2">
+                                        @foreach($service->gallery_images as $index => $img)
+                                        <div class="relative group">
+                                            <img src="{{ \Illuminate\Support\Facades\Storage::url($img) }}" class="h-20 w-full object-cover rounded-lg border border-gray-200">
+                                            <label class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-lg transition cursor-pointer">
+                                                <input type="checkbox" name="remove_gallery[]" value="{{ $index }}" class="w-5 h-5">
+                                                <span class="text-white text-xs ml-1">Remove</span>
+                                            </label>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">Check images to remove them on save</p>
+                                </div>
+                                @endif
+
+                                <!-- Gallery Preview -->
+                                <div class="grid grid-cols-3 gap-2 mb-3" x-show="previews.length > 0">
+                                    <template x-for="(preview, index) in previews" :key="index">
+                                        <div class="relative group">
+                                            <img :src="preview" class="h-20 w-full object-cover rounded-lg border border-gray-200">
+                                            <button type="button" @click="removeImage(index)"
+                                                    class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition">
+                                                ×
+                                            </button>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <!-- Upload Button -->
+                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-purple-400 transition cursor-pointer"
+                                     @click="$refs.galleryInput.click()">
+                                    <svg class="mx-auto h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                    </svg>
+                                    <p class="mt-1 text-sm text-gray-500">Click to add gallery images</p>
+                                </div>
+                                <input type="file" name="gallery_images[]" x-ref="galleryInput" multiple accept="image/*" class="hidden" @change="handleFiles($event)">
                             </div>
                         </div>
                     </x-admin.ui.card>
@@ -306,6 +355,28 @@
 
                 removeSubService(index) {
                     this.subServices.splice(index, 1);
+                }
+            }
+        }
+
+        function galleryUpload() {
+            return {
+                previews: [],
+                files: [],
+
+                handleFiles(event) {
+                    const newFiles = Array.from(event.target.files);
+                    newFiles.forEach(file => {
+                        this.previews.push(URL.createObjectURL(file));
+                        this.files.push(file);
+                    });
+                },
+
+                removeImage(index) {
+                    this.previews.splice(index, 1);
+                    this.files.splice(index, 1);
+                    // Reset file input
+                    this.$refs.galleryInput.value = '';
                 }
             }
         }

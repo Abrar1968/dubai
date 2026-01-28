@@ -63,7 +63,7 @@
                     {{-- Main Thumbnail --}}
                     <div>
                         @if($package->thumbnail || $package->image)
-                            <img src="{{ Storage::url($package->thumbnail ?? $package->image) }}" alt="{{ $package->title }}" class="w-full h-64 object-cover rounded-lg">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($package->thumbnail ?? $package->image) }}" alt="{{ $package->title }}" class="w-full h-64 object-cover rounded-lg">
                         @else
                             <div class="w-full h-64 bg-slate-200 rounded-lg flex items-center justify-center">
                                 <svg class="h-16 w-16 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -76,7 +76,7 @@
                     {{-- Gallery Grid --}}
                     <div class="grid grid-cols-3 gap-2">
                         @forelse($package->gallery as $image)
-                            <img src="{{ Storage::url($image->image_path) }}" alt="{{ $image->alt_text ?? $package->title }}" class="w-full h-20 object-cover rounded-lg">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($image->image_path) }}" alt="{{ $image->alt_text ?? $package->title }}" class="w-full h-20 object-cover rounded-lg">
                         @empty
                             <div class="col-span-3 flex items-center justify-center h-20 bg-slate-100 rounded-lg">
                                 <span class="text-sm text-slate-500">No gallery images</span>

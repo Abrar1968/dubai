@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactInquiry;
+use App\Services\FamilyVisaService;
 use App\Services\OfficeLocationService;
 use App\Services\SettingService;
 use App\Services\TypingServiceService;
@@ -17,7 +18,8 @@ class TypingController extends Controller
     public function __construct(
         protected TypingServiceService $typingServiceService,
         protected SettingService $settingService,
-        protected OfficeLocationService $officeLocationService
+        protected OfficeLocationService $officeLocationService,
+        protected FamilyVisaService $familyVisaService
     ) {}
 
     /**
@@ -50,8 +52,28 @@ class TypingController extends Controller
 
         // Family Visa Process has a special Vue page with emirate selection
         if ($slug === 'family-visa-process') {
+            $emirates = $this->familyVisaService->listEmirates()
+                ->map(function ($emirate) {
+                    return [
+                        'id' => $emirate->id,
+                        'name' => $emirate->name,
+                        'slug' => $emirate->slug,
+                        'description' => $emirate->description,
+                        'intro_text' => $emirate->intro_text,
+                        'visa_types' => $emirate->activeVisaTypes->map(function ($type) {
+                            return [
+                                'id' => $type->id,
+                                'name' => $type->name,
+                                'slug' => $type->slug,
+                                'short_description' => $type->short_description,
+                            ];
+                        })->values(),
+                    ];
+                })->values();
+
             return Inertia::render('typing/services/FamilyVisaProcess', [
                 'settings' => $settings,
+                'emirates' => $emirates,
             ]);
         }
 
@@ -81,6 +103,53 @@ class TypingController extends Controller
     }
 
     /**
+     * Display the family visa type detail page.
+     */
+    public function familyVisaType(string $emirateSlug, string $typeSlug): Response
+    {
+        $settings = $this->settingService->getGrouped('typing');
+
+        // This will throw 404 if not found (uses firstOrFail)
+        $visaType = $this->familyVisaService->getVisaTypeBySlug($emirateSlug, $typeSlug);
+
+        // Get other visa types from the same emirate
+        $otherTypes = $visaType->emirate->activeVisaTypes
+            ->where('id', '!=', $visaType->id)
+            ->map(function ($type) {
+                return [
+                    'id' => $type->id,
+                    'name' => $type->name,
+                    'slug' => $type->slug,
+                    'short_description' => $type->short_description,
+                ];
+            })->values();
+
+        return Inertia::render('typing/services/FamilyVisaTypeDetail', [
+            'settings' => $settings,
+            'visaType' => [
+                'id' => $visaType->id,
+                'name' => $visaType->name,
+                'slug' => $visaType->slug,
+                'short_description' => $visaType->short_description,
+                'long_description' => $visaType->long_description,
+                'requirements' => $visaType->requirements ?? [],
+                'documents' => $visaType->documents ?? [],
+                'process_steps' => $visaType->process_steps ?? [],
+                'processing_time' => $visaType->processing_time,
+                'price_range' => $visaType->price_range,
+                'cta_text' => $visaType->cta_text ?? 'Get Started',
+                'cta_link' => $visaType->cta_link ?? '/typing/contact',
+            ],
+            'emirate' => [
+                'id' => $visaType->emirate->id,
+                'name' => $visaType->emirate->name,
+                'slug' => $visaType->emirate->slug,
+            ],
+            'otherTypes' => $otherTypes,
+        ]);
+    }
+
+    /**
      * Display all typing services list page.
      * Uses the home page which already shows all services.
      */
@@ -103,10 +172,12 @@ class TypingController extends Controller
     {
         $settings = $this->settingService->getGrouped('typing');
         $services = $this->typingServiceService->getActive();
+        $offices = $this->officeLocationService->getForHomePage('typing');
 
         return Inertia::render('typing/contact', [
             'settings' => $settings,
             'services' => $services,
+            'offices' => $offices,
         ]);
     }
 

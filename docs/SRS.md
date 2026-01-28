@@ -52,9 +52,9 @@ The Admin Panel is a web-based content management system designed to manage the 
 - Process and respond to customer inquiries
 - Configure site-wide settings and appearance
 
-**Future Expansion:**
-- Tour & Travel Module (Phase 2)
-- Typing Services Module (Phase 3)
+**Expansion Modules:**
+- Tour & Travel Module (Phase 2) - Planned
+- Typing Services Module (Phase 3) - **In Development** (see Section 4.12)
 
 ### 1.3 Definitions, Acronyms, and Abbreviations
 
@@ -1761,6 +1761,144 @@ The following features, data structures, and implementation details are present 
 
 ## 12. Appendices
 
+### 12.1 Typing Services Module (Phase 3)
+
+#### TYPING-001: Overview
+**Priority:** High  
+**Status:** In Development  
+**Description:** Complete admin panel for managing typing/document services displayed on the typing section of the public website.
+
+**Module Components:**
+- Site Settings Management (company, SEO, social links)
+- Services CRUD Management (12+ typing services)
+- Dynamic frontend data via Inertia props
+
+#### TYPING-002: Database Schema
+
+**New Table: `typing_services`**
+| Column | Type | Description |
+|--------|------|-------------|
+| id | bigint | Primary key |
+| title | varchar(255) | Service name |
+| slug | varchar(255) | URL-friendly identifier (unique) |
+| short_description | text | Grid card description |
+| long_description | text | Service detail page content |
+| icon | varchar(255) | Icon class or image path |
+| image | varchar(255) | Featured image |
+| sub_services | json | Array of {title, description} |
+| cta_text | varchar(100) | CTA button text |
+| cta_link | varchar(255) | CTA button URL |
+| sort_order | int | Display position |
+| is_active | boolean | Visibility toggle |
+| is_featured | boolean | Homepage highlight |
+| meta_title | varchar(255) | SEO title |
+| meta_description | text | SEO description |
+| timestamps | | created_at, updated_at |
+
+**Existing Table Support:**
+- `site_settings` - Already supports `section='typing'`
+- `faqs` - Already supports `section='typing'`
+- `contact_inquiries` - Already supports `section='typing'`
+- `office_locations` - Already supports `section='typing'`
+
+#### TYPING-003: Services List
+**Priority:** High  
+**Description:** 12 typing services identified for management
+
+| # | Service | Slug | Sub-Services |
+|---|---------|------|--------------|
+| 1 | Immigration | immigration | 5 |
+| 2 | Labour Ministry | labour-ministry | 3-4 |
+| 3 | Tasheel Services | tasheel-services | 3-4 |
+| 4 | Domestic Workers Visa | domestic-workers-visa | 3-4 |
+| 5 | Family Visa | family-visa-process | 4 |
+| 6 | Health Insurance | health-insurance | 3-4 |
+| 7 | Ministry of Interior | ministry-of-interior | 3-4 |
+| 8 | Certificate Attestation | certificate-attestation | 3 |
+| 9 | VAT Registration | vat-registration | 3 |
+| 10 | CT Registration | ct-registration | 3-4 |
+| 11 | Passport Renewal | passport-renewal | 3-4 |
+| 12 | Immigration Card | immigration-card | 3-4 |
+
+#### TYPING-004: Admin Routes
+**Description:** Admin panel routes for typing section
+
+```
+GET    /admin/typing/services              → ServiceController@index
+GET    /admin/typing/services/create       → ServiceController@create
+POST   /admin/typing/services              → ServiceController@store
+GET    /admin/typing/services/{id}/edit    → ServiceController@edit
+PUT    /admin/typing/services/{id}         → ServiceController@update
+DELETE /admin/typing/services/{id}         → ServiceController@destroy
+PATCH  /admin/typing/services/{id}/toggle-active   → Toggle visibility
+PATCH  /admin/typing/services/{id}/toggle-featured → Toggle featured
+POST   /admin/typing/services/reorder      → Batch reorder
+
+GET    /admin/typing/settings              → SettingController@index
+PUT    /admin/typing/settings/company      → Update company info
+PUT    /admin/typing/settings/seo          → Update SEO settings
+PUT    /admin/typing/settings/social       → Update social links
+POST   /admin/typing/settings/clear-cache  → Clear settings cache
+```
+
+#### TYPING-005: Site Settings
+**Priority:** High  
+**Description:** Same settings structure as Hajj section with `section='typing'`
+
+**Company Settings:**
+- company_name, company_tagline, company_email, company_phone
+- company_whatsapp, company_address, company_logo
+- company_description, hero_image
+
+**SEO Settings:**
+- meta_title, meta_description, meta_keywords
+- og_image, google_analytics
+
+**Social Settings:**
+- social_facebook, social_twitter, social_instagram
+- social_linkedin, social_youtube, contact_description
+
+#### TYPING-006: Frontend Integration
+**Description:** Public typing pages receive dynamic data via Inertia
+
+**Data Flow:**
+```
+TypingController::home()
+    ↓
+SiteSetting::where('section', 'typing')
+TypingService::active()->ordered()->get()
+    ↓
+Inertia::render('typing/typinghome', [
+    'settings' => $settings,
+    'services' => $services,
+])
+    ↓
+Vue components display real data
+```
+
+**Vue Files Affected:**
+- `typinghome.vue` - Hero image, services grid
+- `typingheader.vue` - Logo, contact info, social links
+- `typingfooter.vue` - Company info, social links
+
+#### TYPING-007: Implementation References
+**Documentation:**
+- `docs/typing-section-implementation-plan.md` - Full implementation plan
+- `docs/steps/typing-step-1-backend.md` - Backend implementation guide
+- `docs/steps/typing-step-2-frontend.md` - Frontend implementation guide
+
+**Files to Create:**
+- Migration: `create_typing_services_table`
+- Model: `TypingService.php`
+- Service: `TypingServiceService.php`
+- Controllers: `Admin/Typing/SettingController.php`, `Admin/Typing/ServiceController.php`
+- Public Controller: `Public/TypingController.php`
+- Blade Views: Settings + Services CRUD
+
+---
+
+## 13. Appendices
+
 ### Appendix A: Glossary
 
 | Term | Definition |
@@ -1776,6 +1914,9 @@ The following features, data structures, and implementation details are present 
 - Frontend Technical Specification (srs-frontend.md)
 - Backend Technical Specification (srs-backend.md)
 - Hajj Section Overview (hajj-section-overview.md)
+- **Typing Section Implementation Plan (typing-section-implementation-plan.md)**
+- **Typing Step 1: Backend (steps/typing-step-1-backend.md)**
+- **Typing Step 2: Frontend (steps/typing-step-2-frontend.md)**
 - Development Plan (steps/day-1.md, day-2.md, day-3.md)
 
 ### Appendix C: Revision History
@@ -1784,6 +1925,7 @@ The following features, data structures, and implementation details are present 
 |------|---------|-------------|--------|
 | Jan 14, 2026 | 1.0 | Initial SRS creation | Dev Team |
 | Jan 14, 2026 | 2.0 | Stack update to Blade/Alpine.js | Dev Team |
+| Jan 28, 2026 | 2.1 | Added Typing Services Module (Section 12.1) | Dev Team |
 
 ---
 

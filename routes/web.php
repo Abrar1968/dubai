@@ -42,6 +42,10 @@ Route::get('/typing/services', [TypingController::class, 'services'])->name('typ
 Route::get('/typing/contact', [TypingController::class, 'contact'])->name('typing.contact');
 Route::post('/typing/contact', [TypingController::class, 'storeContact'])->name('typing.contact.store');
 
+// Family visa type detail pages (dynamic from database)
+Route::get('/typing/services/family-visa/{emirateSlug}/{typeSlug}', [TypingController::class, 'familyVisaType'])
+    ->name('typing.services.family-visa.type');
+
 // Family visa sub-pages (most specific routes first)
 Route::get('/typing/services/family/new-residency', function () {
     return Inertia::render('typing/services/family/NewResidency');

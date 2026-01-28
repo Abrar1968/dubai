@@ -18,7 +18,7 @@
                         <!-- Contact Form -->
                         <div class="bg-white rounded-2xl shadow-lg p-8 border border-slate-100">
                             <h2 class="text-2xl font-bold text-slate-900 mb-6">Send us a Message</h2>
-                            
+
                             <form @submit.prevent="submitForm" class="space-y-6">
                                 <!-- Success Message -->
                                 <div v-if="form.recentlySuccessful" class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
@@ -37,9 +37,9 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
                                         <label for="name" class="block text-sm font-medium text-slate-700 mb-2">Full Name *</label>
-                                        <input 
-                                            type="text" 
-                                            id="name" 
+                                        <input
+                                            type="text"
+                                            id="name"
                                             v-model="form.name"
                                             class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition"
                                             placeholder="Your name"
@@ -48,9 +48,9 @@
                                     </div>
                                     <div>
                                         <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email Address *</label>
-                                        <input 
-                                            type="email" 
-                                            id="email" 
+                                        <input
+                                            type="email"
+                                            id="email"
                                             v-model="form.email"
                                             class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition"
                                             placeholder="your@email.com"
@@ -62,9 +62,9 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                     <div>
                                         <label for="phone" class="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
-                                        <input 
-                                            type="tel" 
-                                            id="phone" 
+                                        <input
+                                            type="tel"
+                                            id="phone"
                                             v-model="form.phone"
                                             class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition"
                                             placeholder="+971 50 123 4567"
@@ -72,8 +72,8 @@
                                     </div>
                                     <div>
                                         <label for="service" class="block text-sm font-medium text-slate-700 mb-2">Service Interested In</label>
-                                        <select 
-                                            id="service" 
+                                        <select
+                                            id="service"
                                             v-model="form.service"
                                             class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition"
                                         >
@@ -88,9 +88,9 @@
 
                                 <div>
                                     <label for="subject" class="block text-sm font-medium text-slate-700 mb-2">Subject *</label>
-                                    <input 
-                                        type="text" 
-                                        id="subject" 
+                                    <input
+                                        type="text"
+                                        id="subject"
                                         v-model="form.subject"
                                         class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition"
                                         placeholder="How can we help?"
@@ -100,8 +100,8 @@
 
                                 <div>
                                     <label for="message" class="block text-sm font-medium text-slate-700 mb-2">Message *</label>
-                                    <textarea 
-                                        id="message" 
+                                    <textarea
+                                        id="message"
                                         v-model="form.message"
                                         rows="5"
                                         class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition resize-none"
@@ -110,8 +110,8 @@
                                     ></textarea>
                                 </div>
 
-                                <button 
-                                    type="submit" 
+                                <button
+                                    type="submit"
                                     :disabled="form.processing"
                                     class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
@@ -126,7 +126,7 @@
                             <!-- Contact Cards -->
                             <div class="bg-slate-50 rounded-2xl p-8 border border-slate-100">
                                 <h3 class="text-xl font-bold text-slate-900 mb-6">Contact Information</h3>
-                                
+
                                 <div class="space-y-6">
                                     <div v-if="settings.company_phone" class="flex items-start gap-4">
                                         <div class="flex-shrink-0 w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
@@ -171,6 +171,31 @@
                                         <div>
                                             <h4 class="font-semibold text-slate-900">Office Address</h4>
                                             <p class="text-slate-600" v-html="settings.company_address?.replace(/\n/g, '<br>')"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Office Locations -->
+                            <div v-if="offices && offices.length > 0" class="bg-teal-50 rounded-2xl p-8 border border-teal-100">
+                                <h3 class="text-xl font-bold text-slate-900 mb-6">Our Office Locations</h3>
+
+                                <div class="space-y-6">
+                                    <div v-for="office in offices" :key="office.id" class="border-b border-teal-200 last:border-b-0 pb-6 last:pb-0">
+                                        <h4 class="font-semibold text-slate-900 mb-2">{{ office.name }}</h4>
+                                        <div class="space-y-2 text-sm">
+                                            <p class="text-slate-700" v-html="office.address.replace(/\n/g, '<br>')"></p>
+                                            <div class="flex flex-col sm:flex-row sm:gap-6 gap-2">
+                                                <a v-if="office.phone" :href="`tel:${office.phone}`" class="text-teal-600 hover:text-teal-700 transition flex items-center gap-2">
+                                                    <Phone class="w-4 h-4" />
+                                                    {{ office.phone }}
+                                                </a>
+                                                <a v-if="office.email" :href="`mailto:${office.email}`" class="text-teal-600 hover:text-teal-700 transition flex items-center gap-2">
+                                                    <Mail class="w-4 h-4" />
+                                                    {{ office.email }}
+                                                </a>
+                                            </div>
+                                            <p v-if="office.working_hours" class="text-slate-600 text-xs" v-html="office.working_hours.replace(/\n/g, '<br>')"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -221,12 +246,24 @@ interface Settings {
     company_address?: string;
 }
 
+interface OfficeLocation {
+    id: number;
+    name: string;
+    address: string;
+    phone?: string;
+    email?: string;
+    working_hours?: string;
+    section: string;
+}
+
 const props = withDefaults(defineProps<{
     services?: TypingService[];
     settings?: Settings;
+    offices?: OfficeLocation[];
 }>(), {
     services: () => [],
     settings: () => ({}),
+    offices: () => [],
 });
 
 const form = useForm({

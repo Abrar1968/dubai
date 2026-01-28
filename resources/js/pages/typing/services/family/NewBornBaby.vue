@@ -31,5 +31,5 @@ const displayEmirate = computed(() => {
   const map = { 'abu-dhabi': 'Abu Dhabi', 'ras-al-khaimah': 'Ras Al Khaimah', 'umm-al-quwain': 'Umm Al Quwain' };
   return map[emirate] ?? emirate.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 });
-const contactLink = `/contactus?service=family-visa&type=new_born${emirate ? '&emirate='+encodeURIComponent(emirate) : ''}`
+const contactLink = `/typing/contact?service=family-visa&type=new_born_baby${emirate ? '&emirate='+encodeURIComponent(emirate) : ''}`
 </script>

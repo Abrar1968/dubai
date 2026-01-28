@@ -315,8 +315,11 @@ class HajjController extends Controller
     {
         $settings = $this->getSettings('hajj');
 
-        // Get office locations
-        $offices = OfficeLocation::where('section', 'hajj')
+        // Get office locations (hajj-specific and global)
+        $offices = OfficeLocation::where(function ($query) {
+                $query->where('section', 'hajj')
+                    ->orWhere('section', 'global');
+            })
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->get()

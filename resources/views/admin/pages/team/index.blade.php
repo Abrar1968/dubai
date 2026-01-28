@@ -22,7 +22,7 @@
                         <!-- Photo -->
                         <div class="aspect-square overflow-hidden bg-gray-100">
                             @if($member->image)
-                                <img src="{{ Storage::url($member->image) }}" alt="{{ $member->name }}" class="h-full w-full object-cover transition group-hover:scale-105">
+                                <img src="{{ \Illuminate\Support\Facades\Storage::url($member->image) }}" alt="{{ $member->name }}" class="h-full w-full object-cover transition group-hover:scale-105">
                             @else
                                 <div class="flex h-full items-center justify-center">
                                     <svg class="h-20 w-20 text-gray-300" fill="currentColor" viewBox="0 0 24 24">

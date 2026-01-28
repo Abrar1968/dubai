@@ -61,10 +61,28 @@
 
           <!-- Sidebar -->
           <div class="lg:col-span-1">
-            <!-- Service Image -->
-            <div v-if="service.image_url" class="mb-6">
+            <!-- Featured Image -->
+            <div v-if="service.featured_image_url" class="mb-6">
+              <img :src="service.featured_image_url" :alt="service.title"
+                   class="w-full rounded-xl shadow-lg object-cover aspect-video">
+            </div>
+            <!-- Fallback to old image_url for backwards compatibility -->
+            <div v-else-if="service.image_url" class="mb-6">
               <img :src="service.image_url" :alt="service.title"
                    class="w-full rounded-xl shadow-lg object-cover aspect-video">
+            </div>
+
+            <!-- Gallery Images (Government Documents) -->
+            <div v-if="service.gallery_urls && service.gallery_urls.length > 0" class="mb-6">
+              <h3 class="text-lg font-semibold text-slate-900 mb-3">Reference Documents</h3>
+              <div class="grid grid-cols-2 gap-2">
+                <div v-for="(imgUrl, index) in service.gallery_urls" :key="index"
+                     class="cursor-pointer overflow-hidden rounded-lg border border-slate-200 hover:border-teal-400 transition"
+                     @click="openGallery(index)">
+                  <img :src="imgUrl" :alt="`Document ${index + 1}`"
+                       class="w-full h-24 object-cover hover:scale-105 transition-transform">
+                </div>
+              </div>
             </div>
 
             <!-- Quick Contact Card -->
@@ -127,6 +145,10 @@ interface TypingService {
   icon?: string
   image?: string
   image_url?: string
+  featured_image?: string
+  featured_image_url?: string
+  gallery_images?: string[]
+  gallery_urls?: string[]
   url: string
   sub_services?: SubService[]
   cta_text?: string
@@ -142,6 +164,14 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+// Gallery lightbox state
+const openGallery = (index: number) => {
+  // For now, just open in new tab - can be enhanced with a lightbox library
+  if (props.service.gallery_urls && props.service.gallery_urls[index]) {
+    window.open(props.service.gallery_urls[index], '_blank')
+  }
+}
 
 // Convert plain text description to HTML with proper formatting
 const formattedDescription = computed(() => {

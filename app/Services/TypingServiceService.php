@@ -111,4 +111,17 @@ class TypingServiceService
             }
         });
     }
+
+    /**
+     * Get statistics for typing services.
+     */
+    public function getStats(): array
+    {
+        return [
+            'total' => TypingService::count(),
+            'active' => TypingService::active()->count(),
+            'featured' => TypingService::featured()->count(),
+            'inactive' => TypingService::inactive()->count(),
+        ];
+    }
 }

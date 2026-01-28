@@ -28,39 +28,54 @@
           <!-- Left: Emirates list -->
           <aside class="md:col-span-1">
             <div class="space-y-4">
-              <button v-for="em in emirates" :key="em.slug" @click="selectEmirate(em.slug)"
+              <button v-for="em in displayEmirates" :key="em.slug" @click="selectEmirate(em.slug)"
                 :class="['w-full text-left px-4 py-4 rounded-md border-2 transition', selectedEmirate === em.slug ? 'bg-white border-yellow-400 shadow-sm' : 'bg-white/50 border-slate-200']">
                 <span class="font-bold text-slate-800">{{ em.name }}</span>
+                <span v-if="em.visa_types && em.visa_types.length" class="ml-2 text-sm text-slate-500">({{ em.visa_types.length }} services)</span>
               </button>
             </div>
           </aside>
 
-          <!-- Right: Actions + Details -->
+          <!-- Right: Visa Types -->
           <div class="md:col-span-2">
-            <div class="flex flex-col items-end gap-4 mb-6">
-              <a :href="applyLinkToPage('new_residency')" class="inline-flex items-center justify-center rounded-md bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 font-semibold">Apply for New Residency / Entry Permit</a>
-              <div class="flex flex-col items-end gap-3 w-full md:w-auto">
-                <a :href="applyLinkToPage('renewal')" class="inline-flex items-center justify-center rounded-md bg-blue-500 hover:bg-blue-600 text-white px-5 py-2">Residency Renewal</a>
-                <a :href="applyLinkToPage('new_born')" class="inline-flex items-center justify-center rounded-md bg-blue-500 hover:bg-blue-600 text-white px-5 py-2">New Born Baby</a>
-                <a :href="applyLinkToPage('cancellation')" class="inline-flex items-center justify-center rounded-md bg-blue-500 hover:bg-blue-600 text-white px-5 py-2">Cancellation</a>
+            <div v-if="selectedEmirateData" class="space-y-6">
+              <div>
+                <h2 class="text-2xl font-bold text-slate-900">{{ selectedEmirateData.name }}</h2>
+                <p v-if="selectedEmirateData.description" class="mt-2 text-slate-700">{{ selectedEmirateData.description }}</p>
+              </div>
+
+              <!-- Visa Types Grid -->
+              <div v-if="selectedEmirateData.visa_types && selectedEmirateData.visa_types.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a v-for="visaType in selectedEmirateData.visa_types"
+                   :key="visaType.id"
+                   :href="`/typing/services/family-visa/${selectedEmirateData.slug}/${visaType.slug}`"
+                   class="rounded-md p-4 border border-slate-100 bg-slate-50 hover:bg-slate-100 hover:border-blue-300 transition group">
+                  <h3 class="font-bold text-slate-900 group-hover:text-blue-600">{{ visaType.name }}</h3>
+                  <p v-if="visaType.short_description" class="mt-2 text-slate-700 text-sm">{{ visaType.short_description }}</p>
+                  <div class="mt-3">
+                    <span class="inline-flex items-center rounded-md bg-[#D3A762] group-hover:bg-[#c29652] px-4 py-2 text-white font-semibold text-sm">
+                      Learn More
+                      <svg class="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      </svg>
+                    </span>
+                  </div>
+                </a>
+              </div>
+
+              <!-- No visa types message -->
+              <div v-else class="text-center py-8 text-slate-500 bg-slate-50 rounded-lg">
+                <p>No visa types available for this emirate yet.</p>
+                <p class="mt-2 text-sm">Please check back later or contact us for assistance.</p>
+                <a href="/typing/contact" class="mt-4 inline-flex items-center rounded-md bg-blue-600 hover:bg-blue-700 px-6 py-3 text-white font-semibold">
+                  Contact Us
+                </a>
               </div>
             </div>
 
-            <div class="space-y-8">
-              <div v-for="em in emirates" :key="em.slug" v-show="selectedEmirate === em.slug">
-                <h2 class="text-2xl font-bold text-slate-900">{{ em.name }}</h2>
-                <p class="mt-2 text-slate-700">{{ em.description }}</p>
-
-                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div v-for="item in em.services" :key="item.key" class="rounded-md p-4 border border-slate-100 bg-slate-50">
-                    <h3 class="font-bold text-slate-900">{{ item.title }}</h3>
-                    <p class="mt-2 text-slate-700">{{ item.desc }}</p>
-                    <div class="mt-3">
-                      <a :href="applyLinkToPage(item.key)" class="inline-flex items-center rounded-md bg-[#D3A762] hover:bg-[#c29652] px-4 py-2 text-white font-semibold">Apply</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <!-- No emirate selected -->
+            <div v-else class="text-center py-12 text-slate-500">
+              <p class="text-lg">Please select an emirate from the list</p>
             </div>
           </div>
         </div>
@@ -73,107 +88,39 @@
 import { ref, computed } from 'vue'
 import TypingLayout from '@/layouts/TypingLayout.vue';
 
-const emirates = [
-  {
-    slug: 'sharjah',
-    name: 'Sharjah',
-    description: 'Sharjah processes family visas in accordance with federal immigration rules and local authority procedures. Processing times vary and some emirate-specific requirements may apply.',
-    services: [
-      { key: 'new_residency', title: 'Apply for New Residency / Entry Permit', desc: 'Start a new family residency application with sponsor documents, entry permits and medical fitness tests.' },
-      { key: 'renewal', title: 'Residency Renewal', desc: 'Renew existing family residency permits before expiry to avoid penalties.' },
-      { key: 'new_born', title: 'New Born Baby', desc: 'Register and sponsor newborns with required birth documentation and medical certificates.' },
-      { key: 'cancellation', title: 'Cancellation', desc: 'Assist with visa cancellations and related clearance if the sponsor requests it.' },
-    ],
+const props = defineProps({
+  settings: {
+    type: Object,
+    default: () => ({})
   },
-  {
-    slug: 'dubai',
-    name: 'Dubai',
-    description: 'Dubai follows federal visa rules and has specific timelines for medical testing and Emirates ID issuance. We coordinate appointments and document submissions to comply with Dubai-specific procedures.',
-    services: [
-      { key: 'new_residency', title: 'Apply for New Residency / Entry Permit', desc: 'Employer- or sponsor-led entry permits and follow-up for stamping and Emirates ID.' },
-      { key: 'renewal', title: 'Residency Renewal', desc: 'Fast-track renewal assistance and reminders for renewals.' },
-      { key: 'new_born', title: 'New Born Baby', desc: 'Assistance with adding a newborn to your residency visa and medical records.' },
-      { key: 'cancellation', title: 'Cancellation', desc: 'Complete cancellation processing and guidance for exit permits where necessary.' },
-    ],
-  },
-  {
-    slug: 'ajman',
-    name: 'Ajman',
-    description: 'Ajman processes follow the federal guidelines with local administrative steps; we assist with document submission and local office visits.',
-    services: [
-      { key: 'new_residency', title: 'Apply for New Residency / Entry Permit', desc: 'Support with initial application, document checks and follow-up.' },
-      { key: 'renewal', title: 'Residency Renewal', desc: 'Assistance to renew residency and ensure compliance with local rules.' },
-      { key: 'new_born', title: 'New Born Baby', desc: 'Register and sponsor newborns and update family records.' },
-      { key: 'cancellation', title: 'Cancellation', desc: 'Handle cancellations with minimal delay and manage documentation.' },
-    ],
-  },
-  {
-    slug: 'abu-dhabi',
-    name: 'Abu Dhabi',
-    description: 'Large-scale processing hub with specific health insurance and medical checks; we ensure all steps are completed accurately for Abu Dhabi authorities.',
-    services: [
-      { key: 'new_residency', title: 'Apply for New Residency / Entry Permit', desc: 'Full application management including health insurance alignment required by Abu Dhabi.' },
-      { key: 'renewal', title: 'Residency Renewal', desc: 'Renewal management and coordination with health insurers.' },
-      { key: 'new_born', title: 'New Born Baby', desc: 'Newborn registration and documentation assistance for residency addition.' },
-      { key: 'cancellation', title: 'Cancellation', desc: 'Process cancellations and help with exit formalities.' },
-    ],
-  },
-  {
-    slug: 'ras-al-khaimah',
-    name: 'Ras Al Khaimah',
-    description: 'Ras Al Khaimah follows federal immigration processes and we offer end-to-end support for family visa matters in the emirate.',
-    services: [
-      { key: 'new_residency', title: 'Apply for New Residency / Entry Permit', desc: 'Local doc preparation and submission service.' },
-      { key: 'renewal', title: 'Residency Renewal', desc: 'Renewal assistance and local office liaison.' },
-      { key: 'new_born', title: 'New Born Baby', desc: 'Support to sponsor newborns and prepare birth documentation.' },
-      { key: 'cancellation', title: 'Cancellation', desc: 'We handle cancellation paperwork and related updates.' },
-    ],
-  },
-  {
-    slug: 'umm-al-quwain',
-    name: 'Umm Al Quwain',
-    description: 'We assist with family visas in Umm Al Quwain, including coordination of medical tests and Emirates ID steps.',
-    services: [
-      { key: 'new_residency', title: 'Apply for New Residency / Entry Permit', desc: 'Application submission and follow-up on permit issuance.' },
-      { key: 'renewal', title: 'Residency Renewal', desc: 'Renewal support and records management.' },
-      { key: 'new_born', title: 'New Born Baby', desc: 'Help with newborn sponsorship and required documents.' },
-      { key: 'cancellation', title: 'Cancellation', desc: 'Visa cancellation handling and notifications.' },
-    ],
-  },
-  {
-    slug: 'fujairah',
-    name: 'Fujairah',
-    description: 'Fujairah family visa processing support with local knowledge to speed up document handling and approvals.',
-    services: [
-      { key: 'new_residency', title: 'Apply for New Residency / Entry Permit', desc: 'Document checks and filing for entry permits.' },
-      { key: 'renewal', title: 'Residency Renewal', desc: 'Assistance with renewals and coordinating medical checks.' },
-      { key: 'new_born', title: 'New Born Baby', desc: 'Support for adding newborns to family residence records.' },
-      { key: 'cancellation', title: 'Cancellation', desc: 'Manage cancellations and related clearance processes.' },
-    ],
-  },
+  emirates: {
+    type: Array,
+    default: () => []
+  }
+})
+
+// Use database emirates if available, otherwise use fallback static data
+const fallbackEmirates = [
+  { slug: 'sharjah', name: 'Sharjah', description: 'Family visa services for Sharjah.', visa_types: [] },
+  { slug: 'dubai', name: 'Dubai', description: 'Family visa services for Dubai.', visa_types: [] },
+  { slug: 'ajman', name: 'Ajman', description: 'Family visa services for Ajman.', visa_types: [] },
+  { slug: 'abu-dhabi', name: 'Abu Dhabi', description: 'Family visa services for Abu Dhabi.', visa_types: [] },
+  { slug: 'ras-al-khaimah', name: 'Ras Al Khaimah', description: 'Family visa services for Ras Al Khaimah.', visa_types: [] },
+  { slug: 'umm-al-quwain', name: 'Umm Al Quwain', description: 'Family visa services for Umm Al Quwain.', visa_types: [] },
+  { slug: 'fujairah', name: 'Fujairah', description: 'Family visa services for Fujairah.', visa_types: [] },
 ]
 
-const selectedEmirate = ref('sharjah')
+const displayEmirates = computed(() => {
+  return props.emirates && props.emirates.length > 0 ? props.emirates : fallbackEmirates
+})
+
+const selectedEmirate = ref(displayEmirates.value.length > 0 ? displayEmirates.value[0].slug : 'sharjah')
 
 const selectEmirate = (slug) => {
   selectedEmirate.value = slug
 }
 
-const selected = computed(() => emirates.find(e => e.slug === selectedEmirate.value))
-
-const typeToPath = {
-  new_residency: 'new-residency',
-  renewal: 'residency-renewal',
-  new_born: 'new-born-baby',
-  cancellation: 'cancellation',
-}
-
-const applyLink = (type) => {
-  return `/contactus?service=family-visa&emirate=${selectedEmirate.value}&type=${encodeURIComponent(type)}`
-}
-
-const applyLinkToPage = (type) => {
-  const path = typeToPath[type] ?? type
-  return `/typing/services/family/${path}?emirate=${selectedEmirate.value}`
-}
+const selectedEmirateData = computed(() => {
+  return displayEmirates.value.find(e => e.slug === selectedEmirate.value)
+})
 </script>

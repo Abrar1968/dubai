@@ -120,4 +120,18 @@ class OfficeLocationService
     {
         return OfficeLocation::count();
     }
+
+    /**
+     * Get statistics for office locations.
+     */
+    public function getStats(): array
+    {
+        return [
+            'total' => OfficeLocation::count(),
+            'global' => OfficeLocation::where('section', 'global')->count(),
+            'hajj' => OfficeLocation::where('section', 'hajj')->count(),
+            'typing' => OfficeLocation::where('section', 'typing')->count(),
+            'active' => OfficeLocation::active()->count(),
+        ];
+    }
 }
