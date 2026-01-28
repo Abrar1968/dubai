@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Public\HajjController;
+use App\Http\Controllers\Public\TypingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -32,32 +33,16 @@ Route::post('/packages/{slug}/book', [\App\Http\Controllers\User\BookingControll
     ->middleware(['auth', 'verified'])
     ->name('packages.book');
 
-Route::get('/typing', function () {
-    return Inertia::render('typing/typinghome');
-})->name('typing.index');
+// ==========================================
+// Typing Services Public Routes
+// ==========================================
+// Main typing pages
+Route::get('/typing', [TypingController::class, 'home'])->name('typing.index');
+Route::get('/typing/services', [TypingController::class, 'services'])->name('typing.services');
+Route::get('/typing/contact', [TypingController::class, 'contact'])->name('typing.contact');
+Route::post('/typing/contact', [TypingController::class, 'storeContact'])->name('typing.contact.store');
 
-// Typing Service pages
-Route::get('/typing/services/immigration', function () {
-    return Inertia::render('typing/services/Immigration');
-})->name('typing.services.immigration');
-
-Route::get('/typing/services/labour-ministry', function () {
-    return Inertia::render('typing/services/LabourMinistry');
-})->name('typing.services.labour-ministry');
-
-Route::get('/typing/services/tasheel-services', function () {
-    return Inertia::render('typing/services/TasheelServices');
-})->name('typing.services.tasheel-services');
-
-Route::get('/typing/services/domestic-workers-visa', function () {
-    return Inertia::render('typing/services/DomesticWorkersVisa');
-})->name('typing.services.domestic-workers-visa');
-
-Route::get('/typing/services/family-visa-process', function () {
-    return Inertia::render('typing/services/FamilyVisaProcess');
-})->name('typing.services.family-visa-process');
-
-// Family visa sub-pages
+// Family visa sub-pages (most specific routes first)
 Route::get('/typing/services/family/new-residency', function () {
     return Inertia::render('typing/services/family/NewResidency');
 })->name('typing.services.family.new-residency');
@@ -74,33 +59,9 @@ Route::get('/typing/services/family/cancellation', function () {
     return Inertia::render('typing/services/family/Cancellation');
 })->name('typing.services.family.cancellation');
 
-Route::get('/typing/services/health-insurance', function () {
-    return Inertia::render('typing/services/HealthInsurance');
-})->name('typing.services.health-insurance');
-
-Route::get('/typing/services/ministry-of-interior', function () {
-    return Inertia::render('typing/services/MinistryOfInterior');
-})->name('typing.services.ministry-of-interior');
-
-Route::get('/typing/services/certificate-attestation', function () {
-    return Inertia::render('typing/services/CertificateAttestation');
-})->name('typing.services.certificate-attestation');
-
-Route::get('/typing/services/vat-registration', function () {
-    return Inertia::render('typing/services/VATRegistration');
-})->name('typing.services.vat-registration');
-
-Route::get('/typing/services/ct-registration', function () {
-    return Inertia::render('typing/services/CTRegistration');
-})->name('typing.services.ct-registration');
-
-Route::get('/typing/services/passport-renewal', function () {
-    return Inertia::render('typing/services/PassportRenewal');
-})->name('typing.services.passport-renewal');
-
-Route::get('/typing/services/immigration-card', function () {
-    return Inertia::render('typing/services/ImmigrationCard');
-})->name('typing.services.immigration-card');
+// Dynamic service detail route - catches all /typing/services/{slug} patterns
+// The TypingController::service() method maps slugs to Vue components
+Route::get('/typing/services/{slug}', [TypingController::class, 'service'])->name('typing.service');
 
 // ==========================================
 // User Dashboard Routes (Vue + Inertia)

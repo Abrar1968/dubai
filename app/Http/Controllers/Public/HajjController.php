@@ -11,6 +11,7 @@ use App\Services\TeamMemberService;
 use App\Services\TestimonialService;
 use App\Services\FaqService;
 use App\Services\ContactInquiryService;
+use App\Services\OfficeLocationService;
 use App\Models\SiteSetting;
 use App\Models\OfficeLocation;
 use Illuminate\Http\Request;
@@ -25,7 +26,8 @@ class HajjController extends Controller
         protected TeamMemberService $teamService,
         protected TestimonialService $testimonialService,
         protected FaqService $faqService,
-        protected ContactInquiryService $inquiryService
+        protected ContactInquiryService $inquiryService,
+        protected OfficeLocationService $officeLocationService
     ) {}
 
     /**
@@ -85,12 +87,16 @@ class HajjController extends Controller
         // Get site settings
         $settings = $this->getSettings('hajj');
 
+        // Get office locations (global + hajj)
+        $offices = $this->officeLocationService->getForHomePage('hajj');
+
         return Inertia::render('hajj&umrah/hajjhome', [
             'packages' => $packages,
             'articles' => $articles,
             'testimonials' => $testimonials,
             'faqs' => $faqs,
             'settings' => $settings,
+            'offices' => $offices,
         ]);
     }
 

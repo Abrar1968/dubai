@@ -83,6 +83,29 @@ class OfficeLocationService
     }
 
     /**
+     * Get global office locations (shown across all sections).
+     */
+    public function getGlobal(): Collection
+    {
+        return OfficeLocation::active()->section('global')->ordered()->get();
+    }
+
+    /**
+     * Get offices for display on a section's home page.
+     * Returns both section-specific and global offices.
+     */
+    public function getForHomePage(string $section): Collection
+    {
+        return OfficeLocation::active()
+            ->where(function ($query) use ($section) {
+                $query->where('section', $section)
+                    ->orWhere('section', 'global');
+            })
+            ->ordered()
+            ->get();
+    }
+
+    /**
      * Get all active locations (public display).
      */
     public function getActive(): Collection

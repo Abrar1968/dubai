@@ -45,18 +45,29 @@ interface Faq {
     answer: string;
 }
 
+interface OfficeLocation {
+    id: number;
+    name: string;
+    address: string;
+    phone?: string;
+    email?: string;
+    section: string;
+}
+
 const props = withDefaults(defineProps<{
     packages?: Package[];
     articles?: Article[];
     testimonials?: Testimonial[];
     faqs?: Faq[];
     settings?: Record<string, string>;
+    offices?: OfficeLocation[];
 }>(), {
     packages: () => [],
     articles: () => [],
     testimonials: () => [],
     faqs: () => [],
     settings: () => ({}),
+    offices: () => [],
 });
 
 // Use props directly - data comes from backend
@@ -173,6 +184,33 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         <div>
                             <h4 class="font-bold text-lg">24/7 Support</h4>
                             <p class="text-sm text-gray-300">Always here to guide you through your journey.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Office Locations (Below Hero) -->
+            <section v-if="offices && offices.length > 0" class="bg-slate-900 py-8">
+                <div class="mx-auto max-w-7xl px-4 md:px-16">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div v-for="office in offices" :key="office.id" class="flex items-start gap-4 text-white">
+                            <div class="flex-shrink-0 w-10 h-10 bg-[#D3A762]/20 rounded-lg flex items-center justify-center">
+                                <MapPin class="w-5 h-5 text-[#D3A762]" />
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-white">{{ office.name }}</h4>
+                                <p class="text-gray-400 text-sm mt-1" v-html="office.address.replace(/\n/g, '<br>')"></p>
+                                <div class="mt-2 flex flex-col gap-1 text-sm">
+                                    <a v-if="office.phone" :href="`tel:${office.phone}`" class="text-gray-400 hover:text-[#D3A762] transition flex items-center gap-2">
+                                        <Phone class="w-3 h-3" />
+                                        {{ office.phone }}
+                                    </a>
+                                    <a v-if="office.email" :href="`mailto:${office.email}`" class="text-gray-400 hover:text-[#D3A762] transition flex items-center gap-2">
+                                        <Mail class="w-3 h-3" />
+                                        {{ office.email }}
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

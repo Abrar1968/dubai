@@ -128,13 +128,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         // ==========================================
-        // Typing Services Section Routes (Phase 3)
+        // Typing Services Section Routes
         // ==========================================
         Route::prefix('typing')->name('typing.')->middleware('section:typing')->group(function () {
-            // Placeholder - will be implemented in Phase 3
+            // Dashboard/Index
             Route::get('/', function () {
-                return view('admin.pages.coming-soon', ['section' => 'Typing Services']);
+                return redirect()->route('admin.typing.services.index');
             })->name('index');
+
+            // Typing Services CRUD
+            Route::resource('services', \App\Http\Controllers\Admin\Typing\ServiceController::class);
+            Route::patch('services/{service}/toggle-status', [\App\Http\Controllers\Admin\Typing\ServiceController::class, 'toggleStatus'])->name('services.toggle-status');
+            Route::patch('services/{service}/toggle-featured', [\App\Http\Controllers\Admin\Typing\ServiceController::class, 'toggleFeatured'])->name('services.toggle-featured');
+            Route::post('services/reorder', [\App\Http\Controllers\Admin\Typing\ServiceController::class, 'reorder'])->name('services.reorder');
+
+            // Settings
+            Route::get('settings', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'index'])->name('settings.index');
+            Route::put('settings/company', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'updateCompany'])->name('settings.update-company');
+            Route::put('settings/seo', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'updateSeo'])->name('settings.update-seo');
+            Route::put('settings/social', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'updateSocial'])->name('settings.update-social');
+            Route::put('settings/contact', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'updateContact'])->name('settings.update-contact');
+            Route::post('settings/clear-cache', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'clearCache'])->name('settings.clear-cache');
         });
 
         // ==========================================
@@ -142,6 +156,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // ==========================================
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['create', 'store']);
         Route::patch('users/{user}/toggle-active', [\App\Http\Controllers\Admin\UserController::class, 'toggleActive'])->name('users.toggle-active');
+
+        // ==========================================
+        // Office Locations (Global - All Admins)
+        // ==========================================
+        Route::resource('office-locations', \App\Http\Controllers\Admin\OfficeLocationController::class)->except(['show']);
+        Route::patch('office-locations/{officeLocation}/toggle-active', [\App\Http\Controllers\Admin\OfficeLocationController::class, 'toggleActive'])->name('office-locations.toggle-active');
+        Route::post('office-locations/reorder', [\App\Http\Controllers\Admin\OfficeLocationController::class, 'reorder'])->name('office-locations.reorder');
 
         // ==========================================
         // Super Admin Only Routes

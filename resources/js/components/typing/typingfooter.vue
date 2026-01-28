@@ -31,7 +31,7 @@ const socialLinks = [
 
 <template>
     <footer class="bg-[#111] text-white py-16 px-4 md:px-16">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
             <!-- Brand Section -->
             <div class="flex flex-col gap-6">
                 <!-- Logo -->
@@ -48,6 +48,14 @@ const socialLinks = [
                 <p v-if="settings.company_tagline" class="text-sm text-gray-400">
                     {{ settings.company_tagline }}
                 </p>
+
+                <!-- Social Links -->
+                <div v-if="socialLinks.length > 0" class="flex gap-4 mt-2">
+                    <a v-for="social in socialLinks" :key="social.name" :href="social.url" target="_blank" rel="noopener noreferrer"
+                       class="text-white hover:text-[#D3A762] transition-colors" :aria-label="social.name">
+                        <component :is="social.icon" class="w-5 h-5" />
+                    </a>
+                </div>
             </div>
 
             <!-- Office Section -->
@@ -68,36 +76,21 @@ const socialLinks = [
                 </div>
             </div>
 
-            <!-- Menu Section -->
+            <!-- Quick Links Section -->
             <div class="flex flex-col gap-6">
-                <h3 class="text-sm font-semibold tracking-wider text-gray-400 uppercase">MENU</h3>
+                <h3 class="text-sm font-semibold tracking-wider text-gray-400 uppercase">QUICK LINKS</h3>
                 <nav class="flex flex-col gap-4 text-sm text-white">
+                    <a href="/typing" class="hover:text-gray-300 transition-colors">Home</a>
                     <a href="/typing#services" class="hover:text-gray-300 transition-colors">Services</a>
-                    <a href="/typing#features" class="hover:text-gray-300 transition-colors">Features</a>
-                    <a href="/typing#testimonials" class="hover:text-gray-300 transition-colors">Testimonials</a>
-                    <a href="/typing#pricing" class="hover:text-gray-300 transition-colors">Pricing</a>
+                    <a href="/typing/contact" class="hover:text-gray-300 transition-colors">Contact Us</a>
+                    <a href="/admin/login" class="hover:text-[#D3A762] transition-colors text-gray-500 text-xs mt-4">Admin Login</a>
                 </nav>
             </div>
+        </div>
 
-            <!-- Links Section -->
-            <div class="flex flex-col gap-6">
-                <h3 class="text-sm font-semibold tracking-wider text-gray-400 uppercase">LINKS</h3>
-                <nav class="flex flex-col gap-4 text-sm text-white">
-                    <a href="/typing/team" class="hover:text-gray-300 transition-colors">About Us</a>
-                    <a href="/contactus" class="hover:text-gray-300 transition-colors">Contact</a>
-                    <a href="/contactus" class="hover:text-gray-300 transition-colors">Help Center</a>
-                    <a href="/typing/career" class="hover:text-gray-300 transition-colors">Career</a>
-                    <a href="/admin/login" class="hover:text-[#D3A762] transition-colors text-gray-500 text-xs mt-2">Admin Login</a>
-                </nav>
-
-                <!-- Social Links -->
-                <div v-if="socialLinks.length > 0" class="flex gap-4 mt-2">
-                    <a v-for="social in socialLinks" :key="social.name" :href="social.url" target="_blank" rel="noopener noreferrer"
-                       class="text-white hover:text-[#D3A762] transition-colors" :aria-label="social.name">
-                        <component :is="social.icon" class="w-5 h-5" />
-                    </a>
-                </div>
-            </div>
+        <!-- Copyright -->
+        <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
+            <p>&copy; {{ new Date().getFullYear() }} {{ settings.company_name || 'Typing Services' }}. All rights reserved.</p>
         </div>
     </footer>
 </template>
