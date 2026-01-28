@@ -181,7 +181,7 @@ const bgVideo = '/assets/img/bg%20video/bg.mp4'
 
 const goTo = (service) => {
   const paths = {
-    'hajj-umrah': '/hajj&umrah',
+    'hajj-umrah': '/hajj-umrah',
     'typing': '/typing',
   }
 
