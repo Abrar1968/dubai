@@ -80,7 +80,7 @@
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             @if($service->image)
-                                                <img src="{{ \\Illuminate\\Support\\Facades\\Storage::url($service->image) }}" alt="{{ $service->title }}" class="h-12 w-12 object-cover rounded-lg">
+                                                <img src="{{ Storage::url($service->image) }}" alt="{{ $service->title }}" class="h-12 w-12 object-cover rounded-lg">
                                             @elseif($service->icon)
                                                 <div class="h-12 w-12 flex items-center justify-center bg-purple-100 rounded-lg">
                                                     <span class="text-2xl">{{ $service->icon }}</span>

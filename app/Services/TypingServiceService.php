@@ -9,27 +9,33 @@ use Illuminate\Support\Facades\DB;
 class TypingServiceService
 {
     /**
-     * Get all typing services ordered.
+     * Get all typing services ordered (excluding family visa).
      */
     public function list(): Collection
     {
-        return TypingService::ordered()->get();
+        return TypingService::where('slug', '!=', 'family-visa-process')
+            ->ordered()
+            ->get();
     }
 
     /**
-     * Get all active typing services ordered.
+     * Get all active typing services ordered (excluding family visa).
      */
     public function getActive(): Collection
     {
-        return TypingService::active()->ordered()->get();
+        return TypingService::where('slug', '!=', 'family-visa-process')
+            ->active()
+            ->ordered()
+            ->get();
     }
 
     /**
-     * Get featured typing services.
+     * Get featured typing services (excluding family visa).
      */
     public function getFeatured(int $limit = 4): Collection
     {
-        return TypingService::active()
+        return TypingService::where('slug', '!=', 'family-visa-process')
+            ->active()
             ->featured()
             ->ordered()
             ->limit($limit)
@@ -113,15 +119,15 @@ class TypingServiceService
     }
 
     /**
-     * Get statistics for typing services.
+     * Get statistics for typing services (excluding family visa).
      */
     public function getStats(): array
     {
         return [
-            'total' => TypingService::count(),
-            'active' => TypingService::active()->count(),
-            'featured' => TypingService::featured()->count(),
-            'inactive' => TypingService::inactive()->count(),
+            'total' => TypingService::where('slug', '!=', 'family-visa-process')->count(),
+            'active' => TypingService::where('slug', '!=', 'family-visa-process')->active()->count(),
+            'featured' => TypingService::where('slug', '!=', 'family-visa-process')->featured()->count(),
+            'inactive' => TypingService::where('slug', '!=', 'family-visa-process')->inactive()->count(),
         ];
     }
 }
