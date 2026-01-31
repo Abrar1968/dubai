@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { edit } from '@/routes/profile';
-import { send } from '@/routes/verification';
 import { Form, Head, Link, usePage } from '@inertiajs/vue3';
 
 import DeleteUser from '@/components/DeleteUser.vue';
@@ -23,7 +21,7 @@ defineProps<Props>();
 const breadcrumbItems: BreadcrumbItem[] = [
     {
         title: 'Profile settings',
-        href: edit().url,
+        href: route('profile.edit'),
     },
 ];
 
@@ -81,7 +79,8 @@ const user = page.props.auth.user;
                         <p class="-mt-4 text-sm text-muted-foreground">
                             Your email address is unverified.
                             <Link
-                                :href="send()"
+                                :href="route('verification.send')"
+                                method="post"
                                 as="button"
                                 class="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                             >
