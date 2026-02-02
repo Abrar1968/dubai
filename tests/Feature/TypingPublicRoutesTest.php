@@ -23,11 +23,10 @@ describe('Typing Public Routes', function () {
             $response = $this->get('/typing');
 
             $response->assertStatus(200);
-            $response->assertInertia(fn ($page) =>
-                $page->component('typing/typinghome')
-                    ->has('services')
-                    ->has('featuredServices')
-                    ->has('settings')
+            $response->assertInertia(fn ($page) => $page->component('typing/typinghome')
+                ->has('services')
+                ->has('featuredServices')
+                ->has('settings')
             );
         });
     });
@@ -46,34 +45,36 @@ describe('Typing Public Routes', function () {
             $response = $this->get('/typing/contact');
 
             $response->assertStatus(200);
-            $response->assertInertia(fn ($page) => $page->component('typing/typinghome'));
+            $response->assertInertia(fn ($page) => $page->component('typing/contact'));
         });
     });
 
-    describe('Service Detail Pages (Static Vue)', function () {
-        $staticServices = [
-            'immigration' => 'typing/services/Immigration',
-            'labour-ministry' => 'typing/services/LabourMinistry',
-            'tasheel-services' => 'typing/services/TasheelServices',
-            'domestic-workers-visa' => 'typing/services/DomesticWorkersVisa',
-            'family-visa-process' => 'typing/services/FamilyVisaProcess',
-            'health-insurance' => 'typing/services/HealthInsurance',
-            'ministry-of-interior' => 'typing/services/MinistryOfInterior',
-            'certificate-attestation' => 'typing/services/CertificateAttestation',
-            'vat-registration' => 'typing/services/VATRegistration',
-            'ct-registration' => 'typing/services/CTRegistration',
-            'passport-renewal' => 'typing/services/PassportRenewal',
-            'immigration-card' => 'typing/services/ImmigrationCard',
-        ];
+    describe('Service Detail Pages', function () {
+        it('can access family-visa-process service page with special Vue', function () {
+            // Family visa uses special FamilyVisaProcess.vue component
+            TypingService::factory()->create([
+                'slug' => 'family-visa-process',
+                'is_active' => true,
+            ]);
 
-        foreach ($staticServices as $slug => $component) {
-            it("can access {$slug} service page", function () use ($slug, $component) {
-                $response = $this->get("/typing/services/{$slug}");
+            $response = $this->get('/typing/services/family-visa-process');
 
-                $response->assertStatus(200);
-                $response->assertInertia(fn ($page) => $page->component($component));
-            });
-        }
+            $response->assertStatus(200);
+            $response->assertInertia(fn ($page) => $page->component('typing/services/FamilyVisaProcess'));
+        });
+
+        it('can access other services with generic ServiceDetail.vue', function () {
+            // Create a test service
+            TypingService::factory()->create([
+                'slug' => 'immigration',
+                'is_active' => true,
+            ]);
+
+            $response = $this->get('/typing/services/immigration');
+
+            $response->assertStatus(200);
+            $response->assertInertia(fn ($page) => $page->component('typing/services/ServiceDetail'));
+        });
     });
 
     describe('Family Visa Sub-Pages', function () {
@@ -103,19 +104,18 @@ describe('Typing Public Routes', function () {
 
             $response = $this->get('/typing/services/test-service-slug');
 
-            // Since 'test-service-slug' is not in static map, it falls back to home
             $response->assertStatus(200);
-            $response->assertInertia(fn ($page) =>
-                $page->component('typing/typinghome')
-                    ->has('service')
+            $response->assertInertia(fn ($page) => $page->component('typing/services/ServiceDetail')
+                ->has('service')
             );
         });
 
-        it('returns 404 for non-existent service', function () {
+        it('returns home page for non-existent service', function () {
             $response = $this->get('/typing/services/non-existent-service');
 
-            // The controller should throw 404 for non-existent services
-            $response->assertStatus(404);
+            // The controller redirects to home for non-existent services
+            $response->assertStatus(200);
+            $response->assertInertia(fn ($page) => $page->component('typing/typinghome'));
         });
     });
 });

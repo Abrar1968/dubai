@@ -112,16 +112,12 @@
                                 name="section"
                                 label="Section"
                                 :value="old('section', 'global')"
+                                :options="['global' => 'Global (All Sections)', 'hajj' => 'Hajj & Umrah', 'typing' => 'Typing Services']"
                                 required
-                            >
-                                <option value="global" {{ old('section', 'global') === 'global' ? 'selected' : '' }}>Global (All Sections)</option>
-                                <option value="hajj" {{ old('section') === 'hajj' ? 'selected' : '' }}>Hajj & Umrah</option>
-                                <option value="tour" {{ old('section') === 'tour' ? 'selected' : '' }}>Tour & Travel</option>
-                                <option value="typing" {{ old('section') === 'typing' ? 'selected' : '' }}>Typing Services</option>
-                            </x-admin.ui.select>
+                            />
 
                             <p class="text-xs text-gray-500">
-                                <strong>Global</strong> locations appear on all section home pages.
+                                <strong>Global</strong> locations appear on all section pages.
                             </p>
 
                             <x-admin.ui.input

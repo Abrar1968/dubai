@@ -61,16 +61,15 @@
 - **Dual Stack**: Laravel 12 backend with TWO frontend approaches:
   1. **Public Website**: Vue 3 + Inertia.js + TypeScript (SPA-like pages) — fully implemented
   2. **Admin Panel**: Laravel Blade + Alpine.js + Tailwind CSS v4 (server-rendered) — fully implemented
-  3. **User Dashboard**: Laravel Blade + Alpine.js (for customers to track bookings) — NOT YET IMPLEMENTED
+  3. **User Dashboard**: Vue 3 + Inertia.js (for customers to track bookings) — ✅ IMPLEMENTED
 - **Database**: MySQL with comprehensive schema (19 tables including users, bookings, packages, articles, typing services, family visas, etc.)
 - **Authentication**: Laravel Fortify with 2FA support
 - **Architecture**: Service Pattern — all business logic in service classes (`app/Services/*`)
 
 ### Critical Structural Knowledge
-- **Three Sections**: 
+- **Two Active Sections** (Tour & Travel removed): 
   - **Hajj & Umrah** (Phase 1) — ✅ FULLY IMPLEMENTED
-  - **Typing Services** (Phase 2) — ✅ FULLY IMPLEMENTED (Jan 2026) 
-  - **Tour & Travel** (Phase 3) — ❌ NOT YET IMPLEMENTED
+  - **Typing Services** (Phase 2) — ✅ FULLY IMPLEMENTED (Jan 2026)
 - **Three User Roles**:
   - `super_admin`: full system access, manages admins, assigns sections
   - `admin`: section-specific access (can be assigned hajj, typing, tour), no admin management
@@ -199,7 +198,24 @@ php artisan storage:link   # Create symlink from public/storage to storage/app/p
 - Pages: `resources/js/pages/<section>/<Name>.vue`
 - Routes: `routes/web.php` → `Inertia::render('<section>/<Name>')`
 - Components: `resources/js/components/` with `ui/` subfolder for reusables
-- **Preserve folder naming**: `hajj&umrah`, `tour&travel` (ampersands are intentional)
+- **Preserve folder naming**: `hajj&umrah` (ampersand is intentional)
+
+### Typing Services Frontend Pattern (IMPORTANT)
+All typing services use **ONE generic Vue component**: `typing/services/ServiceDetail.vue`
+- Content is fetched from database via `TypingServiceService`
+- **Exception**: `family-visa-process` uses `FamilyVisaProcess.vue` (special emirate selection UI)
+- **Do NOT create individual Vue files** per service — use the dynamic `ServiceDetail.vue`
+
+**Service Methods for Public Display**:
+```php
+// For public homepage - INCLUDES Family Visa in list
+$typingServiceService->getActiveWithFamilyVisa();
+$typingServiceService->getFeaturedWithFamilyVisa(8);
+
+// For admin panel - EXCLUDES Family Visa (managed separately)
+$typingServiceService->getActive();
+$typingServiceService->getFeatured(4);
+```
 
 ### Frontend: Admin Panel (Blade + Alpine.js) — ✅ FULLY IMPLEMENTED
 - **Layout**: `resources/views/admin/layouts/app.blade.php` (responsive sidebar + header)
@@ -215,10 +231,11 @@ php artisan storage:link   # Create symlink from public/storage to storage/app/p
 - **Access Control**: Role-aware sidebar using `auth()->user()->hasSection()` and `isSuperAdmin()`
 - **Middleware**: `admin`, `section:<name>`, `super_admin` applied to route groups
 
-### Frontend: User Dashboard (Blade + Alpine.js) — NOT YET IMPLEMENTED
-- Layout: `resources/views/user/layouts/app.blade.php`
-- Pages: `resources/views/user/pages/` (dashboard, bookings, profile)
-- Routes: `routes/user.php` (planned) or within `web.php` with `user.` prefix
+### Frontend: User Dashboard (Vue + Inertia) — ✅ IMPLEMENTED
+- Pages: `resources/js/pages/user/` (Dashboard.vue, Bookings.vue, BookingShow.vue, Profile.vue)
+- Routes: `routes/web.php` with `user.` prefix at `/user/*`
+- Features: Booking stats, booking list with status, booking details, profile management
+- Middleware: `['auth', 'verified', 'user']` — only USER role can access
 
 ### Form Requests
 - **All form requests are in `app/Http/Requests/Admin/`** (no Hajj subfolder)
@@ -562,7 +579,6 @@ Refs: docs/steps/day-2.md
   - ✅ Hajj section routes with `section:hajj` middleware
   - ✅ Typing section routes with `section:typing` middleware
   - ✅ Super admin routes with `super_admin` middleware
-  - ❌ Tour & Travel section (Phase 3 - not implemented)
 
 - **Middleware & RBAC**: Fully functional
   - ✅ `AdminMiddleware` — Admin-level access control
@@ -584,11 +600,11 @@ Refs: docs/steps/day-2.md
   - ✅ `SuperAdminSeeder` — Default super admin
   - ✅ Test credentials: `superadmin@dubai.test` / `hajjadmin@dubai.test` / `user@dubai.test` (all: `password`)
 
-#### ⏳ User Dashboard (Blade + Alpine.js) — NOT YET IMPLEMENTED
-- **Status**: Specs defined in `docs/SRS.md` (USER module)
-- **Routes**: Planned in `routes/user.php` or `routes/web.php` with `user.` prefix
-- **Features**: Dashboard, booking tracking, profile management
-- **Implementation**: Defined in `docs/steps/day-3.md` Phase 6 (not yet executed)
+#### ✅ User Dashboard (Vue + Inertia) — IMPLEMENTED
+- **Status**: Fully functional at `/user/*` routes
+- **Routes**: Configured in `routes/web.php` with `user.` prefix and `['auth', 'verified', 'user']` middleware
+- **Features**: Dashboard with booking stats, booking list, booking details, profile management
+- **Pages**: `resources/js/pages/user/` (Dashboard.vue, Bookings.vue, BookingShow.vue, Profile.vue)
 
 ### What's Working Right Now
 1. ✅ **Admin Login**: `/admin/login` — Full authentication with role checks
@@ -613,11 +629,9 @@ Refs: docs/steps/day-2.md
    - User Management: `/admin/users` — Customer account management
 
 ### Next Phase (Future Enhancements)
-1. **User Dashboard** — Customer booking tracking, profile management
-2. **Tour & Travel Section** — Phase 3 implementation (admin panel for tour packages)
-3. **Email Notifications** — Queue-based email sending for bookings, inquiries
-4. **Payment Gateway Integration** — Stripe/PayPal integration for online booking
-5. **Advanced Analytics** — Revenue reports, booking trends, customer insights
+1. **Email Notifications** — Queue-based email sending for bookings, inquiries
+2. **Payment Gateway Integration** — Stripe/PayPal integration for online booking
+3. **Advanced Analytics** — Revenue reports, booking trends, customer insights
 
 ---
 

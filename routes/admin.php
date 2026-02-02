@@ -39,8 +39,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 return redirect()->route('admin.hajj.dashboard');
             } elseif ($user->hasSection('typing')) {
                 return redirect()->route('admin.typing.dashboard');
-            } elseif ($user->hasSection('tour')) {
-                return redirect()->route('admin.tour.dashboard'); // Future
             } else {
                 // Fallback to hajj dashboard
                 return redirect()->route('admin.hajj.dashboard');
@@ -134,16 +132,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('settings/social', [\App\Http\Controllers\Admin\Hajj\SettingController::class, 'updateSocial'])->name('settings.update-social');
             Route::put('settings/booking', [\App\Http\Controllers\Admin\Hajj\SettingController::class, 'updateBooking'])->name('settings.update-booking');
             Route::post('settings/clear-cache', [\App\Http\Controllers\Admin\Hajj\SettingController::class, 'clearCache'])->name('settings.clear-cache');
-        });
-
-        // ==========================================
-        // Tour & Travel Section Routes (Phase 2)
-        // ==========================================
-        Route::prefix('tour')->name('tour.')->middleware('section:tour')->group(function () {
-            // Placeholder - will be implemented in Phase 2
-            Route::get('/', function () {
-                return view('admin.pages.coming-soon', ['section' => 'Tour & Travel']);
-            })->name('index');
         });
 
         // ==========================================

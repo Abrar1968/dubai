@@ -43,7 +43,7 @@
                class="rounded-lg px-4 py-2 text-sm font-medium {{ !$currentSection ? 'bg-purple-100 text-purple-700' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200' }}">
                 All Sections
             </a>
-            @foreach(['global' => 'Global', 'hajj' => 'Hajj & Umrah', 'tour' => 'Tour & Travel', 'typing' => 'Typing Services'] as $key => $label)
+            @foreach(['global' => 'Global', 'hajj' => 'Hajj & Umrah', 'typing' => 'Typing Services'] as $key => $label)
                 <a href="{{ route('admin.office-locations.index', ['section' => $key]) }}"
                    class="rounded-lg px-4 py-2 text-sm font-medium {{ $currentSection === $key ? 'bg-purple-100 text-purple-700' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200' }}">
                     {{ $label }}

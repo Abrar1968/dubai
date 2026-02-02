@@ -19,7 +19,7 @@ class TypingServiceService
     }
 
     /**
-     * Get all active typing services ordered (excluding family visa).
+     * Get all active typing services ordered (excluding family visa for admin).
      */
     public function getActive(): Collection
     {
@@ -30,12 +30,34 @@ class TypingServiceService
     }
 
     /**
-     * Get featured typing services (excluding family visa).
+     * Get all active typing services ordered (INCLUDING family visa for public display).
+     */
+    public function getActiveWithFamilyVisa(): Collection
+    {
+        return TypingService::active()
+            ->ordered()
+            ->get();
+    }
+
+    /**
+     * Get featured typing services (excluding family visa for admin).
      */
     public function getFeatured(int $limit = 4): Collection
     {
         return TypingService::where('slug', '!=', 'family-visa-process')
             ->active()
+            ->featured()
+            ->ordered()
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Get featured typing services (INCLUDING family visa for public display).
+     */
+    public function getFeaturedWithFamilyVisa(int $limit = 4): Collection
+    {
+        return TypingService::active()
             ->featured()
             ->ordered()
             ->limit($limit)
@@ -64,7 +86,7 @@ class TypingServiceService
     public function create(array $data): TypingService
     {
         // Set default sort_order if not provided
-        if (!isset($data['sort_order'])) {
+        if (! isset($data['sort_order'])) {
             $data['sort_order'] = TypingService::max('sort_order') + 1;
         }
 
@@ -77,6 +99,7 @@ class TypingServiceService
     public function update(TypingService $service, array $data): TypingService
     {
         $service->update($data);
+
         return $service->fresh();
     }
 
@@ -93,7 +116,8 @@ class TypingServiceService
      */
     public function toggleActive(TypingService $service): TypingService
     {
-        $service->update(['is_active' => !$service->is_active]);
+        $service->update(['is_active' => ! $service->is_active]);
+
         return $service->fresh();
     }
 
@@ -102,7 +126,8 @@ class TypingServiceService
      */
     public function toggleFeatured(TypingService $service): TypingService
     {
-        $service->update(['is_featured' => !$service->is_featured]);
+        $service->update(['is_featured' => ! $service->is_featured]);
+
         return $service->fresh();
     }
 

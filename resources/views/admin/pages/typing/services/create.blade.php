@@ -16,7 +16,15 @@
 
         <!-- Form -->
         <form action="{{ route('admin.typing.services.store') }}" method="POST" enctype="multipart/form-data"
-              x-data="serviceForm()">
+              x-data="{
+                  subServices: {{ Js::from(old('sub_services', [])) }},
+                  addSubService() {
+                      this.subServices.push({ name: '', description: '' });
+                  },
+                  removeSubService(index) {
+                      this.subServices.splice(index, 1);
+                  }
+              }">
             @csrf
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -53,11 +61,10 @@
                                 placeholder="Brief description for service cards..."
                             />
 
-                            <x-admin.ui.textarea
+                            <x-admin.form.rich-editor
                                 name="long_description"
                                 label="Full Description"
                                 :value="old('long_description')"
-                                rows="5"
                                 placeholder="Detailed description of the service..."
                             />
                         </div>
@@ -235,7 +242,22 @@
                             </div>
 
                             <!-- Gallery Images -->
-                            <div x-data="galleryUpload()">
+                            <div x-data="{
+                                previews: [],
+                                files: [],
+                                handleFiles(event) {
+                                    const newFiles = Array.from(event.target.files);
+                                    newFiles.forEach(file => {
+                                        this.previews.push(URL.createObjectURL(file));
+                                        this.files.push(file);
+                                    });
+                                },
+                                removeImage(index) {
+                                    this.previews.splice(index, 1);
+                                    this.files.splice(index, 1);
+                                    this.$refs.galleryInput.value = '';
+                                }
+                            }">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Gallery Images</label>
                                 <p class="text-xs text-gray-500 mb-3">Upload government documents or reference images</p>
 
@@ -302,47 +324,4 @@
             </div>
         </form>
     </div>
-
-    @push('scripts')
-    <script>
-        function serviceForm() {
-            return {
-                subServices: @json(old('sub_services', [])),
-
-                addSubService() {
-                    this.subServices.push({
-                        name: '',
-                        description: ''
-                    });
-                },
-
-                removeSubService(index) {
-                    this.subServices.splice(index, 1);
-                }
-            }
-        }
-
-        function galleryUpload() {
-            return {
-                previews: [],
-                files: [],
-
-                handleFiles(event) {
-                    const newFiles = Array.from(event.target.files);
-                    newFiles.forEach(file => {
-                        this.previews.push(URL.createObjectURL(file));
-                        this.files.push(file);
-                    });
-                },
-
-                removeImage(index) {
-                    this.previews.splice(index, 1);
-                    this.files.splice(index, 1);
-                    // Reset file input
-                    this.$refs.galleryInput.value = '';
-                }
-            }
-        }
-    </script>
-    @endpush
 </x-admin.layouts.app>

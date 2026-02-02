@@ -536,8 +536,8 @@ class HajjSectionSeeder extends Seeder
                 'name' => 'Dubai Head Office',
                 'address' => 'Office 1205, Jumeirah Business Center, JLT, Dubai, UAE',
                 'phone' => '+971 4 123 4567',
-                'email' => 'info@dubaihajj.ae',
-                'section' => 'hajj',
+                'email' => 'info@dubaitravel.ae',
+                'section' => 'global',
                 'is_active' => true,
                 'sort_order' => 1,
             ],
@@ -545,8 +545,8 @@ class HajjSectionSeeder extends Seeder
                 'name' => 'Abu Dhabi Branch',
                 'address' => 'Tower 3, Floor 15, Al Maryah Island, Abu Dhabi, UAE',
                 'phone' => '+971 2 987 6543',
-                'email' => 'abudhabi@dubaihajj.ae',
-                'section' => 'hajj',
+                'email' => 'abudhabi@dubaitravel.ae',
+                'section' => 'global',
                 'is_active' => true,
                 'sort_order' => 2,
             ],
@@ -554,8 +554,8 @@ class HajjSectionSeeder extends Seeder
                 'name' => 'Sharjah Office',
                 'address' => 'Al Khan Corniche, Sharjah, UAE',
                 'phone' => '+971 6 555 4433',
-                'email' => 'sharjah@dubaihajj.ae',
-                'section' => 'hajj',
+                'email' => 'sharjah@dubaitravel.ae',
+                'section' => 'global',
                 'is_active' => true,
                 'sort_order' => 3,
             ],
@@ -563,7 +563,7 @@ class HajjSectionSeeder extends Seeder
 
         foreach ($offices as $office) {
             OfficeLocation::updateOrCreate(
-                ['name' => $office['name'], 'section' => $office['section']],
+                ['name' => $office['name']],
                 $office
             );
         }

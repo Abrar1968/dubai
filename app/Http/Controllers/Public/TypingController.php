@@ -27,8 +27,9 @@ class TypingController extends Controller
      */
     public function home(): Response
     {
-        $services = $this->typingServiceService->getActive();
-        $featuredServices = $this->typingServiceService->getFeatured(6);
+        // Use methods that INCLUDE family visa for public display
+        $services = $this->typingServiceService->getActiveWithFamilyVisa();
+        $featuredServices = $this->typingServiceService->getFeaturedWithFamilyVisa(8);
         $settings = $this->settingService->getGrouped('typing');
         $offices = $this->officeLocationService->getForHomePage('typing');
 

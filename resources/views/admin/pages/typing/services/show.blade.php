@@ -173,7 +173,7 @@
                             <div>
                                 <span class="text-sm font-medium text-gray-500">Image</span>
                                 <div class="mt-2">
-                                    <img src="{{ \\Illuminate\\Support\\Facades\\Storage::url($service->image) }}" alt="{{ $service->title }}" class="w-full h-48 object-cover rounded-lg">
+                                    <img src="{{ Storage::url($service->image) }}" alt="{{ $service->title }}" class="w-full h-48 object-cover rounded-lg">
                                 </div>
                             </div>
                         @else

@@ -1,6 +1,23 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { router, usePage } from '@inertiajs/vue3'
+import {
+    User,
+    Mail,
+    Phone,
+    MapPin,
+    Globe,
+    Calendar,
+    FileText,
+    Shield,
+    Lock,
+    Eye,
+    EyeOff,
+    CheckCircle2,
+    AlertCircle,
+    Loader2,
+    Save
+} from 'lucide-vue-next'
 import UserLayout from '@/layouts/UserLayout.vue'
 
 defineOptions({ layout: UserLayout })
@@ -47,6 +64,10 @@ const passwordForm = ref({
     password_confirmation: '',
 });
 
+const showCurrentPassword = ref(false);
+const showNewPassword = ref(false);
+const showConfirmPassword = ref(false);
+
 const errors = ref<Record<string, string>>({});
 const passwordErrors = ref<Record<string, string>>({});
 const isSubmitting = ref(false);
@@ -62,19 +83,24 @@ const displayUser = computed(() => {
     };
 });
 
+const userInitials = computed(() => {
+    const name = displayUser.value.name || 'U';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+});
+
 const validateForm = () => {
     errors.value = {};
-    
+
     if (!form.value.name.trim()) {
         errors.value.name = 'Name is required';
     }
-    
+
     if (!form.value.email.trim()) {
         errors.value.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) {
         errors.value.email = 'Please enter a valid email address';
     }
-    
+
     if (form.value.phone && !/^[\d\s\-\+\(\)]+$/.test(form.value.phone)) {
         errors.value.phone = 'Please enter a valid phone number';
     }
@@ -85,36 +111,36 @@ const validateForm = () => {
             errors.value.passport_expiry = 'Passport has expired';
         }
     }
-    
+
     return Object.keys(errors.value).length === 0;
 };
 
 const validatePasswordForm = () => {
     passwordErrors.value = {};
-    
+
     if (!passwordForm.value.current_password) {
         passwordErrors.value.current_password = 'Current password is required';
     }
-    
+
     if (!passwordForm.value.password) {
         passwordErrors.value.password = 'New password is required';
     } else if (passwordForm.value.password.length < 8) {
         passwordErrors.value.password = 'Password must be at least 8 characters';
     }
-    
+
     if (passwordForm.value.password !== passwordForm.value.password_confirmation) {
         passwordErrors.value.password_confirmation = 'Passwords do not match';
     }
-    
+
     return Object.keys(passwordErrors.value).length === 0;
 };
 
 const submitProfile = () => {
     if (!validateForm()) return;
-    
+
     isSubmitting.value = true;
     successMessage.value = '';
-    
+
     router.put('/user/profile', form.value, {
         preserveScroll: true,
         onSuccess: () => {
@@ -134,10 +160,10 @@ const submitProfile = () => {
 
 const submitPassword = () => {
     if (!validatePasswordForm()) return;
-    
+
     isPasswordSubmitting.value = true;
     passwordSuccessMessage.value = '';
-    
+
     router.put('/user/password', passwordForm.value, {
         preserveScroll: true,
         onSuccess: () => {
@@ -162,171 +188,268 @@ const submitPassword = () => {
 </script>
 
 <template>
-    <div class="space-y-6">
+    <div class="space-y-8">
         <!-- Page Header -->
-        <div>
-            <h1 class="text-2xl font-bold text-gray-900">Profile Settings</h1>
-            <p class="mt-1 text-sm text-gray-500">Manage your personal information and account settings.</p>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-6">
+            <div class="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white text-2xl font-bold shadow-lg shadow-amber-500/25">
+                {{ userInitials }}
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900">Profile Settings</h1>
+                <p class="mt-1 text-slate-500">Manage your personal information, travel documents, and account security</p>
+            </div>
         </div>
 
         <!-- Profile Information -->
-        <div class="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
-            <div class="border-b border-gray-200 px-6 py-4">
-                <h2 class="text-lg font-semibold text-gray-900">Personal Information</h2>
-                <p class="mt-1 text-sm text-gray-500">Update your personal details and travel documents.</p>
-            </div>
-            
-            <form @submit.prevent="submitProfile" class="p-6">
-                <!-- Success Message -->
-                <div v-if="successMessage" class="mb-6 rounded-lg bg-green-50 p-4 text-sm text-green-800">
-                    <div class="flex items-center gap-2">
-                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                        </svg>
-                        {{ successMessage }}
+        <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/60">
+            <div class="border-b border-slate-100 px-6 py-5 bg-slate-50/50">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
+                        <User class="h-5 w-5" />
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-slate-900">Personal Information</h2>
+                        <p class="text-sm text-slate-500">Update your personal details and contact information</p>
                     </div>
                 </div>
+            </div>
+
+            <form @submit.prevent="submitProfile" class="p-6">
+                <!-- Success Message -->
+                <Transition
+                    enter-active-class="transition duration-300 ease-out"
+                    enter-from-class="transform -translate-y-2 opacity-0"
+                    enter-to-class="transform translate-y-0 opacity-100"
+                    leave-active-class="transition duration-200 ease-in"
+                    leave-from-class="transform translate-y-0 opacity-100"
+                    leave-to-class="transform -translate-y-2 opacity-0"
+                >
+                    <div v-if="successMessage" class="mb-6 flex items-center gap-3 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-700">
+                        <CheckCircle2 class="h-5 w-5 flex-shrink-0" />
+                        <span class="font-medium">{{ successMessage }}</span>
+                    </div>
+                </Transition>
 
                 <div class="grid gap-6 sm:grid-cols-2">
                     <!-- Name -->
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700">Full Name *</label>
+                    <div class="group">
+                        <label for="name" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                            <User class="h-4 w-4 text-slate-400" />
+                            Full Name <span class="text-red-500">*</span>
+                        </label>
                         <input
                             type="text"
                             id="name"
                             v-model="form.name"
-                            :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', errors.name ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
+                            placeholder="Enter your full name"
+                            class="block w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2 placeholder:text-slate-400"
+                            :class="errors.name
+                                ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
                         />
-                        <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
+                        <p v-if="errors.name" class="mt-2 flex items-center gap-1 text-sm text-red-600">
+                            <AlertCircle class="h-4 w-4" />
+                            {{ errors.name }}
+                        </p>
                     </div>
 
                     <!-- Email -->
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700">Email Address *</label>
+                        <label for="email" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                            <Mail class="h-4 w-4 text-slate-400" />
+                            Email Address <span class="text-red-500">*</span>
+                        </label>
                         <input
                             type="email"
                             id="email"
                             v-model="form.email"
-                            :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', errors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
+                            placeholder="your@email.com"
+                            class="block w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2 placeholder:text-slate-400"
+                            :class="errors.email
+                                ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
                         />
-                        <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
+                        <p v-if="errors.email" class="mt-2 flex items-center gap-1 text-sm text-red-600">
+                            <AlertCircle class="h-4 w-4" />
+                            {{ errors.email }}
+                        </p>
                     </div>
 
                     <!-- Phone -->
                     <div>
-                        <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                        <label for="phone" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                            <Phone class="h-4 w-4 text-slate-400" />
+                            Phone Number
+                        </label>
                         <input
                             type="tel"
                             id="phone"
                             v-model="form.phone"
                             placeholder="+1 (555) 123-4567"
-                            :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', errors.phone ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
+                            class="block w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2 placeholder:text-slate-400"
+                            :class="errors.phone
+                                ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
                         />
-                        <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
+                        <p v-if="errors.phone" class="mt-2 flex items-center gap-1 text-sm text-red-600">
+                            <AlertCircle class="h-4 w-4" />
+                            {{ errors.phone }}
+                        </p>
                     </div>
 
                     <!-- Nationality -->
                     <div>
-                        <label for="nationality" class="block text-sm font-medium text-gray-700">Nationality</label>
+                        <label for="nationality" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                            <Globe class="h-4 w-4 text-slate-400" />
+                            Nationality
+                        </label>
                         <input
                             type="text"
                             id="nationality"
                             v-model="form.nationality"
-                            :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', errors.nationality ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
+                            placeholder="e.g. American, British"
+                            class="block w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2 placeholder:text-slate-400"
+                            :class="errors.nationality
+                                ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
                         />
-                        <p v-if="errors.nationality" class="mt-1 text-sm text-red-600">{{ errors.nationality }}</p>
                     </div>
 
                     <!-- Date of Birth -->
                     <div>
-                        <label for="date_of_birth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                        <label for="date_of_birth" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                            <Calendar class="h-4 w-4 text-slate-400" />
+                            Date of Birth
+                        </label>
                         <input
                             type="date"
                             id="date_of_birth"
                             v-model="form.date_of_birth"
-                            :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', errors.date_of_birth ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
+                            class="block w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2"
+                            :class="errors.date_of_birth
+                                ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
                         />
-                        <p v-if="errors.date_of_birth" class="mt-1 text-sm text-red-600">{{ errors.date_of_birth }}</p>
                     </div>
 
                     <!-- Address -->
                     <div class="sm:col-span-2">
-                        <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                        <label for="address" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                            <MapPin class="h-4 w-4 text-slate-400" />
+                            Address
+                        </label>
                         <input
                             type="text"
                             id="address"
                             v-model="form.address"
-                            :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', errors.address ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
+                            placeholder="123 Main Street, Apt 4B"
+                            class="block w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2 placeholder:text-slate-400"
+                            :class="errors.address
+                                ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
                         />
-                        <p v-if="errors.address" class="mt-1 text-sm text-red-600">{{ errors.address }}</p>
                     </div>
 
                     <!-- City -->
                     <div>
-                        <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                        <label for="city" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                            City
+                        </label>
                         <input
                             type="text"
                             id="city"
                             v-model="form.city"
-                            :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', errors.city ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
+                            placeholder="New York"
+                            class="block w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2 placeholder:text-slate-400"
+                            :class="errors.city
+                                ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
                         />
-                        <p v-if="errors.city" class="mt-1 text-sm text-red-600">{{ errors.city }}</p>
                     </div>
 
                     <!-- Country -->
                     <div>
-                        <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
+                        <label for="country" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                            Country
+                        </label>
                         <input
                             type="text"
                             id="country"
                             v-model="form.country"
-                            :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', errors.country ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
+                            placeholder="United States"
+                            class="block w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2 placeholder:text-slate-400"
+                            :class="errors.country
+                                ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
                         />
-                        <p v-if="errors.country" class="mt-1 text-sm text-red-600">{{ errors.country }}</p>
                     </div>
                 </div>
 
                 <!-- Travel Documents Section -->
-                <div class="mt-8 border-t border-gray-200 pt-6">
-                    <h3 class="text-base font-medium text-gray-900 mb-4">Travel Documents</h3>
+                <div class="mt-8 pt-8 border-t border-slate-100">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                            <FileText class="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h3 class="text-base font-semibold text-slate-900">Travel Documents</h3>
+                            <p class="text-sm text-slate-500">Required for Hajj & Umrah bookings</p>
+                        </div>
+                    </div>
+
                     <div class="grid gap-6 sm:grid-cols-2">
                         <!-- Passport Number -->
                         <div>
-                            <label for="passport_number" class="block text-sm font-medium text-gray-700">Passport Number</label>
+                            <label for="passport_number" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                                Passport Number
+                            </label>
                             <input
                                 type="text"
                                 id="passport_number"
                                 v-model="form.passport_number"
-                                :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', errors.passport_number ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
+                                placeholder="AB1234567"
+                                class="block w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2 placeholder:text-slate-400 font-mono"
+                                :class="errors.passport_number
+                                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                    : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
                             />
-                            <p v-if="errors.passport_number" class="mt-1 text-sm text-red-600">{{ errors.passport_number }}</p>
+                            <p v-if="errors.passport_number" class="mt-2 flex items-center gap-1 text-sm text-red-600">
+                                <AlertCircle class="h-4 w-4" />
+                                {{ errors.passport_number }}
+                            </p>
                         </div>
 
                         <!-- Passport Expiry -->
                         <div>
-                            <label for="passport_expiry" class="block text-sm font-medium text-gray-700">Passport Expiry Date</label>
+                            <label for="passport_expiry" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                                Passport Expiry Date
+                            </label>
                             <input
                                 type="date"
                                 id="passport_expiry"
                                 v-model="form.passport_expiry"
-                                :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', errors.passport_expiry ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
+                                class="block w-full rounded-xl border px-4 py-3 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2"
+                                :class="errors.passport_expiry
+                                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                    : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
                             />
-                            <p v-if="errors.passport_expiry" class="mt-1 text-sm text-red-600">{{ errors.passport_expiry }}</p>
+                            <p v-if="errors.passport_expiry" class="mt-2 flex items-center gap-1 text-sm text-red-600">
+                                <AlertCircle class="h-4 w-4" />
+                                {{ errors.passport_expiry }}
+                            </p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Submit Button -->
-                <div class="mt-6 flex justify-end">
+                <div class="mt-8 flex justify-end">
                     <button
                         type="submit"
                         :disabled="isSubmitting"
-                        class="inline-flex items-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-amber-500/25 transition duration-200 hover:from-amber-600 hover:to-amber-700 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        <svg v-if="isSubmitting" class="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                        </svg>
+                        <Loader2 v-if="isSubmitting" class="h-4 w-4 animate-spin" />
+                        <Save v-else class="h-4 w-4" />
                         {{ isSubmitting ? 'Saving...' : 'Save Changes' }}
                     </button>
                 </div>
@@ -334,59 +457,136 @@ const submitPassword = () => {
         </div>
 
         <!-- Change Password -->
-        <div class="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
-            <div class="border-b border-gray-200 px-6 py-4">
-                <h2 class="text-lg font-semibold text-gray-900">Change Password</h2>
-                <p class="mt-1 text-sm text-gray-500">Ensure your account is using a secure password.</p>
-            </div>
-            
-            <form @submit.prevent="submitPassword" class="p-6">
-                <!-- Success Message -->
-                <div v-if="passwordSuccessMessage" class="mb-6 rounded-lg bg-green-50 p-4 text-sm text-green-800">
-                    <div class="flex items-center gap-2">
-                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                        </svg>
-                        {{ passwordSuccessMessage }}
+        <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/60">
+            <div class="border-b border-slate-100 px-6 py-5 bg-slate-50/50">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100 text-purple-600">
+                        <Shield class="h-5 w-5" />
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-slate-900">Account Security</h2>
+                        <p class="text-sm text-slate-500">Update your password to keep your account secure</p>
                     </div>
                 </div>
+            </div>
+
+            <form @submit.prevent="submitPassword" class="p-6">
+                <!-- Success Message -->
+                <Transition
+                    enter-active-class="transition duration-300 ease-out"
+                    enter-from-class="transform -translate-y-2 opacity-0"
+                    enter-to-class="transform translate-y-0 opacity-100"
+                    leave-active-class="transition duration-200 ease-in"
+                    leave-from-class="transform translate-y-0 opacity-100"
+                    leave-to-class="transform -translate-y-2 opacity-0"
+                >
+                    <div v-if="passwordSuccessMessage" class="mb-6 flex items-center gap-3 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-700">
+                        <CheckCircle2 class="h-5 w-5 flex-shrink-0" />
+                        <span class="font-medium">{{ passwordSuccessMessage }}</span>
+                    </div>
+                </Transition>
 
                 <div class="grid gap-6 sm:grid-cols-3">
                     <!-- Current Password -->
                     <div>
-                        <label for="current_password" class="block text-sm font-medium text-gray-700">Current Password *</label>
-                        <input
-                            type="password"
-                            id="current_password"
-                            v-model="passwordForm.current_password"
-                            :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', passwordErrors.current_password ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
-                        />
-                        <p v-if="passwordErrors.current_password" class="mt-1 text-sm text-red-600">{{ passwordErrors.current_password }}</p>
+                        <label for="current_password" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                            <Lock class="h-4 w-4 text-slate-400" />
+                            Current Password <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input
+                                :type="showCurrentPassword ? 'text' : 'password'"
+                                id="current_password"
+                                v-model="passwordForm.current_password"
+                                placeholder="••••••••"
+                                class="block w-full rounded-xl border px-4 py-3 pr-12 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2 placeholder:text-slate-400"
+                                :class="passwordErrors.current_password
+                                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                    : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
+                            />
+                            <button
+                                type="button"
+                                @click="showCurrentPassword = !showCurrentPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                                <EyeOff v-if="showCurrentPassword" class="h-5 w-5" />
+                                <Eye v-else class="h-5 w-5" />
+                            </button>
+                        </div>
+                        <p v-if="passwordErrors.current_password" class="mt-2 flex items-center gap-1 text-sm text-red-600">
+                            <AlertCircle class="h-4 w-4" />
+                            {{ passwordErrors.current_password }}
+                        </p>
                     </div>
 
                     <!-- New Password -->
                     <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700">New Password *</label>
-                        <input
-                            type="password"
-                            id="password"
-                            v-model="passwordForm.password"
-                            :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', passwordErrors.password ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
-                        />
-                        <p v-if="passwordErrors.password" class="mt-1 text-sm text-red-600">{{ passwordErrors.password }}</p>
+                        <label for="password" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                            New Password <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input
+                                :type="showNewPassword ? 'text' : 'password'"
+                                id="password"
+                                v-model="passwordForm.password"
+                                placeholder="••••••••"
+                                class="block w-full rounded-xl border px-4 py-3 pr-12 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2 placeholder:text-slate-400"
+                                :class="passwordErrors.password
+                                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                    : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
+                            />
+                            <button
+                                type="button"
+                                @click="showNewPassword = !showNewPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                                <EyeOff v-if="showNewPassword" class="h-5 w-5" />
+                                <Eye v-else class="h-5 w-5" />
+                            </button>
+                        </div>
+                        <p v-if="passwordErrors.password" class="mt-2 flex items-center gap-1 text-sm text-red-600">
+                            <AlertCircle class="h-4 w-4" />
+                            {{ passwordErrors.password }}
+                        </p>
                     </div>
 
                     <!-- Confirm Password -->
                     <div>
-                        <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password *</label>
-                        <input
-                            type="password"
-                            id="password_confirmation"
-                            v-model="passwordForm.password_confirmation"
-                            :class="['mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2', passwordErrors.password_confirmation ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-amber-500 focus:ring-amber-500']"
-                        />
-                        <p v-if="passwordErrors.password_confirmation" class="mt-1 text-sm text-red-600">{{ passwordErrors.password_confirmation }}</p>
+                        <label for="password_confirmation" class="flex items-center gap-2 text-sm font-medium text-slate-700 mb-2">
+                            Confirm Password <span class="text-red-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input
+                                :type="showConfirmPassword ? 'text' : 'password'"
+                                id="password_confirmation"
+                                v-model="passwordForm.password_confirmation"
+                                placeholder="••••••••"
+                                class="block w-full rounded-xl border px-4 py-3 pr-12 text-sm shadow-sm transition duration-200 focus:outline-none focus:ring-2 placeholder:text-slate-400"
+                                :class="passwordErrors.password_confirmation
+                                    ? 'border-red-300 focus:border-red-500 focus:ring-red-500/20'
+                                    : 'border-slate-200 focus:border-amber-500 focus:ring-amber-500/20'"
+                            />
+                            <button
+                                type="button"
+                                @click="showConfirmPassword = !showConfirmPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                                <EyeOff v-if="showConfirmPassword" class="h-5 w-5" />
+                                <Eye v-else class="h-5 w-5" />
+                            </button>
+                        </div>
+                        <p v-if="passwordErrors.password_confirmation" class="mt-2 flex items-center gap-1 text-sm text-red-600">
+                            <AlertCircle class="h-4 w-4" />
+                            {{ passwordErrors.password_confirmation }}
+                        </p>
                     </div>
+                </div>
+
+                <!-- Password Requirements -->
+                <div class="mt-4 rounded-xl bg-slate-50 p-4">
+                    <p class="text-sm text-slate-600">
+                        <strong>Password requirements:</strong> Minimum 8 characters
+                    </p>
                 </div>
 
                 <!-- Submit Button -->
@@ -394,12 +594,10 @@ const submitPassword = () => {
                     <button
                         type="submit"
                         :disabled="isPasswordSubmitting"
-                        class="inline-flex items-center rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-purple-500/25 transition duration-200 hover:from-purple-600 hover:to-purple-700 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                        <svg v-if="isPasswordSubmitting" class="mr-2 h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
-                        </svg>
+                        <Loader2 v-if="isPasswordSubmitting" class="h-4 w-4 animate-spin" />
+                        <Lock v-else class="h-4 w-4" />
                         {{ isPasswordSubmitting ? 'Updating...' : 'Update Password' }}
                     </button>
                 </div>

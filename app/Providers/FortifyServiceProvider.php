@@ -50,10 +50,10 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureViews(): void
     {
-        // Get site settings for auth pages
-        $getSettings = function () {
+        // Get site settings for auth pages based on section
+        $getSettings = function (string $section = 'hajj') {
             try {
-                return \App\Models\SiteSetting::where('section', 'hajj')
+                return \App\Models\SiteSetting::where('section', $section)
                     ->pluck('value', 'key')
                     ->toArray();
             } catch (\Exception $e) {
@@ -61,12 +61,39 @@ class FortifyServiceProvider extends ServiceProvider
             }
         };
 
-        Fortify::loginView(fn (Request $request) => Inertia::render('auth/Login', [
-            'canResetPassword' => Features::enabled(Features::resetPasswords()),
-            'canRegister' => Features::enabled(Features::registration()),
-            'status' => $request->session()->get('status'),
-            'settings' => $getSettings(),
-        ]));
+        // Detect section from referrer or query param
+        $detectSection = function (Request $request) {
+            // Check query param first
+            if ($request->has('section')) {
+                return $request->get('section') === 'typing' ? 'typing' : 'hajj';
+            }
+
+            // Check referrer
+            $referrer = $request->headers->get('referer', '');
+            if (str_contains($referrer, '/typing')) {
+                return 'typing';
+            }
+
+            // Check session
+            if (session('auth_section') === 'typing') {
+                return 'typing';
+            }
+
+            return 'hajj';
+        };
+
+        Fortify::loginView(function (Request $request) use ($getSettings, $detectSection) {
+            $section = $detectSection($request);
+            session(['auth_section' => $section]);
+
+            return Inertia::render('auth/Login', [
+                'canResetPassword' => Features::enabled(Features::resetPasswords()),
+                'canRegister' => Features::enabled(Features::registration()),
+                'status' => $request->session()->get('status'),
+                'settings' => $getSettings($section),
+                'section' => $section,
+            ]);
+        });
 
         Fortify::resetPasswordView(fn (Request $request) => Inertia::render('auth/ResetPassword', [
             'email' => $request->email,
@@ -81,9 +108,15 @@ class FortifyServiceProvider extends ServiceProvider
             'status' => $request->session()->get('status'),
         ]));
 
-        Fortify::registerView(fn () => Inertia::render('auth/Register', [
-            'settings' => $getSettings(),
-        ]));
+        Fortify::registerView(function (Request $request) use ($getSettings, $detectSection) {
+            $section = $detectSection($request);
+            session(['auth_section' => $section]);
+
+            return Inertia::render('auth/Register', [
+                'settings' => $getSettings($section),
+                'section' => $section,
+            ]);
+        });
 
         Fortify::twoFactorChallengeView(fn () => Inertia::render('auth/TwoFactorChallenge'));
 

@@ -29,7 +29,12 @@ use App\Models\SiteSetting;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
 use App\Models\User;
-use function Pest\Laravel\{actingAs, assertDatabaseHas, assertDatabaseMissing, get, post, put, patch, delete};
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
+use function Pest\Laravel\delete;
+use function Pest\Laravel\get;
 
 beforeEach(function () {
     // Create super admin for admin tests
@@ -178,7 +183,7 @@ describe('Bookings - Management', function () {
         ]);
 
         $this->booking = Booking::create([
-            'booking_number' => 'BK-' . strtoupper(uniqid()),
+            'booking_number' => 'BK-'.strtoupper(uniqid()),
             'package_id' => $this->package->id,
             'user_id' => $this->regularUser->id,
             'status' => BookingStatus::PENDING,
@@ -854,13 +859,13 @@ describe('Settings - Management', function () {
     it('can update social media settings', function () {
         actingAs($this->superAdmin)
             ->put(route('admin.hajj.settings.update-social'), [
-                'facebook_url' => 'https://facebook.com/test',
-                'twitter_url' => 'https://twitter.com/test',
-                'instagram_url' => 'https://instagram.com/test',
+                'social_facebook' => 'https://facebook.com/test',
+                'social_twitter' => 'https://twitter.com/test',
+                'social_instagram' => 'https://instagram.com/test',
             ])
             ->assertRedirect();
 
-        expect(SiteSetting::where('key', 'facebook_url')->where('section', 'hajj')->first()->value)
+        expect(SiteSetting::where('key', 'social_facebook')->where('section', 'hajj')->first()->value)
             ->toBe('https://facebook.com/test');
     });
 
