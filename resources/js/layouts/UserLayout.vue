@@ -5,6 +5,7 @@ import { computed, ref } from 'vue'
 const page = usePage()
 
 const user = computed(() => page.props.auth?.user || { name: 'User', email: '' })
+const settings = computed(() => page.props.settings || {})
 
 const isMobileMenuOpen = ref(false)
 
@@ -29,7 +30,13 @@ const isActive = (href: string) => {
                     <!-- Logo -->
                     <div class="flex items-center gap-4">
                         <Link href="/" class="flex items-center gap-2">
-                            <div class="text-xl font-bold text-amber-600">Dubai Tourism</div>
+                            <img 
+                                v-if="settings.company_logo" 
+                                :src="`/storage/${settings.company_logo}`" 
+                                :alt="`${settings.company_name || 'Dubai Tourism'} Logo`" 
+                                class="h-12 w-auto object-contain" 
+                            />
+                            <div v-else class="text-xl font-bold text-amber-600">Dubai Tourism</div>
                         </Link>
                     </div>
 
