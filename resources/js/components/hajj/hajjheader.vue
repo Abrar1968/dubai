@@ -95,12 +95,12 @@ const logout = () => {
     <!-- Main Navbar -->
     <div class="bg-white border-b border-slate-200">
       <div class="max-w-7xl mx-auto px-4 md:px-16">
-        <div class="h-20 flex items-center justify-between">
+        <div class="h-28 flex items-center justify-between">
           <!-- Logo -->
           <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <!-- Logo Image -->
-            <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-20 w-auto object-contain" />
-            <img v-else src="/assets/img/tour/logo/ss.png" alt="Company Logo" class="h-20 w-auto object-contain" />
+            <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-28 w-auto object-contain" />
+            <img v-else src="/assets/img/tour/logo/ss.png" alt="Company Logo" class="h-28 w-auto object-contain" />
           </a>
 
           <!-- Menu -->
