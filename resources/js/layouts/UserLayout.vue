@@ -29,7 +29,7 @@ const isActive = (href: string) => {
                     <!-- Logo -->
                     <div class="flex items-center gap-4">
                         <Link href="/" class="flex items-center gap-2">
-                            <img src="/assets/img/logo.png" alt="Logo" class="h-10 w-auto" />
+                            <div class="text-xl font-bold text-amber-600">Dubai Tourism</div>
                         </Link>
                     </div>
 

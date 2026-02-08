@@ -137,9 +137,9 @@ const formatDateTime = (dateString: string) => {
 };
 
 const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-AE', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'AED',
         minimumFractionDigits: 0,
     }).format(amount);
 };

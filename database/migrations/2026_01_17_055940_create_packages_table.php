@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('slug', 220)->unique();
             $table->enum('type', ['hajj', 'umrah', 'tour'])->default('hajj');
             $table->decimal('price', 10, 2);
-            $table->string('currency', 3)->default('USD');
+            $table->string('currency', 3)->default('AED');
             $table->unsignedInteger('duration_days');
             $table->string('image', 500)->nullable();
             $table->string('thumbnail', 500)->nullable();

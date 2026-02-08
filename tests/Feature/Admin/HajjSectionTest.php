@@ -68,7 +68,7 @@ describe('Packages - Full CRUD', function () {
             'slug' => 'test-package',
             'type' => PackageType::HAJJ,
             'price' => 5000.00,
-            'currency' => 'USD',
+            'currency' => 'AED',
             'duration_days' => 21,
             'duration_nights' => 20,
             'is_active' => true,
@@ -104,7 +104,7 @@ describe('Packages - Full CRUD', function () {
             'slug' => 'umrah-package',
             'type' => PackageType::UMRAH,
             'price' => 3000.00,
-            'currency' => 'USD',
+            'currency' => 'AED',
             'duration_days' => 14,
         ]);
 
@@ -178,7 +178,7 @@ describe('Bookings - Management', function () {
             'slug' => 'booking-test-package',
             'type' => PackageType::HAJJ,
             'price' => 5000.00,
-            'currency' => 'USD',
+            'currency' => 'AED',
             'duration_days' => 21,
         ]);
 
