@@ -34,7 +34,7 @@ class ArticleRequest extends FormRequest
             'excerpt' => ['nullable', 'string', 'max:500'],
             'content' => ['required', 'string'],
             'featured_image' => [
-                'nullable',
+                $this->isMethod('POST') ? 'required' : 'nullable',
                 'image',
                 'mimes:jpeg,jpg,png,gif,webp,svg,heic,heif',
                 'max:5120',

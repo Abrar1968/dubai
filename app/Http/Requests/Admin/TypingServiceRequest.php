@@ -78,10 +78,20 @@ class TypingServiceRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        // Convert checkbox values to boolean
-        $this->merge([
+        $data = [
             'is_active' => $this->boolean('is_active'),
             'is_featured' => $this->boolean('is_featured'),
-        ]);
+        ];
+
+        // Filter out empty sub_services (items without name)
+        if ($this->has('sub_services')) {
+            $subServices = collect($this->input('sub_services'))
+                ->filter(fn($item) => !empty(trim($item['name'] ?? '')))
+                ->values()
+                ->toArray();
+            $data['sub_services'] = empty($subServices) ? null : $subServices;
+        }
+
+        $this->merge($data);
     }
 }

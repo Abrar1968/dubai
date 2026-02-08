@@ -282,7 +282,10 @@
                 </div>
 
                 @if($package->bookings->count() > 0)
-                    <a href="{{ route('admin.hajj.bookings.index', ['package_id' => $package->id]) }}" class="block w-full text-center text-sm text-amber-600 hover:text-amber-700 font-medium">
+                    @php
+                        $bookingsRoutePrefix = request()->is('admin/hajj/*') ? 'admin.hajj.bookings' : 'admin.bookings';
+                    @endphp
+                    <a href="{{ route($bookingsRoutePrefix . '.index', ['package_id' => $package->id]) }}" class="block w-full text-center text-sm text-amber-600 hover:text-amber-700 font-medium">
                         View All Bookings →
                     </a>
                 @endif

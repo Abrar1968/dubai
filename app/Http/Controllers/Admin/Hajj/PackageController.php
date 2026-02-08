@@ -78,7 +78,7 @@ class PackageController extends Controller
         }
 
         return redirect()
-            ->route('admin.packages.index')
+            ->route('admin.hajj.packages.index')
             ->with('success', 'Package created successfully.');
     }
 
@@ -151,7 +151,7 @@ class PackageController extends Controller
         }
 
         return redirect()
-            ->route('admin.packages.index')
+            ->route('admin.hajj.packages.index')
             ->with('success', 'Package updated successfully.');
     }
 
@@ -173,7 +173,7 @@ class PackageController extends Controller
         $this->packageService->delete($package);
 
         return redirect()
-            ->route('admin.packages.index')
+            ->route('admin.hajj.packages.index')
             ->with('success', 'Package deleted successfully.');
     }
 
