@@ -228,7 +228,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         <div v-for="(pkg, index) in displayPackages" :key="pkg.id"
                             class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow group">
                             <div class="relative h-48 overflow-hidden">
-                                <img :src="pkg.image" :alt="pkg.title"
+                                <img :src="`/storage/${pkg.image}`" :alt="pkg.title"
                                     @error="handleImageError"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 <div

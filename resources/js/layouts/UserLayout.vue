@@ -51,6 +51,20 @@ const isActive = (href: string) => {
                             </svg>
                             {{ item.name }}
                         </Link>
+                        
+                        <!-- Divider -->
+                        <div class="h-6 w-px bg-gray-200 mx-2"></div>
+                        
+                        <!-- Back to Website -->
+                        <a
+                            href="/hajjhome"
+                            class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-amber-600 hover:bg-amber-50 transition-colors"
+                        >
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Back to Website
+                        </a>
                     </div>
 
                     <!-- User Menu -->
@@ -125,6 +139,17 @@ const isActive = (href: string) => {
                         </svg>
                         {{ item.name }}
                     </Link>
+                    
+                    <!-- Back to Website -->
+                    <a
+                        href="/hajjhome"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-amber-600 hover:bg-amber-50"
+                    >
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Back to Website
+                    </a>
 
                     <!-- Logout -->
                     <Link

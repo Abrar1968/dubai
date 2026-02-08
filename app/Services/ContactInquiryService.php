@@ -26,11 +26,13 @@ class ContactInquiryService
     /**
      * Get paginated inquiries.
      */
-    public function paginate(int $perPage = 15, ?InquiryStatus $status = null, bool $daily = false): LengthAwarePaginator
+    public function paginate(int $perPage = 15, ?InquiryStatus $status = null, bool $daily = false, ?string $date = null): LengthAwarePaginator
     {
         $query = ContactInquiry::with('package')->orderBy('created_at', 'desc');
 
-        if ($daily) {
+        if ($date) {
+            $query->whereDate('created_at', $date);
+        } elseif ($daily) {
             $query->whereDate('created_at', today());
         }
 

@@ -22,12 +22,14 @@ class InquiryController extends Controller
     {
         $statusFilter = $request->get('status');
         $dailyFilter = $request->get('daily');
+        $dateFilter = $request->get('date');
         $status = $statusFilter ? InquiryStatus::from($statusFilter) : null;
 
         $inquiries = $this->inquiryService->paginate(
             perPage: 20,
             status: $status,
-            daily: $dailyFilter === '1'
+            daily: $dailyFilter === '1',
+            date: $dateFilter
         );
 
         // Get counts for status badges
@@ -45,6 +47,8 @@ class InquiryController extends Controller
             'currentStatus' => $status,
             'counts' => $counts,
             'isDaily' => $dailyFilter === '1',
+            'selectedDate' => $dateFilter ?? today()->format('Y-m-d'),
+            'isDateFiltered' => (bool) $dateFilter,
         ]);
     }
 

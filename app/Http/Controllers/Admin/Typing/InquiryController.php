@@ -26,11 +26,14 @@ class InquiryController extends Controller
     {
         $statusFilter = $request->get('status');
         $dailyFilter = $request->get('daily');
+        $dateFilter = $request->get('date');
         $status = $statusFilter ? InquiryStatus::from($statusFilter) : null;
 
         $query = $this->baseQuery();
 
-        if ($dailyFilter === '1') {
+        if ($dateFilter) {
+            $query->whereDate('created_at', $dateFilter);
+        } elseif ($dailyFilter === '1') {
             $query->whereDate('created_at', today());
         }
 
@@ -55,7 +58,8 @@ class InquiryController extends Controller
             'currentStatus' => $status,
             'counts' => $counts,
             'isDaily' => $dailyFilter === '1',
-        ]);
+            'selectedDate' => $dateFilter ?? today()->format('Y-m-d'),
+            'isDateFiltered' => (bool) $dateFilter,
         ]);
     }
 

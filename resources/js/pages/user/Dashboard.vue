@@ -284,7 +284,7 @@ const firstName = computed(() => {
                                         class="h-16 w-16 sm:h-20 sm:w-20 rounded-xl overflow-hidden ring-2 ring-slate-100"
                                     >
                                         <img
-                                            :src="booking.package.image"
+                                            :src="`/storage/${booking.package.image}`"
                                             :alt="booking.package?.title"
                                             class="h-full w-full object-cover transition duration-300 group-hover:scale-110"
                                         />
