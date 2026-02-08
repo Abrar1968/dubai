@@ -240,63 +240,66 @@
 
                 <!-- RIGHT COLUMN: BOOKING CARD -->
                 <div class="lg:col-span-1">
-                    <div class="sticky top-24 bg-white rounded-2xl shadow-lg border border-slate-100 p-6 overflow-hidden">
-                        <div class="text-center pb-6 border-b border-slate-100 mb-6">
-                            <p class="text-sm text-slate-500 uppercase font-semibold tracking-wider">Starting From</p>
-                            <div class="mt-2 flex flex-col items-center justify-center gap-1">
-                                <template v-if="packageData.discounted_price && packageData.discounted_price < packageData.price">
-                                    <span class="text-xl line-through text-slate-400">${{ (packageData.price || 0).toLocaleString() }}</span>
-                                    <span class="text-4xl font-extrabold text-green-600">${{ (packageData.discounted_price || 0).toLocaleString() }}</span>
-                                </template>
-                                <template v-else>
-                                    <span class="text-4xl font-extrabold text-slate-900">${{ (packageData.price || 0).toLocaleString() }}</span>
-                                </template>
-                                <span class="text-slate-500 font-medium text-lg">/ person</span>
+                    <div class="sticky top-24 space-y-6">
+                        <!-- Main Booking Card -->
+                        <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 overflow-hidden">
+                            <div class="text-center pb-6 border-b border-slate-100 mb-6">
+                                <p class="text-sm text-slate-500 uppercase font-semibold tracking-wider">Starting From</p>
+                                <div class="mt-2 flex flex-col items-center justify-center gap-1">
+                                    <template v-if="packageData.discounted_price && packageData.discounted_price < packageData.price">
+                                        <span class="text-xl line-through text-slate-400">${{ (packageData.price || 0).toLocaleString() }}</span>
+                                        <span class="text-4xl font-extrabold text-green-600">${{ (packageData.discounted_price || 0).toLocaleString() }}</span>
+                                    </template>
+                                    <template v-else>
+                                        <span class="text-4xl font-extrabold text-slate-900">${{ (packageData.price || 0).toLocaleString() }}</span>
+                                    </template>
+                                    <span class="text-slate-500 font-medium text-lg">/ person</span>
+                                </div>
+                                <div v-if="packageData.discounted_price && packageData.discounted_price < packageData.price" class="mt-2">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Save {{ Math.round((1 - packageData.discounted_price / packageData.price) * 100) }}%
+                                    </span>
+                                </div>
                             </div>
-                            <div v-if="packageData.discounted_price && packageData.discounted_price < packageData.price" class="mt-2">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                    Save {{ Math.round((1 - packageData.discounted_price / packageData.price) * 100) }}%
-                                </span>
+
+                            <div class="space-y-4 mb-6">
+                                <div class="flex justify-between text-sm py-2 border-b border-slate-50">
+                                    <span class="text-slate-500">Duration</span>
+                                    <span class="font-semibold text-slate-900">{{ packageData.duration_days }} Days</span>
+                                </div>
+                                <div class="flex justify-between text-sm py-2 border-b border-slate-50">
+                                    <span class="text-slate-500">Type</span>
+                                    <span class="font-semibold text-slate-900 capitalize">{{ packageData.type }}</span>
+                                </div>
+                                <!-- Mock Dates -->
+                                <div class="flex justify-between text-sm py-2 border-b border-slate-50">
+                                    <span class="text-slate-500">Next Departure</span>
+                                    <span class="font-semibold text-green-600">Checking...</span>
+                                </div>
                             </div>
+
+                            <button @click="handleBookClick" class="w-full py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition shadow-lg hover:shadow-orange-500/25 flex items-center justify-center gap-2">
+                                Book This Package
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            </button>
+
+                            <p class="mt-4 text-xs text-center text-slate-400">
+                                Secure your spot today with a deposit.
+                            </p>
                         </div>
 
-                        <div class="space-y-4 mb-6">
-                            <div class="flex justify-between text-sm py-2 border-b border-slate-50">
-                                <span class="text-slate-500">Duration</span>
-                                <span class="font-semibold text-slate-900">{{ packageData.duration_days }} Days</span>
+                        <!-- Need Help Card -->
+                        <div class="bg-slate-900 rounded-2xl p-6 text-center text-white relative overflow-hidden shadow-lg">
+                            <div class="relative z-10">
+                                <h3 class="text-lg font-bold mb-2">Need Custom Plan?</h3>
+                                <p class="text-slate-300 text-sm mb-4">We can customize a spiritual journey just for you and your family.</p>
+                                <Link href="/contactus" class="inline-block px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold transition">
+                                    Contact Expert
+                                </Link>
                             </div>
-                            <div class="flex justify-between text-sm py-2 border-b border-slate-50">
-                                <span class="text-slate-500">Type</span>
-                                <span class="font-semibold text-slate-900 capitalize">{{ packageData.type }}</span>
-                            </div>
-                            <!-- Mock Dates -->
-                             <div class="flex justify-between text-sm py-2 border-b border-slate-50">
-                                <span class="text-slate-500">Next Departure</span>
-                                <span class="font-semibold text-green-600">Checking...</span>
-                            </div>
+                            <!-- Decor -->
+                            <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-orange-500/20 rounded-full blur-2xl"></div>
                         </div>
-
-                        <button @click="handleBookClick" class="w-full py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition shadow-lg hover:shadow-orange-500/25 flex items-center justify-center gap-2">
-                            Book This Package
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                        </button>
-
-                        <p class="mt-4 text-xs text-center text-slate-400">
-                            Secure your spot today with a deposit.
-                        </p>
-                    </div>
-
-                    <!-- Need Help Card -->
-                    <div class="mt-8 bg-slate-900 rounded-2xl p-6 text-center text-white relative overflow-hidden">
-                        <div class="relative z-10">
-                            <h3 class="text-lg font-bold mb-2">Need Custom Plan?</h3>
-                            <p class="text-slate-300 text-sm mb-4">We can customize a spiritual journey just for you and your family.</p>
-                            <Link href="/contactus" class="inline-block px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold transition">
-                                Contact Expert
-                            </Link>
-                        </div>
-                         <!-- Decor -->
-                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-orange-500/20 rounded-full blur-2xl"></div>
                     </div>
                 </div>
 
