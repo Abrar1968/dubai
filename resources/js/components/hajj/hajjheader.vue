@@ -170,48 +170,41 @@ const logout = () => {
               Contact Us
             </a>
 
-            <!-- Auth Section -->
-            <!-- Admin Panel Button (for admin/super_admin users) -->
-            <template v-if="isAdminUser()">
-              <a href="/admin" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700
-                       px-5 py-2.5 text-sm font-semibold text-white transition">
-                Admin Panel
-              </a>
-            </template>
-
+            <!-- Auth Section (Only for Users - Admins have separate admin panel) -->
             <!-- User Dropdown (only for regular users with role='user') -->
-            <template v-else-if="isRegularUser()">
+            <template v-if="isRegularUser()">
               <div class="relative group">
-              <button class="flex items-center gap-2 rounded-xl border-2 border-slate-200 hover:border-slate-300
-                             px-4 py-2.5 text-sm font-semibold text-slate-700 transition">
-                <User class="w-4 h-4" />
-                <span class="hidden sm:inline">{{ auth.user.name }}</span>
-                <ChevronDown class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
-              </button>
-
-              <!-- Dropdown Menu -->
-              <div class="absolute right-0 top-full mt-3 w-48 rounded-xl bg-white border border-slate-200
-                       shadow-[0_20px_40px_rgba(0,0,0,0.12)]
-                       opacity-0 invisible translate-y-2
-                       group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
-                       transition-all duration-200 z-50">
-                <a href="/user/dashboard"
-                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-t-xl transition">
-                  Dashboard
-                </a>
-                <a href="/user/bookings"
-                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">
-                  My Bookings
-                </a>
-                <a href="/user/profile"
-                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">
-                  Profile
-                </a>
-                <button @click="logout"
-                  class="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-b-xl transition text-left">
-                  <LogOut class="w-4 h-4" />
-                  Logout
+                <button class="flex items-center gap-2 rounded-xl border-2 border-slate-200 hover:border-slate-300
+                               px-4 py-2.5 text-sm font-semibold text-slate-700 transition">
+                  <User class="w-4 h-4" />
+                  <span class="hidden sm:inline">{{ auth.user.name }}</span>
+                  <ChevronDown class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
                 </button>
+
+                <!-- Dropdown Menu -->
+                <div class="absolute right-0 top-full mt-3 w-48 rounded-xl bg-white border border-slate-200
+                         shadow-[0_20px_40px_rgba(0,0,0,0.12)]
+                         opacity-0 invisible translate-y-2
+                         group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
+                         transition-all duration-200 z-50">
+                  <a href="/user/dashboard"
+                    class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-t-xl transition">
+                    Dashboard
+                  </a>
+                  <a href="/user/bookings"
+                    class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">
+                    My Bookings
+                  </a>
+                  <a href="/user/profile"
+                    class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">
+                    Profile
+                  </a>
+                  <button @click="logout"
+                    class="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-b-xl transition text-left">
+                    <LogOut class="w-4 h-4" />
+                    Logout
+                  </button>
+                </div>
               </div>
             </template>
 
