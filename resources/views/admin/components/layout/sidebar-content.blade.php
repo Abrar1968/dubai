@@ -2,13 +2,21 @@
     $user = auth()->user();
     $sections = $user->getSectionNames();
     $currentRoute = request()->route()->getName() ?? '';
+    
+    // Determine active section from current route
+    $activeSection = 'hajj'; // default
+    if (str_contains($currentRoute, 'typing')) {
+        $activeSection = 'typing';
+    } elseif (str_contains($currentRoute, 'admin.users') || str_contains($currentRoute, 'admin.office') || str_contains($currentRoute, 'admin.admins')) {
+        $activeSection = 'management';
+    }
 @endphp
 
-<nav class="flex flex-1 flex-col">
+<nav class="flex flex-1 flex-col" x-data="{ activeSection: '{{ $activeSection }}' }">
     <ul role="list" class="flex flex-1 flex-col gap-y-6">
         <!-- Hajj & Umrah Section -->
         @if(in_array('hajj', $sections))
-        <li>
+        <li x-init="if ('{{ $activeSection }}' === 'hajj') { $el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }">
             <div class="flex items-center gap-2 px-2 mb-3">
                 <div class="h-6 w-1 rounded-full bg-gradient-to-b from-amber-400 to-amber-600"></div>
                 <span class="text-xs font-bold uppercase tracking-wider text-amber-500">Hajj & Umrah</span>
@@ -120,7 +128,7 @@
 
         <!-- Typing Services Section -->
         @if(in_array('typing', $sections))
-        <li>
+        <li x-init="if ('{{ $activeSection }}' === 'typing') { $el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }">
             <div class="flex items-center gap-2 px-2 mb-3">
                 <div class="h-6 w-1 rounded-full bg-gradient-to-b from-purple-400 to-purple-600"></div>
                 <span class="text-xs font-bold uppercase tracking-wider text-purple-400">Typing Services</span>
@@ -187,7 +195,7 @@
         @endif
 
         <!-- Global Admin Section -->
-        <li class="mt-auto">
+        <li class="mt-auto" x-init="if ('{{ $activeSection }}' === 'management') { $el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }">
             <div class="flex items-center gap-2 px-2 mb-3">
                 <div class="h-6 w-1 rounded-full bg-gradient-to-b from-green-400 to-green-600"></div>
                 <span class="text-xs font-bold uppercase tracking-wider text-green-400">Management</span>
