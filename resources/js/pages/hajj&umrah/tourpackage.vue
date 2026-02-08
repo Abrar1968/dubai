@@ -157,7 +157,7 @@ const onLearnMore = (pkg: Package) => {
 };
 
 const formatPrice = (price: number) => {
-    return `$${price.toLocaleString()}`;
+    return `AED ${price.toLocaleString()}`;
 };
 
 const handleImageError = (event: Event) => {

@@ -30,11 +30,11 @@
                                         </div>
                                         <div class="text-right">
                                             <template v-if="packageData.discounted_price && packageData.discounted_price < packageData.price">
-                                                <p class="text-sm line-through text-gray-400">${{ (packageData.price || 0).toLocaleString() }}/person</p>
-                                                <p class="text-lg font-bold text-green-600">${{ (packageData.discounted_price || 0).toLocaleString() }}/person</p>
+                                                <p class="text-sm line-through text-gray-400">AED {{ (packageData.price || 0).toLocaleString() }}/person</p>
+                                                <p class="text-lg font-bold text-green-600">AED {{ (packageData.discounted_price || 0).toLocaleString() }}/person</p>
                                             </template>
                                             <template v-else>
-                                                <p class="text-lg font-bold text-orange-600">${{ (packageData.price || 0).toLocaleString() }}/person</p>
+                                                <p class="text-lg font-bold text-orange-600">AED {{ (packageData.price || 0).toLocaleString() }}/person</p>
                                             </template>
                                         </div>
                                     </div>
@@ -247,11 +247,11 @@
                                 <p class="text-sm text-slate-500 uppercase font-semibold tracking-wider">Starting From</p>
                                 <div class="mt-2 flex flex-col items-center justify-center gap-1">
                                     <template v-if="packageData.discounted_price && packageData.discounted_price < packageData.price">
-                                        <span class="text-xl line-through text-slate-400">${{ (packageData.price || 0).toLocaleString() }}</span>
-                                        <span class="text-4xl font-extrabold text-green-600">${{ (packageData.discounted_price || 0).toLocaleString() }}</span>
+                                        <span class="text-xl line-through text-slate-400">AED {{ (packageData.price || 0).toLocaleString() }}</span>
+                                        <span class="text-4xl font-extrabold text-green-600">AED {{ (packageData.discounted_price || 0).toLocaleString() }}</span>
                                     </template>
                                     <template v-else>
-                                        <span class="text-4xl font-extrabold text-slate-900">${{ (packageData.price || 0).toLocaleString() }}</span>
+                                        <span class="text-4xl font-extrabold text-slate-900">AED {{ (packageData.price || 0).toLocaleString() }}</span>
                                     </template>
                                     <span class="text-slate-500 font-medium text-lg">/ person</span>
                                 </div>
@@ -317,7 +317,7 @@
                                 @error="handleImageError"
                                 class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                          <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-md text-xs font-bold shadow-sm">
-                            ${{ (related.price || 0).toLocaleString() }}
+                            AED {{ (related.price || 0).toLocaleString() }}
                          </div>
                     </div>
                     <div class="p-4">

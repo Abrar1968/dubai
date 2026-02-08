@@ -14,6 +14,7 @@ interface Package {
     title: string;
     slug: string;
     price: number;
+    discounted_price?: number | null;
     currency: string;
     duration_days: number;
     image: string;
@@ -91,7 +92,7 @@ const features = [
 
 // Format price display
 const formatPrice = (price: number, currency: string) => {
-    return `Start From $${price.toLocaleString()}`;
+    return `AED ${price.toLocaleString()}`;
 };
 
 // Smooth scroll to packages
@@ -238,7 +239,15 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                             </div>
                             <div class="p-6">
                                 <h3 class="text-xl font-bold text-slate-900 mb-2">{{ pkg.title }}</h3>
-                                <p class="text-[#D3A762] font-semibold text-lg mb-4">{{ formatPrice(pkg.price, pkg.currency) }}</p>
+                                <div class="mb-4">
+                                    <template v-if="pkg.discounted_price && pkg.discounted_price < pkg.price">
+                                        <p class="text-sm line-through text-slate-400">{{ formatPrice(pkg.price, pkg.currency) }}</p>
+                                        <p class="text-green-600 font-semibold text-lg">{{ formatPrice(pkg.discounted_price, pkg.currency) }}</p>
+                                    </template>
+                                    <template v-else>
+                                        <p class="text-[#D3A762] font-semibold text-lg">{{ formatPrice(pkg.price, pkg.currency) }}</p>
+                                    </template>
+                                </div>
                                 <ul class="space-y-2 mb-6">
                                     <li v-for="feat in pkg.features" :key="feat"
                                         class="flex items-center gap-2 text-slate-600 text-sm">

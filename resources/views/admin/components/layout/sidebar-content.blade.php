@@ -2,7 +2,7 @@
     $user = auth()->user();
     $sections = $user->getSectionNames();
     $currentRoute = request()->route()->getName() ?? '';
-    
+
     // Determine active section from current route
     $activeSection = 'hajj'; // default
     if (str_contains($currentRoute, 'typing')) {

@@ -42,7 +42,12 @@
                     <p class="text-slate-600 mb-6 text-sm">Quick access to common services — click a card to learn more.</p>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <article v-for="service in displayServices" :key="service.id" class="rounded-lg border border-slate-200 p-5 bg-slate-50 hover:shadow-lg transition-shadow">
+                        <article v-for="service in displayServices" :key="service.id" class="rounded-lg border border-slate-200 p-5 bg-slate-50 hover:shadow-lg transition-shadow relative">
+                            <!-- Featured Star Badge -->
+                            <div v-if="service.is_featured" class="absolute top-3 right-3 bg-amber-500 rounded-full p-1.5 shadow-lg">
+                                <Star class="w-4 h-4 text-white fill-white" />
+                            </div>
+                            
                             <div v-if="service.image_url || service.image" class="mb-3 h-32 overflow-hidden rounded-md">
                                 <img :src="service.image_url || getImageUrl(service.image)" :alt="service.title" class="w-full h-full object-cover" @error="handleImageError" />
                             </div>
@@ -123,7 +128,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import TypingLayout from '@/layouts/TypingLayout.vue';
-import { MapPin, Phone, Mail } from 'lucide-vue-next';
+import { MapPin, Phone, Mail, Star } from 'lucide-vue-next';
 
 // Define interfaces for proper typing
 interface TypingService {
