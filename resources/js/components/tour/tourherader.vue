@@ -6,7 +6,7 @@
         <!-- Logo -->
         <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <!-- Logo Image -->
-          <img src="/assets/img/tour/logo/ss.png" alt="GoFly Logo" class="h-12 w-auto object-contain" />
+          <img src="/assets/img/tour/logo/ss.png" alt="GoFly Logo" class="h-20 w-auto object-contain" />
         </a>
 
         <!-- Desktop Nav -->

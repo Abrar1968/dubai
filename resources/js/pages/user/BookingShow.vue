@@ -216,7 +216,7 @@ const formatAmount = (amount: number) => {
                                         class="h-32 w-32 sm:h-40 sm:w-40 rounded-xl overflow-hidden ring-2 ring-slate-100"
                                     >
                                         <img
-                                            :src="booking.package.image"
+                                            :src="`/storage/${booking.package.image}`"
                                             :alt="booking.package.title"
                                             class="h-full w-full object-cover"
                                         />

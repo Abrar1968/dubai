@@ -11,9 +11,18 @@
         <!-- Status Filters -->
         <div class="flex flex-wrap gap-2">
             <a href="{{ route('admin.typing.inquiries.index') }}"
-               class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ !$currentStatus ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+               class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ !$currentStatus && !$isDaily ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 All
                 <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['all'] }}</span>
+            </a>
+            <a href="{{ route('admin.typing.inquiries.index', ['daily' => '1']) }}"
+               class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $isDaily ? 'bg-indigo-100 text-indigo-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
+                Daily
+                @if($counts['daily'] > 0)
+                    <span class="rounded-full bg-indigo-500 px-1.5 text-xs text-white">{{ $counts['daily'] }}</span>
+                @else
+                    <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['daily'] }}</span>
+                @endif
             </a>
             <a href="{{ route('admin.typing.inquiries.index', ['status' => 'new']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus?->value === 'new' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">

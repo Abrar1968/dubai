@@ -190,7 +190,7 @@ const formatAmount = (amount: number) => {
                                 class="absolute inset-0"
                             >
                                 <img
-                                    :src="booking.package.image"
+                                    :src="`/storage/${booking.package.image}`"
                                     :alt="booking.package?.title"
                                     class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                                 />

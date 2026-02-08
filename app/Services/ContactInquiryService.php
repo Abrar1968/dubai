@@ -26,15 +26,35 @@ class ContactInquiryService
     /**
      * Get paginated inquiries.
      */
-    public function paginate(int $perPage = 15, ?InquiryStatus $status = null): LengthAwarePaginator
+    public function paginate(int $perPage = 15, ?InquiryStatus $status = null, bool $daily = false): LengthAwarePaginator
     {
         $query = ContactInquiry::with('package')->orderBy('created_at', 'desc');
+
+        if ($daily) {
+            $query->whereDate('created_at', today());
+        }
 
         if ($status) {
             $query->status($status);
         }
 
         return $query->paginate($perPage);
+    }
+
+    /**
+     * Get today's inquiries.
+     */
+    public function listDaily(?InquiryStatus $status = null): Collection
+    {
+        $query = ContactInquiry::with('package')
+            ->whereDate('created_at', today())
+            ->orderBy('created_at', 'desc');
+
+        if ($status) {
+            $query->status($status);
+        }
+
+        return $query->get();
     }
 
     /**

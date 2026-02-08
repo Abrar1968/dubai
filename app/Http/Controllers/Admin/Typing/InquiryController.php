@@ -25,9 +25,14 @@ class InquiryController extends Controller
     public function index(Request $request): View
     {
         $statusFilter = $request->get('status');
+        $dailyFilter = $request->get('daily');
         $status = $statusFilter ? InquiryStatus::from($statusFilter) : null;
 
         $query = $this->baseQuery();
+
+        if ($dailyFilter === '1') {
+            $query->whereDate('created_at', today());
+        }
 
         if ($status) {
             $query->status($status);
@@ -38,6 +43,7 @@ class InquiryController extends Controller
         // Get counts for status badges
         $counts = [
             'all' => $this->baseQuery()->count(),
+            'daily' => $this->baseQuery()->whereDate('created_at', today())->count(),
             'new' => $this->baseQuery()->where('status', InquiryStatus::NEW)->count(),
             'read' => $this->baseQuery()->where('status', InquiryStatus::READ)->count(),
             'responded' => $this->baseQuery()->where('status', InquiryStatus::RESPONDED)->count(),
@@ -48,6 +54,8 @@ class InquiryController extends Controller
             'inquiries' => $inquiries,
             'currentStatus' => $status,
             'counts' => $counts,
+            'isDaily' => $dailyFilter === '1',
+        ]);
         ]);
     }
 

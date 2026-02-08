@@ -324,40 +324,32 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         </a>
 
                         <!-- Card 3 -->
-                        <div class="relative rounded-2xl overflow-hidden group h-full">
-                            <img src="/assets/img/hajj/islamictour.png"
-                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                alt="Tour" />
+                        <a href="/tourpackage" class="block h-full">
+                            <div class="relative rounded-2xl overflow-hidden group h-full">
+                                <img src="/assets/img/hajj/islamictour.png"
+                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    alt="Tour" />
 
-                            <!-- dark gradient -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent">
-                            </div>
+                                <!-- dark gradient -->
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                                </div>
 
-                            <!-- ✅ Coming Soon overlay (center) -->
-                            <div class="absolute inset-0 z-10 flex items-center justify-center">
-                                <span class="rounded-full bg-black/60 backdrop-blur-md
-             px-6 py-2 text-sm font-semibold tracking-widest uppercase
-             text-[#D3A762] border border-white/20
-             shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
-                                    Coming Soon
-                                </span>
-                            </div>
+                                <!-- bottom content -->
+                                <div class="absolute bottom-8 left-8 text-white z-20">
+                                    <h3 class="text-2xl font-serif mb-2">Tour</h3>
 
-                            <!-- bottom content -->
-                            <div class="absolute bottom-8 left-8 text-white z-20">
-                                <h3 class="text-2xl font-serif mb-2">Islamic Tour</h3>
+                                    <p
+                                        class="text-sm text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        Explore amazing destinations around the world.
+                                    </p>
 
-                                <p
-                                    class="text-sm text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    Explore the history of Islamic civilization.
-                                </p>
-
-                                <span class="bg-white/20 backdrop-blur p-2 rounded-full inline-block
+                                    <span class="bg-white/20 backdrop-blur p-2 rounded-full inline-block
              group-hover:bg-[#D3A762] transition-colors">
-                                    <ArrowUpRight class="w-5 h-5" />
-                                </span>
+                                        <ArrowUpRight class="w-5 h-5" />
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                        </a>
 
                     </div>
                 </div>

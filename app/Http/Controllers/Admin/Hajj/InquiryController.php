@@ -21,16 +21,19 @@ class InquiryController extends Controller
     public function index(Request $request): View
     {
         $statusFilter = $request->get('status');
+        $dailyFilter = $request->get('daily');
         $status = $statusFilter ? InquiryStatus::from($statusFilter) : null;
 
         $inquiries = $this->inquiryService->paginate(
             perPage: 20,
-            status: $status
+            status: $status,
+            daily: $dailyFilter === '1'
         );
 
         // Get counts for status badges
         $counts = [
             'all' => $this->inquiryService->list()->count(),
+            'daily' => $this->inquiryService->listDaily()->count(),
             'new' => $this->inquiryService->list(InquiryStatus::NEW)->count(),
             'read' => $this->inquiryService->list(InquiryStatus::READ)->count(),
             'responded' => $this->inquiryService->list(InquiryStatus::RESPONDED)->count(),
@@ -41,6 +44,7 @@ class InquiryController extends Controller
             'inquiries' => $inquiries,
             'currentStatus' => $status,
             'counts' => $counts,
+            'isDaily' => $dailyFilter === '1',
         ]);
     }
 

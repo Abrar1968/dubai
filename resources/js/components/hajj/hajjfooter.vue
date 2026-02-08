@@ -37,7 +37,7 @@ const socialLinks = [
             <div class="flex flex-col gap-6">
                 <!-- Logo -->
                 <div class="flex items-center gap-3">
-                    <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-10 w-auto object-contain" />
+                    <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-16 w-auto object-contain" />
                     <div v-else class="text-2xl font-serif">
                         <span class="inline-block border border-white/30 p-1 rounded-sm mr-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M12 2v20M8 10v4M16 10v4M4 14h16M12 2l-2 4h4l-2-4z"/></svg>

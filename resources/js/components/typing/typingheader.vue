@@ -119,8 +119,8 @@ const logout = () => {
         <div class="h-20 flex items-center justify-between">
           <!-- Logo -->
           <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-12 w-auto object-contain" />
-            <img v-else src="/assets/img/tour/logo/ss.png" alt="Company Logo" class="h-12 w-auto object-contain" />
+            <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-20 w-auto object-contain" />
+            <img v-else src="/assets/img/typing/logo.png" alt="Company Logo" class="h-20 w-auto object-contain" />
           </a>
 
           <!-- Menu -->
