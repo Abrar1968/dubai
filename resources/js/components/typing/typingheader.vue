@@ -162,39 +162,18 @@ const logout = () => {
               Contact Us
             </a>
 
-            <template v-if="!isLoggedIn() || isAdminUser()">
-              <template v-if="isAdminUser()">
-                <a href="/admin" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700
-                         px-5 py-2.5 text-sm font-semibold text-white transition">
-                  Admin Panel
-                </a>
-              </template>
-              <!-- Single Account button with dropdown for Login/Register -->
-              <template v-else>
-                <div class="relative group">
-                  <button class="hidden sm:inline-flex items-center gap-2 rounded-xl bg-[#D3A762] hover:bg-[#c29652]
-                           px-5 py-2.5 text-sm font-semibold text-white transition active:scale-[0.98]">
-                    <User class="w-4 h-4" />
-                    Account
-                    <ChevronDown class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
-                  </button>
-                  <div class="absolute right-0 top-full mt-3 w-40 rounded-xl bg-white border border-slate-200
-                           shadow-[0_20px_40px_rgba(0,0,0,0.12)]
-                           opacity-0 invisible translate-y-2
-                           group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
-                           transition-all duration-200 z-50">
-                    <Link href="/login" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-t-xl transition">
-                      Login
-                    </Link>
-                    <Link href="/register" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-b-xl transition">
-                      Register
-                    </Link>
-                  </div>
-                </div>
-              </template>
+            <!-- Auth Section -->
+            <!-- Admin Panel Button (for admin/super_admin users) -->
+            <template v-if="isAdminUser()">
+              <a href="/admin" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700
+                       px-5 py-2.5 text-sm font-semibold text-white transition">
+                Admin Panel
+              </a>
             </template>
 
-            <div v-else class="relative group">
+            <!-- User Dropdown (only for regular users with role='user') -->
+            <template v-else-if="isRegularUser()">
+              <div class="relative group">
               <button class="flex items-center gap-2 rounded-xl border-2 border-slate-200 hover:border-slate-300
                              px-4 py-2.5 text-sm font-semibold text-slate-700 transition">
                 <User class="w-4 h-4" />
@@ -225,7 +204,31 @@ const logout = () => {
                   Logout
                 </button>
               </div>
-            </div>
+            </template>
+
+            <!-- Account Dropdown (for non-logged in users) -->
+            <template v-else>
+              <div class="relative group">
+                <button class="hidden sm:inline-flex items-center gap-2 rounded-xl bg-[#D3A762] hover:bg-[#c29652]
+                         px-5 py-2.5 text-sm font-semibold text-white transition active:scale-[0.98]">
+                  <User class="w-4 h-4" />
+                  Account
+                  <ChevronDown class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
+                </button>
+                <div class="absolute right-0 top-full mt-3 w-40 rounded-xl bg-white border border-slate-200
+                         shadow-[0_20px_40px_rgba(0,0,0,0.12)]
+                         opacity-0 invisible translate-y-2
+                         group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
+                         transition-all duration-200 z-50">
+                  <Link href="/login" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-t-xl transition">
+                    Login
+                  </Link>
+                  <Link href="/register" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-b-xl transition">
+                    Register
+                  </Link>
+                </div>
+              </div>
+            </template>
 
             <!-- Mobile menu button (optional) -->
             <button
