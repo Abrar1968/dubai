@@ -24,6 +24,7 @@ Route::get('/hajj-umrah', [HajjController::class, 'home'])->name('hajj-umrah.ind
 Route::get('/hajj-umrah/team', [HajjController::class, 'team'])->name('hajj-umrah.team');
 Route::get('/hajjpackage', [HajjController::class, 'hajjPackages'])->name('hajjpackage');
 Route::get('/umrahpackage', [HajjController::class, 'umrahPackages'])->name('umrahpackage');
+Route::get('/tourpackage', [HajjController::class, 'tourPackages'])->name('tourpackage');
 Route::get('/contactus', [HajjController::class, 'contact'])->name('contactus');
 Route::post('/contactus', [HajjController::class, 'contactSubmit'])->name('contact.submit');
 Route::get('/articles', [HajjController::class, 'articles'])->name('articles');
@@ -85,4 +86,4 @@ Route::prefix('user')->name('user.')->middleware(['auth', 'verified', 'user'])->
     Route::put('/password', [\App\Http\Controllers\User\ProfileController::class, 'updatePassword'])->name('profile.password');
 });
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

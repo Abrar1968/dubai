@@ -147,8 +147,13 @@ const logout = () => {
                 </a>
 
                 <a href="/umrahpackage"
-                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-b-xl transition">
+                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">
                   Umrah Package
+                </a>
+
+                <a href="/tourpackage"
+                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-b-xl transition">
+                  Tour Package
                 </a>
               </div>
             </div>

@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Public;
 
-use App\Http\Controllers\Controller;
 use App\Enums\PackageType;
 use App\Enums\PublishStatus;
-use App\Services\PackageService;
+use App\Http\Controllers\Controller;
+use App\Models\OfficeLocation;
+use App\Models\SiteSetting;
 use App\Services\ArticleService;
+use App\Services\ContactInquiryService;
+use App\Services\FaqService;
+use App\Services\OfficeLocationService;
+use App\Services\PackageService;
 use App\Services\TeamMemberService;
 use App\Services\TestimonialService;
-use App\Services\FaqService;
-use App\Services\ContactInquiryService;
-use App\Services\OfficeLocationService;
-use App\Models\SiteSetting;
-use App\Models\OfficeLocation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -36,15 +36,16 @@ class HajjController extends Controller
     public function home(): Response
     {
         // Get featured packages (limit 4 for homepage)
-        $packages = $this->packageService->getFeatured(4)->map(fn($pkg) => [
+        $packages = $this->packageService->getFeatured(4)->map(fn ($pkg) => [
             'id' => $pkg->id,
             'title' => $pkg->title,
             'slug' => $pkg->slug,
             'price' => $pkg->price,
+            'discounted_price' => $pkg->discounted_price,
             'currency' => $pkg->currency,
             'duration_days' => $pkg->duration_days,
             'duration_nights' => $pkg->duration_nights,
-            'image' => $pkg->thumbnail ? asset('storage/' . $pkg->thumbnail) : ($pkg->image ? asset('storage/' . $pkg->image) : '/assets/img/hajj/hajjbg.jpg'),
+            'image' => $pkg->thumbnail ? asset('storage/'.$pkg->thumbnail) : ($pkg->image ? asset('storage/'.$pkg->image) : '/assets/img/hajj/hajjbg.jpg'),
             'features' => $pkg->features ?? [],
             'type' => $pkg->type->value,
         ]);
@@ -52,32 +53,32 @@ class HajjController extends Controller
         // Get recent published articles (limit 3)
         $articles = $this->articleService->list(PublishStatus::PUBLISHED)
             ->take(3)
-            ->map(fn($article) => [
+            ->map(fn ($article) => [
                 'id' => $article->id,
                 'title' => $article->title,
                 'slug' => $article->slug,
                 'excerpt' => $article->excerpt,
                 'category' => $article->category?->name ?? 'Travel Guide',
-                'image' => $article->featured_image ? asset('storage/' . $article->featured_image) : '/assets/img/hajj/hajjbg.jpg',
+                'image' => $article->featured_image ? asset('storage/'.$article->featured_image) : '/assets/img/hajj/hajjbg.jpg',
             ]);
 
         // Get approved testimonials (limit 3)
         $testimonials = $this->testimonialService->getApproved()
             ->take(3)
-            ->map(fn($t) => [
+            ->map(fn ($t) => [
                 'id' => $t->id,
                 'name' => $t->name,
                 'location' => $t->location,
                 'content' => $t->content,
                 'rating' => $t->rating,
-                'avatar' => $t->avatar ? asset('storage/' . $t->avatar) : null,
+                'avatar' => $t->avatar ? asset('storage/'.$t->avatar) : null,
             ]);
 
         // Get active FAQs (limit 6 for homepage)
         $faqs = $this->faqService->list('hajj')
             ->where('is_active', true)
             ->take(6)
-            ->map(fn($faq) => [
+            ->map(fn ($faq) => [
                 'id' => $faq->id,
                 'question' => $faq->question,
                 'answer' => $faq->answer,
@@ -106,15 +107,16 @@ class HajjController extends Controller
     public function hajjPackages(): Response
     {
         $packages = $this->packageService->list(PackageType::HAJJ, true)
-            ->map(fn($pkg) => [
+            ->map(fn ($pkg) => [
                 'id' => $pkg->id,
                 'title' => $pkg->title,
                 'slug' => $pkg->slug,
                 'price' => $pkg->price,
+                'discounted_price' => $pkg->discounted_price,
                 'currency' => $pkg->currency,
                 'duration_days' => $pkg->duration_days,
                 'duration_nights' => $pkg->duration_nights,
-                'image' => $pkg->thumbnail ? asset('storage/' . $pkg->thumbnail) : ($pkg->image ? asset('storage/' . $pkg->image) : '/assets/img/hajj/hajjbg.jpg'),
+                'image' => $pkg->thumbnail ? asset('storage/'.$pkg->thumbnail) : ($pkg->image ? asset('storage/'.$pkg->image) : '/assets/img/hajj/hajjbg.jpg'),
                 'features' => $pkg->features ?? [],
                 'departure_dates' => $pkg->departure_dates ?? [],
             ]);
@@ -134,15 +136,16 @@ class HajjController extends Controller
     public function umrahPackages(): Response
     {
         $packages = $this->packageService->list(PackageType::UMRAH, true)
-            ->map(fn($pkg) => [
+            ->map(fn ($pkg) => [
                 'id' => $pkg->id,
                 'title' => $pkg->title,
                 'slug' => $pkg->slug,
                 'price' => $pkg->price,
+                'discounted_price' => $pkg->discounted_price,
                 'currency' => $pkg->currency,
                 'duration_days' => $pkg->duration_days,
                 'duration_nights' => $pkg->duration_nights,
-                'image' => $pkg->thumbnail ? asset('storage/' . $pkg->thumbnail) : ($pkg->image ? asset('storage/' . $pkg->image) : '/images/packages/p1.jpg'),
+                'image' => $pkg->thumbnail ? asset('storage/'.$pkg->thumbnail) : ($pkg->image ? asset('storage/'.$pkg->image) : '/images/packages/p1.jpg'),
                 'features' => $pkg->features ?? [],
                 'departure_dates' => $pkg->departure_dates ?? [],
             ]);
@@ -157,13 +160,42 @@ class HajjController extends Controller
     }
 
     /**
+     * Tour Packages List
+     */
+    public function tourPackages(): Response
+    {
+        $packages = $this->packageService->list(PackageType::TOUR, true)
+            ->map(fn ($pkg) => [
+                'id' => $pkg->id,
+                'title' => $pkg->title,
+                'slug' => $pkg->slug,
+                'price' => $pkg->price,
+                'discounted_price' => $pkg->discounted_price,
+                'currency' => $pkg->currency,
+                'duration_days' => $pkg->duration_days,
+                'duration_nights' => $pkg->duration_nights,
+                'image' => $pkg->thumbnail ? asset('storage/'.$pkg->thumbnail) : ($pkg->image ? asset('storage/'.$pkg->image) : '/assets/img/tour/tour-bg.jpg'),
+                'features' => $pkg->features ?? [],
+                'departure_dates' => $pkg->departure_dates ?? [],
+            ]);
+
+        $settings = $this->getSettings('hajj');
+
+        return Inertia::render('hajj&umrah/tourpackage', [
+            'packages' => $packages,
+            'settings' => $settings,
+            'headerBg' => $settings['packages_header_image'] ?? '/assets/img/tour/tour-bg.jpg',
+        ]);
+    }
+
+    /**
      * Package Detail Page
      */
     public function packageShow(string $slug): Response
     {
         $package = $this->packageService->getBySlug($slug);
 
-        if (!$package || !$package->is_active) {
+        if (! $package || ! $package->is_active) {
             abort(404);
         }
 
@@ -171,13 +203,14 @@ class HajjController extends Controller
         $relatedPackages = $this->packageService->list($package->type, true)
             ->where('id', '!=', $package->id)
             ->take(3)
-            ->map(fn($pkg) => [
+            ->map(fn ($pkg) => [
                 'id' => $pkg->id,
                 'title' => $pkg->title,
                 'slug' => $pkg->slug,
                 'price' => $pkg->price,
+                'discounted_price' => $pkg->discounted_price,
                 'duration_days' => $pkg->duration_days,
-                'image' => $pkg->thumbnail ? asset('storage/' . $pkg->thumbnail) : ($pkg->image ? asset('storage/' . $pkg->image) : null),
+                'image' => $pkg->thumbnail ? asset('storage/'.$pkg->thumbnail) : ($pkg->image ? asset('storage/'.$pkg->image) : null),
             ])
             ->values();
 
@@ -188,11 +221,12 @@ class HajjController extends Controller
                 'slug' => $package->slug,
                 'type' => $package->type->value,
                 'price' => $package->price,
+                'discounted_price' => $package->discounted_price,
                 'currency' => $package->currency,
                 'duration_days' => $package->duration_days,
                 'duration_nights' => $package->duration_nights,
-                'image' => $package->thumbnail ? asset('storage/' . $package->thumbnail) : ($package->image ? asset('storage/' . $package->image) : '/assets/img/hajj/hajjbg.jpg'),
-                'thumbnail' => $package->thumbnail ? asset('storage/' . $package->thumbnail) : ($package->image ? asset('storage/' . $package->image) : '/assets/img/hajj/hajjbg.jpg'),
+                'image' => $package->thumbnail ? asset('storage/'.$package->thumbnail) : ($package->image ? asset('storage/'.$package->image) : '/assets/img/hajj/hajjbg.jpg'),
+                'thumbnail' => $package->thumbnail ? asset('storage/'.$package->thumbnail) : ($package->image ? asset('storage/'.$package->image) : '/assets/img/hajj/hajjbg.jpg'),
                 'description' => $package->description,
                 'features' => $package->features ?? [],
                 'inclusions' => $package->inclusions ?? [],
@@ -201,8 +235,8 @@ class HajjController extends Controller
                 'hotel_details' => $package->hotel_details ?? [],
                 'departure_dates' => $package->departure_dates ?? [],
                 'max_capacity' => $package->max_capacity,
-                'gallery' => $package->gallery->map(fn($img) => [
-                    'url' => asset('storage/' . $img->image_path),
+                'gallery' => $package->gallery->map(fn ($img) => [
+                    'url' => asset('storage/'.$img->image_path),
                     'alt' => $img->alt_text ?? $package->title,
                 ])->toArray(),
             ],
@@ -217,13 +251,13 @@ class HajjController extends Controller
     public function articles(): Response
     {
         $articles = $this->articleService->list(PublishStatus::PUBLISHED)
-            ->map(fn($article) => [
+            ->map(fn ($article) => [
                 'id' => $article->id,
                 'title' => $article->title,
                 'slug' => $article->slug,
                 'excerpt' => $article->excerpt,
                 'category' => $article->category?->name ?? 'Travel Guide',
-                'image' => $article->featured_image ? asset('storage/' . $article->featured_image) : '/assets/img/hajj/hajjbg.jpg',
+                'image' => $article->featured_image ? asset('storage/'.$article->featured_image) : '/assets/img/hajj/hajjbg.jpg',
                 'published_at' => $article->published_at?->format('M d, Y'),
             ]);
 
@@ -240,7 +274,7 @@ class HajjController extends Controller
     {
         $article = $this->articleService->getBySlug($slug);
 
-        if (!$article || $article->status !== PublishStatus::PUBLISHED) {
+        if (! $article || $article->status !== PublishStatus::PUBLISHED) {
             abort(404);
         }
 
@@ -249,11 +283,11 @@ class HajjController extends Controller
 
         // Get related articles
         $relatedArticles = $this->articleService->getRelated($article, 3)
-            ->map(fn($a) => [
+            ->map(fn ($a) => [
                 'id' => $a->id,
                 'title' => $a->title,
                 'slug' => $a->slug,
-                'image' => $a->featured_image ? asset('storage/' . $a->featured_image) : null,
+                'image' => $a->featured_image ? asset('storage/'.$a->featured_image) : null,
             ]);
 
         return Inertia::render('hajj&umrah/article_detail', [
@@ -264,7 +298,7 @@ class HajjController extends Controller
                 'excerpt' => $article->excerpt,
                 'content' => $article->content,
                 'category' => $article->category?->name ?? 'Travel Guide',
-                'image' => $article->featured_image ? asset('storage/' . $article->featured_image) : null,
+                'image' => $article->featured_image ? asset('storage/'.$article->featured_image) : null,
                 'author' => $article->author?->name ?? 'Admin',
                 'published_at' => $article->published_at?->format('M d, Y'),
                 'views_count' => $article->views_count,
@@ -281,12 +315,12 @@ class HajjController extends Controller
     public function team(): Response
     {
         $teamMembers = $this->teamService->list(true)
-            ->map(fn($member) => [
+            ->map(fn ($member) => [
                 'id' => $member->id,
                 'name' => $member->name,
                 'role' => $member->role,
                 'bio' => $member->bio,
-                'image' => $member->image ? asset('storage/' . $member->image) : '/assets/img/team/1.jpg',
+                'image' => $member->image ? asset('storage/'.$member->image) : '/assets/img/team/1.jpg',
                 'social_links' => $member->social_links ?? [],
             ]);
 
@@ -294,7 +328,7 @@ class HajjController extends Controller
         $faqs = $this->faqService->list('hajj')
             ->where('is_active', true)
             ->take(5)
-            ->map(fn($faq) => [
+            ->map(fn ($faq) => [
                 'id' => $faq->id,
                 'question' => $faq->question,
                 'answer' => $faq->answer,
@@ -317,19 +351,19 @@ class HajjController extends Controller
 
         // Get office locations (hajj-specific and global)
         $offices = OfficeLocation::where(function ($query) {
-                $query->where('section', 'hajj')
-                    ->orWhere('section', 'global');
-            })
+            $query->where('section', 'hajj')
+                ->orWhere('section', 'global');
+        })
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->get()
-            ->map(fn($office) => [
-                'id' => $office->id,
-                'name' => $office->name,
-                'address' => $office->address,
-                'phone' => $office->phone,
-                'email' => $office->email,
-            ]);
+            ->map(fn ($office) => [
+            'id' => $office->id,
+            'name' => $office->name,
+            'address' => $office->address,
+            'phone' => $office->phone,
+            'email' => $office->email,
+        ]);
 
         return Inertia::render('hajj&umrah/contactus', [
             'offices' => $offices,

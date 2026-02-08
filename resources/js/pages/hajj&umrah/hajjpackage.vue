@@ -41,7 +41,13 @@
                             <!-- price tag -->
                             <div class="absolute top-3 right-3 rounded-full bg-[#f2e8dc] px-3 py-1 text-xs font-extrabold text-slate-800
                        shadow-[0_10px_20px_rgba(0,0,0,0.18)]">
-                                {{ formatPrice(pkg.price) }}
+                                <template v-if="pkg.discounted_price && pkg.discounted_price < pkg.price">
+                                    <span class="line-through text-slate-400 mr-1">{{ formatPrice(pkg.price) }}</span>
+                                    <span class="text-green-600">{{ formatPrice(pkg.discounted_price) }}</span>
+                                </template>
+                                <template v-else>
+                                    {{ formatPrice(pkg.price) }}
+                                </template>
                             </div>
                         </div>
 
@@ -90,6 +96,7 @@ interface Package {
     title: string;
     slug: string;
     price: number;
+    discounted_price?: number | null;
     currency: string;
     duration_days: number;
     image: string;

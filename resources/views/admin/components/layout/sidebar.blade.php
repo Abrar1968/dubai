@@ -61,7 +61,17 @@
             </a>
         </div>
 
-        <div class="flex-1 overflow-y-auto px-4 py-4">
+        <div 
+            class="flex-1 overflow-y-auto px-4 py-4"
+            x-ref="sidebarScroll"
+            x-init="
+                $nextTick(() => {
+                    const savedPos = localStorage.getItem('admin_sidebar_scroll');
+                    if (savedPos) $refs.sidebarScroll.scrollTop = parseInt(savedPos);
+                });
+            "
+            @scroll.debounce.100ms="localStorage.setItem('admin_sidebar_scroll', $refs.sidebarScroll.scrollTop)"
+        >
             @include('admin.components.layout.sidebar-content')
         </div>
 

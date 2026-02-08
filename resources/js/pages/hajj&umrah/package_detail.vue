@@ -28,7 +28,15 @@
                                             <p class="font-semibold text-gray-900">{{ packageData.title }}</p>
                                             <p class="text-sm text-gray-600">{{ packageData.duration_days }} Days • {{ packageData.type }}</p>
                                         </div>
-                                        <p class="text-lg font-bold text-orange-600">${{ (packageData.price || 0).toLocaleString() }}/person</p>
+                                        <div class="text-right">
+                                            <template v-if="packageData.discounted_price && packageData.discounted_price < packageData.price">
+                                                <p class="text-sm line-through text-gray-400">${{ (packageData.price || 0).toLocaleString() }}/person</p>
+                                                <p class="text-lg font-bold text-green-600">${{ (packageData.discounted_price || 0).toLocaleString() }}/person</p>
+                                            </template>
+                                            <template v-else>
+                                                <p class="text-lg font-bold text-orange-600">${{ (packageData.price || 0).toLocaleString() }}/person</p>
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -235,9 +243,20 @@
                     <div class="sticky top-24 bg-white rounded-2xl shadow-lg border border-slate-100 p-6 overflow-hidden">
                         <div class="text-center pb-6 border-b border-slate-100 mb-6">
                             <p class="text-sm text-slate-500 uppercase font-semibold tracking-wider">Starting From</p>
-                            <div class="mt-2 flex items-baseline justify-center gap-1">
-                                <span class="text-4xl font-extrabold text-slate-900">${{ (packageData.price || 0).toLocaleString() }}</span>
+                            <div class="mt-2 flex flex-col items-center justify-center gap-1">
+                                <template v-if="packageData.discounted_price && packageData.discounted_price < packageData.price">
+                                    <span class="text-xl line-through text-slate-400">${{ (packageData.price || 0).toLocaleString() }}</span>
+                                    <span class="text-4xl font-extrabold text-green-600">${{ (packageData.discounted_price || 0).toLocaleString() }}</span>
+                                </template>
+                                <template v-else>
+                                    <span class="text-4xl font-extrabold text-slate-900">${{ (packageData.price || 0).toLocaleString() }}</span>
+                                </template>
                                 <span class="text-slate-500 font-medium text-lg">/ person</span>
+                            </div>
+                            <div v-if="packageData.discounted_price && packageData.discounted_price < packageData.price" class="mt-2">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    Save {{ Math.round((1 - packageData.discounted_price / packageData.price) * 100) }}%
+                                </span>
                             </div>
                         </div>
 
@@ -326,6 +345,7 @@ interface Package {
     slug: string;
     type: string;
     price: number;
+    discounted_price?: number | null;
     currency: string;
     duration_days: number;
     image: string | null;
@@ -393,7 +413,10 @@ const minDate = computed(() => {
 
 // Compute estimated total
 const estimatedTotal = computed(() => {
-    return (props.package.price || 0) * bookingForm.value.traveler_count;
+    const unitPrice = (props.package.discounted_price && props.package.discounted_price < props.package.price)
+        ? props.package.discounted_price
+        : props.package.price;
+    return (unitPrice || 0) * bookingForm.value.traveler_count;
 });
 
 // Update travelers array when count changes
