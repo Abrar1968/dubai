@@ -30,11 +30,11 @@ const isActive = (href: string) => {
                     <!-- Logo -->
                     <div class="flex items-center gap-4">
                         <Link href="/" class="flex items-center gap-2">
-                            <img 
-                                v-if="settings.company_logo" 
-                                :src="`/storage/${settings.company_logo}`" 
-                                :alt="`${settings.company_name || 'Dubai Tourism'} Logo`" 
-                                class="h-12 w-auto object-contain" 
+                            <img
+                                v-if="settings.company_logo"
+                                :src="`/storage/${settings.company_logo}`"
+                                :alt="`${settings.company_name || 'Dubai Tourism'} Logo`"
+                                class="h-12 w-auto object-contain"
                             />
                             <div v-else class="text-xl font-bold text-amber-600">Dubai Tourism</div>
                         </Link>
@@ -47,8 +47,8 @@ const isActive = (href: string) => {
                             :key="item.name"
                             :href="item.href"
                             :class="[
-                                isActive(item.href) 
-                                    ? 'bg-amber-50 text-amber-700' 
+                                isActive(item.href)
+                                    ? 'bg-amber-50 text-amber-700'
                                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                                 'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors'
                             ]"
@@ -58,10 +58,10 @@ const isActive = (href: string) => {
                             </svg>
                             {{ item.name }}
                         </Link>
-                        
+
                         <!-- Divider -->
                         <div class="h-6 w-px bg-gray-200 mx-2"></div>
-                        
+
                         <!-- Back to Website -->
                         <a
                             href="/hajjhome"
@@ -135,8 +135,8 @@ const isActive = (href: string) => {
                         :href="item.href"
                         @click="isMobileMenuOpen = false"
                         :class="[
-                            isActive(item.href) 
-                                ? 'bg-amber-50 text-amber-700' 
+                            isActive(item.href)
+                                ? 'bg-amber-50 text-amber-700'
                                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                             'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium'
                         ]"
@@ -146,7 +146,7 @@ const isActive = (href: string) => {
                         </svg>
                         {{ item.name }}
                     </Link>
-                    
+
                     <!-- Back to Website -->
                     <a
                         href="/hajjhome"

@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
 
         // Get site settings for hajj section (used for logo and company info)
         $settingService = app(SiteSettingService::class);
-        $settings = $settingService->getAllSettings('hajj');
+        $settings = $settingService->getForSection('hajj');
 
         return [
             ...parent::share($request),

@@ -24,10 +24,10 @@
                     <span class="rounded-full bg-white px-1.5 text-xs">{{ $counts['daily'] }}</span>
                 @endif
             </a>
-            
+
             <!-- Calendar Date Picker -->
             <div x-data="{ showCalendar: false }" class="relative">
-                <button @click="showCalendar = !showCalendar" 
+                <button @click="showCalendar = !showCalendar"
                         type="button"
                         class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $isDateFiltered ? 'bg-pink-100 text-pink-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -39,22 +39,22 @@
                         Pick Date
                     @endif
                 </button>
-                
-                <div x-show="showCalendar" 
+
+                <div x-show="showCalendar"
                      @click.away="showCalendar = false"
                      x-cloak
                      class="absolute left-0 top-full mt-2 z-50 bg-white rounded-lg shadow-lg ring-1 ring-gray-200 p-4">
                     <form action="{{ route('admin.typing.inquiries.index') }}" method="GET" class="space-y-3">
-                        <input type="date" 
-                               name="date" 
+                        <input type="date"
+                               name="date"
                                value="{{ $selectedDate }}"
                                class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-purple-500 focus:ring-purple-500">
                         <div class="flex gap-2">
-                            <button type="submit" 
+                            <button type="submit"
                                     class="flex-1 rounded-lg bg-purple-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-purple-700">
                                 View
                             </button>
-                            <a href="{{ route('admin.typing.inquiries.index') }}" 
+                            <a href="{{ route('admin.typing.inquiries.index') }}"
                                class="rounded-lg bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200">
                                 Clear
                             </a>
@@ -62,9 +62,9 @@
                     </form>
                 </div>
             </div>
-            
+
             <span class="h-4 w-px bg-gray-300 mx-1"></span>
-            
+
             <a href="{{ route('admin.typing.inquiries.index', ['status' => 'new']) }}"
                class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium {{ $currentStatus?->value === 'new' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }}">
                 New
