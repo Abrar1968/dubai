@@ -3,7 +3,7 @@
         <div class="bg-white">
             <!-- ✅ HERO (Banner only, no text) -->
             <section class="relative h-[260px] sm:h-[360px] lg:h-[460px] w-full overflow-hidden">
-                <img :src="heroImage" alt="Hero Banner" class="absolute inset-0 h-full w-full object-cover" />
+                <img :src="heroImage" alt="Hero Banner" loading="lazy" class="absolute inset-0 h-full w-full object-cover" />
                 <!-- optional overlay for readability (keep it light) -->
                 <div class="absolute inset-0 bg-black/25"></div>
             </section>
@@ -49,7 +49,11 @@
                             </div>
 
                             <div v-if="service.image_url || service.image" class="mb-3 h-32 overflow-hidden rounded-md">
-                                <img :src="service.image_url || getImageUrl(service.image)" :alt="service.title" class="w-full h-full object-cover" @error="handleImageError" />
+                                <LazyImage
+                                    :src="service.image_url || getImageUrl(service.image)"
+                                    :alt="service.title"
+                                    fallback="/assets/img/typing/default-service.jpg"
+                                />
                             </div>
                             <div v-else-if="service.icon" class="mb-3 text-3xl">
                                 <span>{{ service.icon }}</span>
@@ -128,6 +132,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import TypingLayout from '@/layouts/TypingLayout.vue';
+import LazyImage from '@/components/ui/LazyImage.vue';
 import { MapPin, Phone, Mail, Star } from 'lucide-vue-next';
 
 // Define interfaces for proper typing

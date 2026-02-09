@@ -4,6 +4,7 @@
         <div class="relative h-[400px] w-full overflow-hidden">
             <img :src="displayArticle.image || 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070'"
                  :alt="displayArticle.title"
+                 loading="lazy"
                  class="absolute inset-0 h-full w-full object-cover" />
             <div class="absolute inset-0 bg-black/50"></div>
             <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-4">
@@ -63,6 +64,7 @@
                     <div class="relative h-[180px] overflow-hidden">
                         <img :src="related.image || 'https://images.unsplash.com/photo-1585036156171-384164a8c675?q=80&w=2070'"
                              :alt="related.title"
+                             loading="lazy"
                              class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div class="p-6">

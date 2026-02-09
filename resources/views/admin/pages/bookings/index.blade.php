@@ -36,7 +36,7 @@
         </div>
         <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200">
             <p class="text-sm text-slate-600">Revenue</p>
-            <p class="text-2xl font-bold text-slate-900">${{ number_format($stats['total_revenue'], 0) }}</p>
+            <p class="text-2xl font-bold text-slate-900">AED {{ number_format($stats['total_revenue'], 0) }}</p>
         </div>
     </div>
 
@@ -100,9 +100,9 @@
                         <span class="text-sm font-medium text-slate-900">{{ $booking->travelers_count }}</span>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="font-medium text-slate-900">${{ number_format($booking->total_amount, 2) }}</div>
+                        <div class="font-medium text-slate-900">AED {{ number_format($booking->total_amount, 2) }}</div>
                         @if($booking->remaining_balance > 0)
-                            <div class="text-xs text-red-600">Due: ${{ number_format($booking->remaining_balance, 2) }}</div>
+                            <div class="text-xs text-red-600">Due: AED {{ number_format($booking->remaining_balance, 2) }}</div>
                         @else
                             <div class="text-xs text-green-600">Paid</div>
                         @endif

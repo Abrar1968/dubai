@@ -106,9 +106,9 @@
                         </x-admin.ui.badge>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="font-medium text-slate-900">${{ number_format($package->price, 2) }}</div>
+                        <div class="font-medium text-slate-900">AED {{ number_format($package->price, 2) }}</div>
                         @if($package->discounted_price)
-                            <div class="text-sm text-green-600">${{ number_format($package->discounted_price, 2) }}</div>
+                            <div class="text-sm text-green-600">AED {{ number_format($package->discounted_price, 2) }}</div>
                         @endif
                     </td>
                     <td class="px-6 py-4 text-sm text-slate-600">

@@ -64,11 +64,13 @@
             <!-- Featured Image -->
             <div v-if="service.featured_image_url" class="mb-6">
               <img :src="service.featured_image_url" :alt="service.title"
+                   loading="lazy"
                    class="w-full rounded-xl shadow-lg object-cover aspect-video">
             </div>
             <!-- Fallback to old image_url for backwards compatibility -->
             <div v-else-if="service.image_url" class="mb-6">
               <img :src="service.image_url" :alt="service.title"
+                   loading="lazy"
                    class="w-full rounded-xl shadow-lg object-cover aspect-video">
             </div>
 
@@ -80,6 +82,7 @@
                      class="cursor-pointer overflow-hidden rounded-lg border border-slate-200 hover:border-teal-400 transition"
                      @click="openGallery(index)">
                   <img :src="imgUrl" :alt="`Document ${index + 1}`"
+                       loading="lazy"
                        class="w-full h-24 object-cover hover:scale-105 transition-transform">
                 </div>
               </div>

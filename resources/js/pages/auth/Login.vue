@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Head, useForm, Link } from '@inertiajs/vue3'
+import { Head, useForm, Link, usePage } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
-import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-vue-next'
+import { Eye, EyeOff, Mail, Lock, LogIn, CheckCircle } from 'lucide-vue-next'
 import HajjHeader from '@/components/hajj/hajjheader.vue'
 import HajjFooter from '@/components/hajj/hajjfooter.vue'
 import TypingHeader from '@/components/typing/typingheader.vue'
@@ -14,6 +14,10 @@ const props = defineProps<{
     settings?: Record<string, string>;
     section?: string;
 }>();
+
+// Get flash messages from page props
+const page = usePage();
+const flash = computed(() => page.props.flash as { success?: string; error?: string } | undefined);
 
 const form = useForm({
     email: '',
@@ -59,6 +63,12 @@ const submit = () => {
 
                     <!-- Form Section -->
                     <div class="p-8">
+                        <!-- Flash Success Message (e.g., after registration) -->
+                        <div v-if="flash?.success" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm flex items-center gap-3">
+                            <CheckCircle class="w-5 h-5 text-green-500 flex-shrink-0" />
+                            <span>{{ flash.success }}</span>
+                        </div>
+
                         <!-- Status Message -->
                         <div v-if="status" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm text-center">
                             {{ status }}

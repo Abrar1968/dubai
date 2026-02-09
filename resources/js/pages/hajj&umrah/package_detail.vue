@@ -45,15 +45,15 @@
                                     <label class="block text-sm font-medium text-gray-700">Preferred Departure Date *</label>
                                     <input type="date" v-model="bookingForm.departure_date" required
                                         :min="minDate"
-                                        class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"/>
+                                        class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"/>
                                 </div>
 
                                 <!-- Number of Travelers -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Number of Travelers *</label>
                                     <select v-model="bookingForm.traveler_count" @change="updateTravelers" required
-                                        class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white text-gray-900">
-                                        <option v-for="n in 10" :key="n" :value="n" class="text-gray-900 bg-white">{{ n }} traveler{{ n > 1 ? 's' : '' }}</option>
+                                        class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
+                                        <option v-for="n in 10" :key="n" :value="n">{{ n }} traveler{{ n > 1 ? 's' : '' }}</option>
                                     </select>
                                 </div>
 
@@ -61,7 +61,7 @@
                                 <div class="space-y-4">
                                     <h4 class="font-medium text-gray-900">Traveler Details</h4>
                                     <div v-for="(traveler, index) in bookingForm.travelers" :key="index"
-                                        class="rounded-lg border border-gray-200 p-4">
+                                        class="rounded-lg border border-gray-200 bg-white p-4">
                                         <h5 class="mb-3 font-medium text-gray-900">
                                             Traveler {{ index + 1 }} {{ index === 0 ? '(Primary Contact)' : '' }}
                                         </h5>
@@ -70,25 +70,26 @@
                                                 <label class="block text-xs font-medium text-gray-600">Full Name *</label>
                                                 <input type="text" v-model="traveler.name" required
                                                     placeholder="As per passport"
-                                                    class="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none"/>
+                                                    class="mt-1 block w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none"/>
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-medium text-gray-600">Passport Number</label>
                                                 <input type="text" v-model="traveler.passport_number"
-                                                    class="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none"/>
+                                                    placeholder="Enter passport number"
+                                                    class="mt-1 block w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none"/>
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-medium text-gray-600">Date of Birth</label>
                                                 <input type="date" v-model="traveler.date_of_birth"
-                                                    class="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none"/>
+                                                    class="mt-1 block w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none"/>
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-medium text-gray-600">Gender</label>
                                                 <select v-model="traveler.gender"
-                                                    class="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none bg-white text-gray-900">
-                                                    <option value="" class="text-gray-900">Select</option>
-                                                    <option value="male" class="text-gray-900">Male</option>
-                                                    <option value="female" class="text-gray-900">Female</option>
+                                                    class="mt-1 block w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none">
+                                                    <option value="">Select gender</option>
+                                                    <option value="male">Male</option>
+                                                    <option value="female">Female</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -100,14 +101,14 @@
                                     <label class="block text-sm font-medium text-gray-700">Special Requests</label>
                                     <textarea v-model="bookingForm.special_requests" rows="2"
                                         placeholder="Any dietary requirements, mobility assistance, etc."
-                                        class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"></textarea>
+                                        class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"></textarea>
                                 </div>
 
                                 <!-- Total -->
                                 <div class="rounded-lg bg-gray-50 p-4">
                                     <div class="flex items-center justify-between">
                                         <span class="font-medium text-gray-700">Estimated Total:</span>
-                                        <span class="text-2xl font-bold text-orange-600">${{ estimatedTotal.toLocaleString() }}</span>
+                                        <span class="text-2xl font-bold text-orange-600">AED {{ estimatedTotal.toLocaleString() }}</span>
                                     </div>
                                     <p class="mt-1 text-xs text-gray-500">Final price will be confirmed by our team</p>
                                 </div>
@@ -229,6 +230,7 @@
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                             <div v-for="(img, idx) in galleryList" :key="idx" class="relative group overflow-hidden rounded-lg aspect-square">
                                 <img :src="img.url" :alt="img.alt"
+                                    loading="lazy"
                                     @error="handleImageError"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
@@ -314,6 +316,7 @@
                     class="group block bg-white rounded-xl shadow-sm hover:shadow-md transition border border-slate-100 overflow-hidden">
                     <div class="h-48 overflow-hidden relative">
                          <img :src="related.image || '/assets/img/hajj/hajjbg.jpg'" :alt="related.title"
+                                loading="lazy"
                                 @error="handleImageError"
                                 class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                          <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-md text-xs font-bold shadow-sm">

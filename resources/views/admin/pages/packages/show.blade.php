@@ -210,12 +210,12 @@
                 <dl class="space-y-4">
                     <div class="flex justify-between">
                         <dt class="text-sm text-slate-600">Price</dt>
-                        <dd class="text-sm font-medium text-slate-900">${{ number_format($package->price, 2) }}</dd>
+                        <dd class="text-sm font-medium text-slate-900">AED {{ number_format($package->price, 2) }}</dd>
                     </div>
                     @if($package->discounted_price)
                         <div class="flex justify-between">
                             <dt class="text-sm text-slate-600">Discounted Price</dt>
-                            <dd class="text-sm font-medium text-green-600">${{ number_format($package->discounted_price, 2) }}</dd>
+                            <dd class="text-sm font-medium text-green-600">AED {{ number_format($package->discounted_price, 2) }}</dd>
                         </div>
                     @endif
                     <div class="flex justify-between">

@@ -49,9 +49,9 @@
                     </x-slot>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <x-admin.ui.input type="number" name="price" label="Price ($)" :value="old('price')" required min="0" step="0.01" placeholder="0.00" />
+                        <x-admin.ui.input type="number" name="price" label="Price (AED)" :value="old('price')" required min="0" step="0.01" placeholder="0.00" />
 
-                        <x-admin.ui.input type="number" name="discounted_price" label="Discounted Price ($)" :value="old('discounted_price')" min="0" step="0.01" placeholder="0.00" hint="Leave empty for no discount" />
+                        <x-admin.ui.input type="number" name="discounted_price" label="Discounted Price (AED)" :value="old('discounted_price')" min="0" step="0.01" placeholder="0.00" hint="Leave empty for no discount" />
 
                         <x-admin.ui.input type="number" name="max_capacity" label="Max Capacity" :value="old('max_capacity')" min="1" placeholder="e.g., 50" />
 

@@ -14,6 +14,7 @@ import {
     ChevronRight
 } from 'lucide-vue-next'
 import UserLayout from '@/layouts/UserLayout.vue'
+import LazyImage from '@/components/ui/LazyImage.vue'
 
 defineOptions({ layout: UserLayout })
 
@@ -283,10 +284,11 @@ const firstName = computed(() => {
                                         v-if="booking.package?.image"
                                         class="h-16 w-16 sm:h-20 sm:w-20 rounded-xl overflow-hidden ring-2 ring-slate-100"
                                     >
-                                        <img
+                                        <LazyImage
                                             :src="`/storage/${booking.package.image}`"
                                             :alt="booking.package?.title"
-                                            class="h-full w-full object-cover transition duration-300 group-hover:scale-110"
+                                            fallback="/assets/img/hajj/hajjbg.jpg"
+                                            img-class="transition duration-300 group-hover:scale-110"
                                         />
                                     </div>
                                     <div

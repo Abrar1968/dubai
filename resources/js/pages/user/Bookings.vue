@@ -16,6 +16,7 @@ import {
     ArrowUpDown
 } from 'lucide-vue-next'
 import UserLayout from '@/layouts/UserLayout.vue'
+import LazyImage from '@/components/ui/LazyImage.vue'
 
 defineOptions({ layout: UserLayout })
 
@@ -189,12 +190,13 @@ const formatAmount = (amount: number) => {
                                 v-if="booking.package?.image"
                                 class="absolute inset-0"
                             >
-                                <img
+                                <LazyImage
                                     :src="`/storage/${booking.package.image}`"
                                     :alt="booking.package?.title"
-                                    class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                                    fallback="/assets/img/hajj/hajjbg.jpg"
+                                    img-class="transition duration-500 group-hover:scale-105"
                                 />
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent lg:bg-gradient-to-r"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent lg:bg-gradient-to-r z-10"></div>
                             </div>
                             <div
                                 v-else
@@ -204,7 +206,7 @@ const formatAmount = (amount: number) => {
                             </div>
 
                             <!-- Status Badge (Mobile) -->
-                            <div class="absolute top-4 left-4 lg:hidden">
+                            <div class="absolute top-4 left-4 lg:hidden z-20">
                                 <span
                                     :class="[
                                         getStatusConfig(booking.status).bg,

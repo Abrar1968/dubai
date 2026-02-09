@@ -116,11 +116,14 @@ class Package extends Model
     }
 
     /**
-     * Get the effective price (discounted if available).
+     * Get the effective price (discounted if available and less than original).
      */
     public function getEffectivePriceAttribute(): float
     {
-        return (float) ($this->discounted_price ?? $this->price);
+        if ($this->discounted_price !== null && $this->discounted_price < $this->price) {
+            return (float) $this->discounted_price;
+        }
+        return (float) $this->price;
     }
 
     /**

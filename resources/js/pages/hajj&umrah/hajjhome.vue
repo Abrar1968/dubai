@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import HajjHeader from '@/components/hajj/hajjheader.vue';
 import HajjFooter from '@/components/hajj/hajjfooter.vue';
+import LazyImage from '@/components/ui/LazyImage.vue';
 import {
     MapPin, Calendar, Users, Star, ArrowRight, ShieldCheck,
     Clock, Heart, Menu, Phone, Mail, CheckCircle, ArrowUpRight, MessageCircle, ChevronDown, ChevronUp
@@ -229,11 +230,14 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         <div v-for="(pkg, index) in displayPackages" :key="pkg.id"
                             class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow group">
                             <div class="relative h-48 overflow-hidden">
-                                <img :src="`/storage/${pkg.image}`" :alt="pkg.title"
-                                    @error="handleImageError"
-                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <LazyImage
+                                    :src="`/storage/${pkg.image}`"
+                                    :alt="pkg.title"
+                                    :fallback="'/assets/img/hajj/hajjbg.jpg'"
+                                    img-class="group-hover:scale-110 transition-transform duration-500"
+                                />
                                 <div
-                                    class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-900">
+                                    class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-900 z-10">
                                     {{ pkg.duration_days }} Days
                                 </div>
                             </div>
@@ -282,6 +286,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         <a href="/umrahpackage" class="block h-full">
                             <div class="relative rounded-2xl overflow-hidden group h-full">
                                 <img src="/assets/img/hajj/umrahh.jpg"
+                                    loading="lazy"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     alt="Umrah" />
 
@@ -309,6 +314,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         <a href="/hajjpackage" class="block h-full">
                             <div class="relative rounded-2xl overflow-hidden group h-full md:-mt-8">
                                 <img src="/assets/img/hajj/hajjj.jpg"
+                                    loading="lazy"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     alt="Hajj" />
 
@@ -336,6 +342,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         <a href="/tourpackage" class="block h-full">
                             <div class="relative rounded-2xl overflow-hidden group h-full">
                                 <img src="/assets/img/hajj/islamictour.png"
+                                    loading="lazy"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     alt="Tour" />
 
@@ -368,7 +375,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
             <section id="features" class="py-20 bg-gray-50">
                 <div class="max-w-7xl mx-auto px-4 md:px-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div class="relative h-[600px] rounded-2xl overflow-hidden shadow-2xl">
-                        <img src="/assets/img/hajj/whyus.jpg" class="w-full h-full object-cover"
+                        <img src="/assets/img/hajj/whyus.jpg" loading="lazy" class="w-full h-full object-cover"
                             alt="Makkah Clock Tower" />
                     </div>
 
@@ -400,7 +407,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
             <section id="testimonials" v-if="displayTestimonial" class="relative py-24 bg-slate-900 overflow-hidden">
                 <div class="absolute inset-0">
                     <img src="https://images.unsplash.com/photo-1627441584288-51b660c6d9c6?q=80&w=2070&auto=format&fit=crop"
-                        class="w-full h-full object-cover opacity-20" alt="Background" />
+                        loading="lazy" class="w-full h-full object-cover opacity-20" alt="Background" />
                 </div>
                 <div class="relative z-10 max-w-7xl mx-auto px-4 md:px-16 flex items-center">
                     <div class="bg-white p-10 rounded-xl shadow-xl max-w-lg">
@@ -412,7 +419,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         </p>
                         <div class="flex items-center gap-4">
                             <img :src="displayTestimonial.avatar || '/assets/img/hajj/hajjbg.jpg'"
-                                class="w-12 h-12 rounded-full object-cover" alt="User" />
+                                loading="lazy" class="w-12 h-12 rounded-full object-cover" alt="User" />
                             <div>
                                 <h5 class="font-bold text-slate-900">{{ displayTestimonial.name }}</h5>
                                 <span class="text-sm text-slate-500">{{ displayTestimonial.location }}</span>
@@ -460,7 +467,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         </div>
                     </div>
                     <div class="relative">
-                        <img src="/assets/img/hajj/kabah.jpg" class="rounded-2xl shadow-2xl w-full" alt="Kaaba" />
+                        <img src="/assets/img/hajj/kabah.jpg" loading="lazy" class="rounded-2xl shadow-2xl w-full" alt="Kaaba" />
                     </div>
                 </div>
             </section>
@@ -483,9 +490,11 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         <div v-for="article in displayArticles" :key="article.id"
                             class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow group">
                             <div class="h-64 overflow-hidden">
-                                <img :src="article.image || 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070'"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    :alt="article.title">
+                                <LazyImage
+                                    :src="article.image || 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070'"
+                                    :alt="article.title"
+                                    img-class="group-hover:scale-105 transition-transform duration-500"
+                                />
                             </div>
                             <div class="p-8">
                                 <span class="text-xs font-bold text-[#D3A762] uppercase mb-2 block">{{ article.category || 'Travel Guide' }}</span>
@@ -539,10 +548,12 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                 <img v-if="settings.banner_image"
                      :src="`/storage/${settings.banner_image}`"
                      alt="Banner"
+                     loading="lazy"
                      class="w-full h-[200px] object-cover" />
                 <img v-else
                      src="https://images.unsplash.com/photo-1596726284620-830238e8f643?q=80&w=2684&auto=format&fit=crop"
                      alt="Kaaba"
+                     loading="lazy"
                      class="w-full h-[200px] object-cover" />
             </section>
         </main>

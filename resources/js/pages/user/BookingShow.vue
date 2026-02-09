@@ -19,6 +19,7 @@ import {
     Calendar
 } from 'lucide-vue-next'
 import UserLayout from '@/layouts/UserLayout.vue'
+import LazyImage from '@/components/ui/LazyImage.vue'
 
 defineOptions({ layout: UserLayout })
 
@@ -28,6 +29,7 @@ interface Package {
     slug: string;
     type: string;
     price: number;
+    discounted_price?: number | null;
     currency: string;
     duration_days: number;
     image: string;
@@ -143,6 +145,19 @@ const formatAmount = (amount: number) => {
         minimumFractionDigits: 0,
     }).format(amount);
 };
+
+// Get effective price (discounted if available)
+const getEffectivePrice = (pkg: Package | undefined) => {
+    if (!pkg) return 0;
+    return (pkg.discounted_price && pkg.discounted_price < pkg.price)
+        ? pkg.discounted_price
+        : pkg.price;
+};
+
+const hasDiscount = (pkg: Package | undefined) => {
+    if (!pkg) return false;
+    return pkg.discounted_price && pkg.discounted_price < pkg.price;
+};
 </script>
 
 <template>
@@ -215,10 +230,10 @@ const formatAmount = (amount: number) => {
                                         v-if="booking.package.image"
                                         class="h-32 w-32 sm:h-40 sm:w-40 rounded-xl overflow-hidden ring-2 ring-slate-100"
                                     >
-                                        <img
+                                        <LazyImage
                                             :src="`/storage/${booking.package.image}`"
                                             :alt="booking.package.title"
-                                            class="h-full w-full object-cover"
+                                            fallback="/assets/img/hajj/hajjbg.jpg"
                                         />
                                     </div>
                                     <div
@@ -246,7 +261,10 @@ const formatAmount = (amount: number) => {
                                                 Per Person
                                             </div>
                                             <p class="font-semibold text-slate-900">
-                                                {{ booking.package.currency }} {{ booking.package.price.toLocaleString() }}
+                                                <span v-if="hasDiscount(booking.package)" class="line-through text-slate-400 mr-2">
+                                                    {{ formatAmount(booking.package.price) }}
+                                                </span>
+                                                {{ formatAmount(getEffectivePrice(booking.package)) }}
                                             </p>
                                         </div>
                                     </div>
@@ -346,7 +364,12 @@ const formatAmount = (amount: number) => {
                             </div>
                             <div v-if="booking.package" class="flex justify-between text-sm">
                                 <span class="text-slate-500">Price per person</span>
-                                <span class="font-medium text-slate-900">{{ formatAmount(booking.package.price) }}</span>
+                                <span class="font-medium text-slate-900">
+                                    <span v-if="hasDiscount(booking.package)" class="line-through text-slate-400 mr-1 text-xs">
+                                        {{ formatAmount(booking.package.price) }}
+                                    </span>
+                                    {{ formatAmount(getEffectivePrice(booking.package)) }}
+                                </span>
                             </div>
                             <hr class="border-slate-200" />
                             <div class="flex justify-between items-center">

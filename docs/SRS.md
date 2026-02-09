@@ -1206,7 +1206,7 @@ routes/
 | slug | VARCHAR(220) | UNIQUE, NOT NULL | URL-friendly slug |
 | type | ENUM('hajj', 'umrah', 'tour') | NOT NULL, DEFAULT 'hajj' | Package type |
 | price | DECIMAL(10,2) | NOT NULL | Base price |
-| currency | VARCHAR(3) | NOT NULL, DEFAULT 'USD' | Currency code |
+| currency | VARCHAR(3) | NOT NULL, DEFAULT 'AED' | Currency code |
 | duration_days | INT UNSIGNED | NOT NULL | Trip duration |
 | image | VARCHAR(500) | NULL | Featured image path |
 | thumbnail | VARCHAR(500) | NULL | Thumbnail image path |

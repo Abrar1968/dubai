@@ -3,7 +3,7 @@
         <!-- HERO / BREADCRUMB BANNER -->
         <section class="relative h-[280px] sm:h-[320px] w-full overflow-hidden">
             <!-- background image -->
-            <img :src="headerBg" alt="Packages header" class="absolute inset-0 h-full w-full object-cover" />
+            <img :src="headerBg" alt="Packages header" loading="lazy" class="absolute inset-0 h-full w-full object-cover" />
             <!-- overlay -->
             <div class="absolute inset-0 bg-black/55"></div>
 
@@ -34,13 +34,16 @@
                    overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_rgba(0,0,0,0.12)]">
                         <!-- image -->
                         <div class="relative h-[140px] overflow-hidden">
-                            <img :src="pkg.image || '/assets/img/hajj/umrahh.jpg'" :alt="pkg.title"
-                                @error="handleImageError"
-                                class="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]" />
+                            <LazyImage
+                                :src="pkg.image || '/assets/img/hajj/umrahh.jpg'"
+                                :alt="pkg.title"
+                                fallback="/assets/img/hajj/umrahh.jpg"
+                                img-class="transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+                            />
 
                             <!-- price tag -->
                             <div class="absolute top-3 right-3 rounded-full bg-[#f2e8dc] px-3 py-1 text-xs font-extrabold text-slate-800
-                       shadow-[0_10px_20px_rgba(0,0,0,0.18)]">
+                       shadow-[0_10px_20px_rgba(0,0,0,0.18)] z-10">
                                 <template v-if="pkg.discounted_price && pkg.discounted_price < pkg.price">
                                     <span class="line-through text-slate-400 mr-1">{{ formatPrice(pkg.price) }}</span>
                                     <span class="text-green-600">{{ formatPrice(pkg.discounted_price) }}</span>
@@ -86,6 +89,7 @@
 
 <script setup lang="ts">
 import HajjUmrahLayout from '@/layouts/HajjUmrahLayout.vue'
+import LazyImage from '@/components/ui/LazyImage.vue'
 import { router } from '@inertiajs/vue3'
 
 defineOptions({ layout: HajjUmrahLayout })
