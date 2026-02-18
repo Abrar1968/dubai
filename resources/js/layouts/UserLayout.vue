@@ -5,6 +5,7 @@ import { computed, ref } from 'vue'
 const page = usePage()
 
 const user = computed(() => page.props.auth?.user || { name: 'User', email: '' })
+const settings = computed(() => page.props.settings || {})
 
 const isMobileMenuOpen = ref(false)
 
@@ -29,7 +30,13 @@ const isActive = (href: string) => {
                     <!-- Logo -->
                     <div class="flex items-center gap-4">
                         <Link href="/" class="flex items-center gap-2">
-                            <img src="/assets/img/logo.png" alt="Logo" class="h-10 w-auto" />
+                            <img
+                                v-if="settings.company_logo"
+                                :src="`/storage/${settings.company_logo}`"
+                                :alt="`${settings.company_name || 'Dubai Tourism'} Logo`"
+                                class="h-12 w-auto object-contain"
+                            />
+                            <div v-else class="text-xl font-bold text-amber-600">Dubai Tourism</div>
                         </Link>
                     </div>
 
@@ -40,8 +47,8 @@ const isActive = (href: string) => {
                             :key="item.name"
                             :href="item.href"
                             :class="[
-                                isActive(item.href) 
-                                    ? 'bg-amber-50 text-amber-700' 
+                                isActive(item.href)
+                                    ? 'bg-amber-50 text-amber-700'
                                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                                 'flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors'
                             ]"
@@ -51,6 +58,20 @@ const isActive = (href: string) => {
                             </svg>
                             {{ item.name }}
                         </Link>
+
+                        <!-- Divider -->
+                        <div class="h-6 w-px bg-gray-200 mx-2"></div>
+
+                        <!-- Back to Website -->
+                        <a
+                            href="/hajjhome"
+                            class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-amber-600 hover:bg-amber-50 transition-colors"
+                        >
+                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Back to Website
+                        </a>
                     </div>
 
                     <!-- User Menu -->
@@ -114,8 +135,8 @@ const isActive = (href: string) => {
                         :href="item.href"
                         @click="isMobileMenuOpen = false"
                         :class="[
-                            isActive(item.href) 
-                                ? 'bg-amber-50 text-amber-700' 
+                            isActive(item.href)
+                                ? 'bg-amber-50 text-amber-700'
                                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
                             'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium'
                         ]"
@@ -125,6 +146,17 @@ const isActive = (href: string) => {
                         </svg>
                         {{ item.name }}
                     </Link>
+
+                    <!-- Back to Website -->
+                    <a
+                        href="/hajjhome"
+                        class="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-amber-600 hover:bg-amber-50"
+                    >
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                        Back to Website
+                    </a>
 
                     <!-- Logout -->
                     <Link

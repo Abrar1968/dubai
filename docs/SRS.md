@@ -52,9 +52,9 @@ The Admin Panel is a web-based content management system designed to manage the 
 - Process and respond to customer inquiries
 - Configure site-wide settings and appearance
 
-**Future Expansion:**
-- Tour & Travel Module (Phase 2)
-- Typing Services Module (Phase 3)
+**Expansion Modules:**
+- Tour & Travel Module (Phase 2) - Planned
+- Typing Services Module (Phase 3) - **In Development** (see Section 4.12)
 
 ### 1.3 Definitions, Acronyms, and Abbreviations
 
@@ -1206,7 +1206,7 @@ routes/
 | slug | VARCHAR(220) | UNIQUE, NOT NULL | URL-friendly slug |
 | type | ENUM('hajj', 'umrah', 'tour') | NOT NULL, DEFAULT 'hajj' | Package type |
 | price | DECIMAL(10,2) | NOT NULL | Base price |
-| currency | VARCHAR(3) | NOT NULL, DEFAULT 'USD' | Currency code |
+| currency | VARCHAR(3) | NOT NULL, DEFAULT 'AED' | Currency code |
 | duration_days | INT UNSIGNED | NOT NULL | Trip duration |
 | image | VARCHAR(500) | NULL | Featured image path |
 | thumbnail | VARCHAR(500) | NULL | Thumbnail image path |
@@ -1578,7 +1578,326 @@ No direct hardware interfaces required. System operates entirely through web bro
 
 ---
 
+## Addendum — Codebase Additions (since v2.0)
+
+The following features, data structures, and implementation details are present in the codebase but were not captured in SRS v2.0. They are recorded here to bring the SRS in line with the current implementation (targeting SRS v2.1).
+
+### Summary of additions
+- Package gallery support (`package_gallery` table and admin/gallery UI)
+- Booking travelers details (`booking_travelers` table and user input validation)
+- Booking status audit trail (`booking_status_logs` table and status logging)
+- Office locations management (`office_locations` table and admin UI)
+- FAQ module with reordering and public display (`faqs` table and `FaqService`)
+- User dashboard and bookings UI implemented with Vue + Inertia (routes under `/user`)
+- Two-Factor Authentication (2FA) support via Laravel Fortify and settings controllers
+- New services and controllers reflecting the above (e.g., `OfficeLocationService`, `FaqService`, `AdminSectionService`, `AdminUserService`, `SiteSettingService`)
+
+---
+
+### A. Package Gallery
+**Purpose:** Attach multiple ordered images to a package (public gallery + admin ordering).
+
+**DB Table:** `package_gallery`
+**Key fields:**
+- `id` (PK)
+- `package_id` (FK -> packages)
+- `image_path` (string)
+- `alt_text` (string, nullable)
+- `sort_order` (unsigned int)
+- `created_at`, `updated_at`
+
+**Acceptance Criteria:**
+- Admin can upload multiple gallery images for a package
+- Images are displayed in `sort_order` on public package pages
+- Deleting a package removes its gallery items
+
+**References:** migration `2026_01_17_055941_create_package_gallery_table.php`, `PackageGallery` model
+
+---
+
+### B. Booking Travelers
+**Purpose:** Store traveler/passenger information per booking.
+
+**DB Table:** `booking_travelers`
+**Key fields:**
+- `id` (PK)
+- `booking_id` (FK -> bookings)
+- `full_name` (string)
+- `passport_number` (string, nullable)
+- `passport_expiry` (date, nullable)
+- `date_of_birth` (date, nullable)
+- `nationality` (string, nullable)
+- `gender` (enum: male, female, other, nullable)
+- `is_primary` (boolean)
+- `created_at`, `updated_at`
+
+**Acceptance Criteria / Business Rules:**
+- Each booking can have one or many travelers
+- At least one traveler is required when creating a booking
+- Traveler validations enforced on booking submission (name, DOB, optional passport details)
+
+**References:** migration `2026_01_17_055943_create_booking_travelers_table.php`, `BookingController@store`, `BookingService`
+
+---
+
+### C. Booking Status Logs
+**Purpose:** Maintain an audit trail of booking status transitions.
+
+**DB Table:** `booking_status_logs`
+**Key fields:**
+- `id` (PK)
+- `booking_id` (FK -> bookings)
+- `from_status` (string, nullable)
+- `to_status` (string)
+- `changed_by` (FK -> users, nullable)
+- `notes` (text, nullable)
+- `created_at` (timestamp)
+
+**Acceptance Criteria:**
+- Status changes are recorded each time a booking status is updated
+- Logs include who changed the status (user) and optional notes
+- Admin and user views can show status history for a booking
+
+**References:** migration `2026_01_17_055944_create_booking_status_logs_table.php`, `Booking` model relation `statusLogs`
+
+---
+
+### D. Office Locations
+**Purpose:** Manage office branches per section (contact addresses, map coords).
+
+**DB Table:** `office_locations`
+**Key fields:**
+- `id` (PK)
+- `section` (enum: hajj, tour, typing, global)
+- `name` (string)
+- `address` (text)
+- `phone` (string, nullable)
+- `email` (string, nullable)
+- `map_lat`, `map_lng` (decimal, nullable)
+- `sort_order` (unsigned int)
+- `is_active` (boolean)
+- `created_at`, `updated_at`
+
+**Acceptance Criteria:**
+- Admin can create/edit/delete office locations and set active/inactive
+- Public site can display office locations by section
+- Office locations can be ordered via `sort_order`
+
+**References:** migration `2026_01_17_055951_create_office_locations_table.php`, `OfficeLocationService`
+
+---
+
+### E. FAQ Module
+**Purpose:** Manage frequently asked questions per section, with admin CRUD and public display.
+
+**DB Table:** `faqs`
+**Key behaviors:**
+- Reordering of FAQs (for display order)
+- Active/Inactive toggles
+- Public controllers fetch section-specific FAQs
+
+**Acceptance Criteria:**
+- Admin UI provides create/edit/delete and reordering actions
+- Public pages display active FAQs for the relevant section (e.g., Hajj)
+
+**References:** migration `2026_01_17_055952_create_faqs_table.php`, `FaqService`, `Admin/Hajj/FaqController`, public controllers using FAQs
+
+---
+
+### F. User Dashboard Implementation (Changed)
+**Previous SRS Note:** User Dashboard (Blade + Alpine.js) - NOT YET IMPLEMENTED
+
+**Current Implementation (codebase):**
+- Implemented as Vue + Inertia pages under `/user/*` routes (see `routes/web.php`)
+- Features include:
+  - Dashboard stats (total/pending/confirmed/completed bookings)
+  - Bookings listing and filtering (`/user/bookings`)
+  - Booking details showing travelers and status logs (`/user/bookings/{id}`)
+  - Create booking (public package booking route posts to `User\BookingController@store`)
+  - Profile management routes for viewing/updating profile and password
+
+**Acceptance Criteria:**
+- Users can authenticate, view dashboard, place bookings (with travelers), and view booking histories
+- Dashboard displays accurate stats and recent bookings
+
+**References:** `User\DashboardController`, `User\BookingController`, Inertia pages `resources/js/pages/user/*`, routes prefixed with `user.`
+
+---
+
+### G. Two-Factor Authentication (2FA)
+**Purpose:** Optional 2FA for enhanced account security (Fortify integration).
+
+**Behavioral Notes:**
+- 2FA is supported via Laravel Fortify
+- Controllers and Views exist for enabling/disabling 2FA, regenerating recovery codes, and QR code provisioning
+- Settings for profile, password, and 2FA are present under `app/Http/Controllers/Settings/*`
+
+**Acceptance Criteria:**
+- Users can enable/disable 2FA from their account settings
+- Recovery codes are available and stored securely
+- Admin users may be required to use 2FA (configurable)
+
+**References:** `FortifyServiceProvider`, `Settings\TwoFactorAuthenticationController`, `TwoFactorAuthenticatable` support on `User` model
+
+---
+
+### H. Services / Controllers (New or Expanded)
+**Notable services/controllers added or expanded in codebase:**
+- `AdminSectionService`, `AdminUserService` (admin management and section assignment)
+- `FaqService` (FAQ management and reordering)
+- `OfficeLocationService` (office CRUD)
+- `SiteSettingService` / `SettingService` (site configs and section-specific settings)
+- `BookingService` (booking creation with traveler handling and status updates)
+
+**Acceptance Criteria:**
+- Services follow the project's Service Pattern and expose `list()`, `getById()`, `create()`, `update()`, `delete()` patterns
+- Controllers use services and FormRequests for validation
+
+---
+
+**Revision note:** These additions will be incorporated into SRS v2.1 (date: 2026-01-24) to reflect the current implementation. Any future code changes should be reflected in the SRS via the same addendum mechanism.
+
+---
+
 ## 12. Appendices
+
+### 12.1 Typing Services Module (Phase 3)
+
+#### TYPING-001: Overview
+**Priority:** High  
+**Status:** In Development  
+**Description:** Complete admin panel for managing typing/document services displayed on the typing section of the public website.
+
+**Module Components:**
+- Site Settings Management (company, SEO, social links)
+- Services CRUD Management (12+ typing services)
+- Dynamic frontend data via Inertia props
+
+#### TYPING-002: Database Schema
+
+**New Table: `typing_services`**
+| Column | Type | Description |
+|--------|------|-------------|
+| id | bigint | Primary key |
+| title | varchar(255) | Service name |
+| slug | varchar(255) | URL-friendly identifier (unique) |
+| short_description | text | Grid card description |
+| long_description | text | Service detail page content |
+| icon | varchar(255) | Icon class or image path |
+| image | varchar(255) | Featured image |
+| sub_services | json | Array of {title, description} |
+| cta_text | varchar(100) | CTA button text |
+| cta_link | varchar(255) | CTA button URL |
+| sort_order | int | Display position |
+| is_active | boolean | Visibility toggle |
+| is_featured | boolean | Homepage highlight |
+| meta_title | varchar(255) | SEO title |
+| meta_description | text | SEO description |
+| timestamps | | created_at, updated_at |
+
+**Existing Table Support:**
+- `site_settings` - Already supports `section='typing'`
+- `faqs` - Already supports `section='typing'`
+- `contact_inquiries` - Already supports `section='typing'`
+- `office_locations` - Already supports `section='typing'`
+
+#### TYPING-003: Services List
+**Priority:** High  
+**Description:** 12 typing services identified for management
+
+| # | Service | Slug | Sub-Services |
+|---|---------|------|--------------|
+| 1 | Immigration | immigration | 5 |
+| 2 | Labour Ministry | labour-ministry | 3-4 |
+| 3 | Tasheel Services | tasheel-services | 3-4 |
+| 4 | Domestic Workers Visa | domestic-workers-visa | 3-4 |
+| 5 | Family Visa | family-visa-process | 4 |
+| 6 | Health Insurance | health-insurance | 3-4 |
+| 7 | Ministry of Interior | ministry-of-interior | 3-4 |
+| 8 | Certificate Attestation | certificate-attestation | 3 |
+| 9 | VAT Registration | vat-registration | 3 |
+| 10 | CT Registration | ct-registration | 3-4 |
+| 11 | Passport Renewal | passport-renewal | 3-4 |
+| 12 | Immigration Card | immigration-card | 3-4 |
+
+#### TYPING-004: Admin Routes
+**Description:** Admin panel routes for typing section
+
+```
+GET    /admin/typing/services              → ServiceController@index
+GET    /admin/typing/services/create       → ServiceController@create
+POST   /admin/typing/services              → ServiceController@store
+GET    /admin/typing/services/{id}/edit    → ServiceController@edit
+PUT    /admin/typing/services/{id}         → ServiceController@update
+DELETE /admin/typing/services/{id}         → ServiceController@destroy
+PATCH  /admin/typing/services/{id}/toggle-active   → Toggle visibility
+PATCH  /admin/typing/services/{id}/toggle-featured → Toggle featured
+POST   /admin/typing/services/reorder      → Batch reorder
+
+GET    /admin/typing/settings              → SettingController@index
+PUT    /admin/typing/settings/company      → Update company info
+PUT    /admin/typing/settings/seo          → Update SEO settings
+PUT    /admin/typing/settings/social       → Update social links
+POST   /admin/typing/settings/clear-cache  → Clear settings cache
+```
+
+#### TYPING-005: Site Settings
+**Priority:** High  
+**Description:** Same settings structure as Hajj section with `section='typing'`
+
+**Company Settings:**
+- company_name, company_tagline, company_email, company_phone
+- company_whatsapp, company_address, company_logo
+- company_description, hero_image
+
+**SEO Settings:**
+- meta_title, meta_description, meta_keywords
+- og_image, google_analytics
+
+**Social Settings:**
+- social_facebook, social_twitter, social_instagram
+- social_linkedin, social_youtube, contact_description
+
+#### TYPING-006: Frontend Integration
+**Description:** Public typing pages receive dynamic data via Inertia
+
+**Data Flow:**
+```
+TypingController::home()
+    ↓
+SiteSetting::where('section', 'typing')
+TypingService::active()->ordered()->get()
+    ↓
+Inertia::render('typing/typinghome', [
+    'settings' => $settings,
+    'services' => $services,
+])
+    ↓
+Vue components display real data
+```
+
+**Vue Files Affected:**
+- `typinghome.vue` - Hero image, services grid
+- `typingheader.vue` - Logo, contact info, social links
+- `typingfooter.vue` - Company info, social links
+
+#### TYPING-007: Implementation References
+**Documentation:**
+- `docs/typing-section-implementation-plan.md` - Full implementation plan
+- `docs/steps/typing-step-1-backend.md` - Backend implementation guide
+- `docs/steps/typing-step-2-frontend.md` - Frontend implementation guide
+
+**Files to Create:**
+- Migration: `create_typing_services_table`
+- Model: `TypingService.php`
+- Service: `TypingServiceService.php`
+- Controllers: `Admin/Typing/SettingController.php`, `Admin/Typing/ServiceController.php`
+- Public Controller: `Public/TypingController.php`
+- Blade Views: Settings + Services CRUD
+
+---
+
+## 13. Appendices
 
 ### Appendix A: Glossary
 
@@ -1595,6 +1914,9 @@ No direct hardware interfaces required. System operates entirely through web bro
 - Frontend Technical Specification (srs-frontend.md)
 - Backend Technical Specification (srs-backend.md)
 - Hajj Section Overview (hajj-section-overview.md)
+- **Typing Section Implementation Plan (typing-section-implementation-plan.md)**
+- **Typing Step 1: Backend (steps/typing-step-1-backend.md)**
+- **Typing Step 2: Frontend (steps/typing-step-2-frontend.md)**
 - Development Plan (steps/day-1.md, day-2.md, day-3.md)
 
 ### Appendix C: Revision History
@@ -1603,6 +1925,7 @@ No direct hardware interfaces required. System operates entirely through web bro
 |------|---------|-------------|--------|
 | Jan 14, 2026 | 1.0 | Initial SRS creation | Dev Team |
 | Jan 14, 2026 | 2.0 | Stack update to Blade/Alpine.js | Dev Team |
+| Jan 28, 2026 | 2.1 | Added Typing Services Module (Section 12.1) | Dev Team |
 
 ---
 

@@ -75,7 +75,7 @@
             {{-- Featured Image --}}
             @if($article->featured_image)
                 <x-admin.ui.card>
-                    <img src="{{ Storage::url($article->featured_image) }}" alt="{{ $article->title }}" class="w-full h-64 object-cover rounded-lg">
+                    <img src="{{ \Illuminate\Support\Facades\Storage::url($article->featured_image) }}" alt="{{ $article->title }}" class="w-full h-64 object-cover rounded-lg">
                 </x-admin.ui.card>
             @endif
 

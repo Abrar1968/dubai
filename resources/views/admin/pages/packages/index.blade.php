@@ -80,7 +80,7 @@
                 <tr class="hover:bg-slate-50">
                     <td class="px-4 py-4">
                         @if($package->thumbnail || $package->image)
-                            <img src="{{ Storage::url($package->thumbnail ?? $package->image) }}" alt="{{ $package->title }}" class="h-12 w-16 object-cover rounded-lg">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($package->thumbnail ?? $package->image) }}" alt="{{ $package->title }}" class="h-12 w-16 object-cover rounded-lg">
                         @else
                             <div class="h-12 w-16 bg-slate-200 rounded-lg flex items-center justify-center">
                                 <svg class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -106,9 +106,9 @@
                         </x-admin.ui.badge>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="font-medium text-slate-900">${{ number_format($package->price, 2) }}</div>
+                        <div class="font-medium text-slate-900">AED {{ number_format($package->price, 2) }}</div>
                         @if($package->discounted_price)
-                            <div class="text-sm text-green-600">${{ number_format($package->discounted_price, 2) }}</div>
+                            <div class="text-sm text-green-600">AED {{ number_format($package->discounted_price, 2) }}</div>
                         @endif
                     </td>
                     <td class="px-6 py-4 text-sm text-slate-600">

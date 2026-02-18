@@ -78,7 +78,7 @@ class PackageController extends Controller
         }
 
         return redirect()
-            ->route('admin.packages.index')
+            ->route('admin.hajj.packages.index')
             ->with('success', 'Package created successfully.');
     }
 
@@ -151,7 +151,7 @@ class PackageController extends Controller
         }
 
         return redirect()
-            ->route('admin.packages.index')
+            ->route('admin.hajj.packages.index')
             ->with('success', 'Package updated successfully.');
     }
 
@@ -173,7 +173,7 @@ class PackageController extends Controller
         $this->packageService->delete($package);
 
         return redirect()
-            ->route('admin.packages.index')
+            ->route('admin.hajj.packages.index')
             ->with('success', 'Package deleted successfully.');
     }
 
@@ -196,12 +196,14 @@ class PackageController extends Controller
      */
     public function toggleFeatured(Package $package): RedirectResponse
     {
-        $this->packageService->update($package, [
-            'is_featured' => !$package->is_featured,
-        ]);
+        try {
+            $this->packageService->toggleFeatured($package);
 
-        $status = $package->fresh()->is_featured ? 'featured' : 'unfeatured';
+            $status = $package->fresh()->is_featured ? 'featured' : 'unfeatured';
 
-        return back()->with('success', "Package {$status} successfully.");
+            return back()->with('success', "Package {$status} successfully.");
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 }

@@ -351,7 +351,7 @@ resources/
 | slug | VARCHAR(220) | UNIQUE, NOT NULL |
 | type | ENUM('hajj', 'umrah', 'tour') | NOT NULL, DEFAULT 'hajj' |
 | price | DECIMAL(10,2) | NOT NULL |
-| currency | VARCHAR(3) | NOT NULL, DEFAULT 'USD' |
+| currency | VARCHAR(3) | NOT NULL, DEFAULT 'AED' |
 | duration_days | INT UNSIGNED | NOT NULL |
 | image | VARCHAR(500) | NULL |
 | thumbnail | VARCHAR(500) | NULL |

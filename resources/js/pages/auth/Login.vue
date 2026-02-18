@@ -1,16 +1,23 @@
 <script setup lang="ts">
-import { Head, useForm, Link } from '@inertiajs/vue3'
-import { ref } from 'vue'
-import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-vue-next'
+import { Head, useForm, Link, usePage } from '@inertiajs/vue3'
+import { ref, computed } from 'vue'
+import { Eye, EyeOff, Mail, Lock, LogIn, CheckCircle } from 'lucide-vue-next'
 import HajjHeader from '@/components/hajj/hajjheader.vue'
 import HajjFooter from '@/components/hajj/hajjfooter.vue'
+import TypingHeader from '@/components/typing/typingheader.vue'
+import TypingFooter from '@/components/typing/typingfooter.vue'
 
-defineProps<{
+const props = defineProps<{
     status?: string;
     canResetPassword?: boolean;
     canRegister?: boolean;
     settings?: Record<string, string>;
+    section?: string;
 }>();
+
+// Get flash messages from page props
+const page = usePage();
+const flash = computed(() => page.props.flash as { success?: string; error?: string } | undefined);
 
 const form = useForm({
     email: '',
@@ -19,6 +26,9 @@ const form = useForm({
 });
 
 const showPassword = ref(false);
+
+// Determine which section we're in
+const isTypingSection = computed(() => props.section === 'typing');
 
 const submit = () => {
     form.post('/login', {
@@ -33,8 +43,9 @@ const submit = () => {
     <Head title="Login" />
 
     <div class="min-h-screen flex flex-col bg-slate-50">
-        <!-- Header -->
-        <HajjHeader :settings="settings || {}" />
+        <!-- Dynamic Header based on section -->
+        <TypingHeader v-if="isTypingSection" :settings="settings || {}" />
+        <HajjHeader v-else :settings="settings || {}" />
 
         <!-- Main Content -->
         <main class="flex-1 flex items-center justify-center py-12 px-4">
@@ -52,6 +63,12 @@ const submit = () => {
 
                     <!-- Form Section -->
                     <div class="p-8">
+                        <!-- Flash Success Message (e.g., after registration) -->
+                        <div v-if="flash?.success" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm flex items-center gap-3">
+                            <CheckCircle class="w-5 h-5 text-green-500 flex-shrink-0" />
+                            <span>{{ flash.success }}</span>
+                        </div>
+
                         <!-- Status Message -->
                         <div v-if="status" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm text-center">
                             {{ status }}
@@ -75,8 +92,14 @@ const submit = () => {
                                         autofocus
                                         autocomplete="email"
                                         placeholder="Enter your email"
-                                        class="w-full pl-12 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition placeholder:text-slate-400"
-                                        :class="{ 'border-red-500': form.errors.email }"
+                                        :class="[
+                                            'w-full pl-12 pr-4 py-3 border rounded-xl transition placeholder:text-slate-400 text-slate-900 bg-white',
+                                            form.errors.email
+                                                ? 'border-red-500 focus:ring-2 focus:ring-red-500 focus:border-red-500'
+                                                : isTypingSection
+                                                    ? 'border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500'
+                                                    : 'border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500'
+                                        ]"
                                     />
                                 </div>
                                 <p v-if="form.errors.email" class="mt-2 text-sm text-red-600">{{ form.errors.email }}</p>
@@ -88,7 +111,9 @@ const submit = () => {
                                     <label for="password" class="block text-sm font-semibold text-slate-700">
                                         Password
                                     </label>
-                                    <Link v-if="canResetPassword" href="/forgot-password" class="text-sm text-amber-600 hover:text-amber-700 font-medium">
+                                    <Link v-if="canResetPassword" href="/forgot-password"
+                                          :class="isTypingSection ? 'text-teal-600 hover:text-teal-700' : 'text-amber-600 hover:text-amber-700'"
+                                          class="text-sm font-medium">
                                         Forgot password?
                                     </Link>
                                 </div>
@@ -103,8 +128,14 @@ const submit = () => {
                                         required
                                         autocomplete="current-password"
                                         placeholder="Enter your password"
-                                        class="w-full pl-12 pr-12 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition placeholder:text-slate-400"
-                                        :class="{ 'border-red-500': form.errors.password }"
+                                        :class="[
+                                            'w-full pl-12 pr-12 py-3 border rounded-xl transition placeholder:text-slate-400 text-slate-900 bg-white',
+                                            form.errors.password
+                                                ? 'border-red-500 focus:ring-2 focus:ring-red-500 focus:border-red-500'
+                                                : isTypingSection
+                                                    ? 'border-slate-300 focus:ring-2 focus:ring-teal-500 focus:border-teal-500'
+                                                    : 'border-slate-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500'
+                                        ]"
                                     />
                                     <button
                                         type="button"
@@ -124,7 +155,8 @@ const submit = () => {
                                     id="remember"
                                     v-model="form.remember"
                                     type="checkbox"
-                                    class="h-4 w-4 text-amber-600 border-slate-300 rounded focus:ring-amber-500"
+                                    :class="isTypingSection ? 'text-teal-600 focus:ring-teal-500' : 'text-amber-600 focus:ring-amber-500'"
+                                    class="h-4 w-4 border-slate-300 rounded"
                                 />
                                 <label for="remember" class="ml-3 text-sm text-slate-600">
                                     Remember me
@@ -135,7 +167,12 @@ const submit = () => {
                             <button
                                 type="submit"
                                 :disabled="form.processing"
-                                class="w-full py-3.5 px-6 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-semibold rounded-xl shadow-lg shadow-amber-500/25 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                :class="[
+                                    'w-full py-3.5 px-6 text-white font-semibold rounded-xl shadow-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2',
+                                    isTypingSection
+                                        ? 'bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-teal-500/25'
+                                        : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 shadow-amber-500/25'
+                                ]"
                             >
                                 <svg v-if="form.processing" class="animate-spin h-5 w-5" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
@@ -149,7 +186,9 @@ const submit = () => {
                         <div class="mt-8 pt-6 border-t border-slate-200 text-center">
                             <p class="text-slate-600">
                                 Don't have an account?
-                                <Link href="/register" class="text-amber-600 hover:text-amber-700 font-semibold ml-1">
+                                <Link :href="`/register${isTypingSection ? '?section=typing' : ''}`"
+                                      :class="isTypingSection ? 'text-teal-600 hover:text-teal-700' : 'text-amber-600 hover:text-amber-700'"
+                                      class="font-semibold ml-1">
                                     Create Account
                                 </Link>
                             </p>
@@ -160,14 +199,15 @@ const submit = () => {
                 <!-- Additional Info -->
                 <p class="mt-6 text-center text-sm text-slate-500">
                     By signing in, you agree to our
-                    <a href="#" class="text-amber-600 hover:underline">Terms of Service</a>
+                    <a href="#" :class="isTypingSection ? 'text-teal-600 hover:underline' : 'text-amber-600 hover:underline'">Terms of Service</a>
                     and
-                    <a href="#" class="text-amber-600 hover:underline">Privacy Policy</a>
+                    <a href="#" :class="isTypingSection ? 'text-teal-600 hover:underline' : 'text-amber-600 hover:underline'">Privacy Policy</a>
                 </p>
             </div>
         </main>
 
-        <!-- Footer -->
-        <HajjFooter :settings="settings || {}" />
+        <!-- Dynamic Footer based on section -->
+        <TypingFooter v-if="isTypingSection" :settings="settings || {}" />
+        <HajjFooter v-else :settings="settings || {}" />
     </div>
 </template>

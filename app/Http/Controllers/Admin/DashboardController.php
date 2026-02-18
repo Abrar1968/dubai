@@ -21,13 +21,13 @@ class DashboardController extends Controller
     ) {}
 
     /**
-     * Display the admin dashboard.
+     * Display the admin dashboard (now hajj-specific).
      */
     public function index(Request $request)
     {
         $user = $request->user();
 
-        // Get statistics based on user's section access
+        // Get hajj-specific statistics
         $stats = [];
 
         // Package stats (if user has hajj access or is super admin)
@@ -54,7 +54,7 @@ class DashboardController extends Controller
                 'total_views' => $articleStats['total_views'],
             ];
 
-            $inquiryStats = $this->inquiryService->getStats();
+            $inquiryStats = $this->inquiryService->getStatsBySection('hajj');
             $stats['inquiries'] = [
                 'total' => $inquiryStats['total'],
                 'new' => $inquiryStats['new'],
@@ -69,11 +69,11 @@ class DashboardController extends Controller
             ];
         }
 
-        // Get recent data
+        // Get recent data (hajj-specific)
         $recentBookings = $this->bookingService->getRecent(5);
-        $recentInquiries = $this->inquiryService->getRecent(5);
+        $recentInquiries = $this->inquiryService->getRecentBySection('hajj', 5);
 
-        return view('admin.pages.dashboard', [
+        return view('admin.pages.hajj.dashboard', [
             'stats' => $stats,
             'recentBookings' => $recentBookings,
             'recentInquiries' => $recentInquiries,
