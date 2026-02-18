@@ -28,8 +28,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Logout
         Route::post('logout', [AdminLoginController::class, 'logout'])->name('logout');
 
-        // Dashboard
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        // Dashboard - redirect to appropriate section dashboard
+        Route::get('/', function () {
+            $user = auth()->user();
+
+            if ($user->isSuperAdmin()) {
+                // Super admin can access all sections, default to hajj
+                return redirect()->route('admin.hajj.dashboard');
+            } elseif ($user->hasSection('hajj')) {
+                return redirect()->route('admin.hajj.dashboard');
+            } elseif ($user->hasSection('typing')) {
+                return redirect()->route('admin.typing.dashboard');
+            } else {
+                // Fallback to hajj dashboard
+                return redirect()->route('admin.hajj.dashboard');
+            }
+        })->name('dashboard');
 
         // ==========================================
         // Shared Admin Routes (accessible from any section)
@@ -59,6 +73,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Hajj & Umrah Section Routes
         // ==========================================
         Route::prefix('hajj')->name('hajj.')->middleware('section:hajj')->group(function () {
+            // Dashboard
+            Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
             // Packages
             Route::resource('packages', \App\Http\Controllers\Admin\Hajj\PackageController::class);
             Route::patch('packages/{package}/toggle-status', [\App\Http\Controllers\Admin\Hajj\PackageController::class, 'toggleStatus'])->name('packages.toggle-status');
@@ -118,23 +135,55 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         // ==========================================
-        // Tour & Travel Section Routes (Phase 2)
-        // ==========================================
-        Route::prefix('tour')->name('tour.')->middleware('section:tour')->group(function () {
-            // Placeholder - will be implemented in Phase 2
-            Route::get('/', function () {
-                return view('admin.pages.coming-soon', ['section' => 'Tour & Travel']);
-            })->name('index');
-        });
-
-        // ==========================================
-        // Typing Services Section Routes (Phase 3)
+        // Typing Services Section Routes
         // ==========================================
         Route::prefix('typing')->name('typing.')->middleware('section:typing')->group(function () {
-            // Placeholder - will be implemented in Phase 3
-            Route::get('/', function () {
-                return view('admin.pages.coming-soon', ['section' => 'Typing Services']);
-            })->name('index');
+            // Dashboard
+            Route::get('/', [\App\Http\Controllers\Admin\Typing\DashboardController::class, 'index'])->name('dashboard');
+
+            // Typing Services CRUD
+            Route::resource('services', \App\Http\Controllers\Admin\Typing\ServiceController::class);
+            Route::patch('services/{service}/toggle-status', [\App\Http\Controllers\Admin\Typing\ServiceController::class, 'toggleStatus'])->name('services.toggle-status');
+            Route::patch('services/{service}/toggle-featured', [\App\Http\Controllers\Admin\Typing\ServiceController::class, 'toggleFeatured'])->name('services.toggle-featured');
+            Route::post('services/reorder', [\App\Http\Controllers\Admin\Typing\ServiceController::class, 'reorder'])->name('services.reorder');
+
+            // Family Visa (Emirates and Visa Types)
+            Route::prefix('family-visa')->name('family-visa.')->group(function () {
+                Route::get('/', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'index'])->name('index');
+                Route::get('/create', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'create'])->name('create');
+                Route::post('/', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'store'])->name('store');
+                Route::get('/{family_visa}', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'show'])->name('show');
+                Route::get('/{family_visa}/edit', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'edit'])->name('edit');
+                Route::put('/{family_visa}', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'update'])->name('update');
+                Route::delete('/{family_visa}', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'destroy'])->name('destroy');
+                Route::patch('/{family_visa}/toggle-active', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'toggleActive'])->name('toggle-active');
+
+                // Visa Types within Emirate
+                Route::get('/{family_visa}/types/create', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'createType'])->name('types.create');
+                Route::post('/{family_visa}/types', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'storeType'])->name('types.store');
+                Route::get('/{family_visa}/types/{visaType}/edit', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'editType'])->name('types.edit');
+                Route::put('/{family_visa}/types/{visaType}', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'updateType'])->name('types.update');
+                Route::delete('/{family_visa}/types/{visaType}', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'destroyType'])->name('types.destroy');
+                Route::patch('/{family_visa}/types/{visaType}/toggle-active', [\App\Http\Controllers\Admin\Typing\FamilyVisaController::class, 'toggleTypeActive'])->name('types.toggle-active');
+            });
+
+            // Typing Inquiries
+            Route::prefix('inquiries')->name('inquiries.')->group(function () {
+                Route::post('bulk-mark-read', [\App\Http\Controllers\Admin\Typing\InquiryController::class, 'bulkMarkRead'])->name('bulk-mark-read');
+                Route::delete('bulk-delete', [\App\Http\Controllers\Admin\Typing\InquiryController::class, 'bulkDelete'])->name('bulk-delete');
+            });
+            Route::resource('inquiries', \App\Http\Controllers\Admin\Typing\InquiryController::class)->only(['index', 'show', 'destroy']);
+            Route::patch('inquiries/{inquiry}/mark-read', [\App\Http\Controllers\Admin\Typing\InquiryController::class, 'markRead'])->name('inquiries.mark-read');
+            Route::patch('inquiries/{inquiry}/mark-responded', [\App\Http\Controllers\Admin\Typing\InquiryController::class, 'markResponded'])->name('inquiries.mark-responded');
+            Route::patch('inquiries/{inquiry}/close', [\App\Http\Controllers\Admin\Typing\InquiryController::class, 'close'])->name('inquiries.close');
+
+            // Settings
+            Route::get('settings', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'index'])->name('settings.index');
+            Route::put('settings/company', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'updateCompany'])->name('settings.update-company');
+            Route::put('settings/seo', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'updateSeo'])->name('settings.update-seo');
+            Route::put('settings/social', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'updateSocial'])->name('settings.update-social');
+            Route::put('settings/contact', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'updateContact'])->name('settings.update-contact');
+            Route::post('settings/clear-cache', [\App\Http\Controllers\Admin\Typing\SettingController::class, 'clearCache'])->name('settings.clear-cache');
         });
 
         // ==========================================
@@ -142,6 +191,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // ==========================================
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->except(['create', 'store']);
         Route::patch('users/{user}/toggle-active', [\App\Http\Controllers\Admin\UserController::class, 'toggleActive'])->name('users.toggle-active');
+
+        // ==========================================
+        // Office Locations (Global - All Admins)
+        // ==========================================
+        Route::resource('office-locations', \App\Http\Controllers\Admin\OfficeLocationController::class)->except(['show']);
+        Route::patch('office-locations/{officeLocation}/toggle-active', [\App\Http\Controllers\Admin\OfficeLocationController::class, 'toggleActive'])->name('office-locations.toggle-active');
+        Route::post('office-locations/reorder', [\App\Http\Controllers\Admin\OfficeLocationController::class, 'reorder'])->name('office-locations.reorder');
 
         // ==========================================
         // Super Admin Only Routes

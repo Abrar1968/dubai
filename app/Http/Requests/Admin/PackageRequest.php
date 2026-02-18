@@ -99,9 +99,63 @@ class PackageRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        $this->merge([
+        $data = [
             'is_featured' => $this->boolean('is_featured'),
             'is_active' => $this->boolean('is_active'),
-        ]);
+        ];
+
+        // Filter out empty features (remove items with empty/null values)
+        if ($this->has('features')) {
+            $features = collect($this->input('features'))
+                ->filter(fn($item) => is_array($item) ? !empty(trim($item['value'] ?? '')) : !empty(trim($item ?? '')))
+                ->values()
+                ->toArray();
+            $data['features'] = empty($features) ? null : $features;
+        }
+
+        // Filter out empty inclusions
+        if ($this->has('inclusions')) {
+            $inclusions = collect($this->input('inclusions'))
+                ->filter(fn($item) => is_array($item) ? !empty(trim($item['value'] ?? '')) : !empty(trim($item ?? '')))
+                ->values()
+                ->toArray();
+            $data['inclusions'] = empty($inclusions) ? null : $inclusions;
+        }
+
+        // Filter out empty exclusions
+        if ($this->has('exclusions')) {
+            $exclusions = collect($this->input('exclusions'))
+                ->filter(fn($item) => is_array($item) ? !empty(trim($item['value'] ?? '')) : !empty(trim($item ?? '')))
+                ->values()
+                ->toArray();
+            $data['exclusions'] = empty($exclusions) ? null : $exclusions;
+        }
+
+        // Filter out empty itinerary items (items without title)
+        if ($this->has('itinerary')) {
+            $itinerary = collect($this->input('itinerary'))
+                ->filter(fn($item) => !empty(trim($item['title'] ?? '')))
+                ->values()
+                ->map(function ($item, $index) {
+                    return [
+                        'day' => $item['day'] ?? ($index + 1),
+                        'title' => trim($item['title'] ?? ''),
+                        'description' => trim($item['description'] ?? ''),
+                    ];
+                })
+                ->toArray();
+            $data['itinerary'] = empty($itinerary) ? null : $itinerary;
+        }
+
+        // Filter out empty hotel details (items without name)
+        if ($this->has('hotel_details')) {
+            $hotels = collect($this->input('hotel_details'))
+                ->filter(fn($item) => !empty(trim($item['name'] ?? '')))
+                ->values()
+                ->toArray();
+            $data['hotel_details'] = empty($hotels) ? null : $hotels;
+        }
+
+        $this->merge($data);
     }
 }

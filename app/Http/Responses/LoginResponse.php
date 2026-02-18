@@ -24,9 +24,9 @@ class LoginResponse implements LoginResponseContract
                 : redirect()->intended(route('admin.dashboard'));
         }
 
-        // Regular users go to home page (they can access dashboard from header dropdown)
+        // Regular users go to their dashboard
         return $request->wantsJson()
             ? new JsonResponse('', 204)
-            : redirect()->intended('/');
+            : redirect()->intended(route('user.dashboard'));
     }
 }

@@ -95,12 +95,12 @@ const logout = () => {
     <!-- Main Navbar -->
     <div class="bg-white border-b border-slate-200">
       <div class="max-w-7xl mx-auto px-4 md:px-16">
-        <div class="h-20 flex items-center justify-between">
+        <div class="h-28 flex items-center justify-between">
           <!-- Logo -->
           <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <!-- Logo Image -->
-            <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-12 w-auto object-contain" />
-            <img v-else src="/assets/img/tour/logo/ss.png" alt="Company Logo" class="h-12 w-auto object-contain" />
+            <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-28 w-auto object-contain" />
+            <img v-else src="/assets/img/tour/logo/ss.png" alt="Company Logo" class="h-28 w-auto object-contain" />
           </a>
 
           <!-- Menu -->
@@ -147,8 +147,13 @@ const logout = () => {
                 </a>
 
                 <a href="/umrahpackage"
-                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-b-xl transition">
+                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">
                   Umrah Package
+                </a>
+
+                <a href="/tourpackage"
+                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-b-xl transition">
+                  Tour Package
                 </a>
               </div>
             </div>
@@ -165,62 +170,67 @@ const logout = () => {
               Contact Us
             </a>
 
-            <!-- Auth Buttons (show when NOT logged in OR when admin is logged in - admins have separate panel) -->
-            <template v-if="!isLoggedIn() || isAdminUser()">
-              <!-- Admin users see link to Admin Panel instead of Login -->
-              <template v-if="isAdminUser()">
-                <a href="/admin" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-slate-800 hover:bg-slate-700
-                         px-5 py-2.5 text-sm font-semibold text-white transition">
-                  Admin Panel
-                </a>
-              </template>
-              <!-- Non-logged in users see Login/Register -->
-              <template v-else>
-                <Link href="/login" class="hidden sm:inline-flex items-center justify-center rounded-xl border-2 border-slate-300 hover:border-slate-400
-                         px-5 py-2.5 text-sm font-semibold text-slate-700 hover:text-slate-900 transition">
-                  Login
-                </Link>
-                <Link href="/register" class="hidden sm:inline-flex items-center justify-center rounded-xl bg-[#D3A762] hover:bg-[#c29652]
-                         px-5 py-2.5 text-sm font-semibold text-white transition active:scale-[0.98]">
-                  Register
-                </Link>
-              </template>
+            <!-- Auth Section (Only for Users - Admins have separate admin panel) -->
+            <!-- User Dropdown (only for regular users with role='user') -->
+            <template v-if="isRegularUser()">
+              <div class="relative group">
+                <button class="flex items-center gap-2 rounded-xl border-2 border-slate-200 hover:border-slate-300
+                               px-4 py-2.5 text-sm font-semibold text-slate-700 transition">
+                  <User class="w-4 h-4" />
+                  <span class="hidden sm:inline">{{ auth.user.name }}</span>
+                  <ChevronDown class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div class="absolute right-0 top-full mt-3 w-48 rounded-xl bg-white border border-slate-200
+                         shadow-[0_20px_40px_rgba(0,0,0,0.12)]
+                         opacity-0 invisible translate-y-2
+                         group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
+                         transition-all duration-200 z-50">
+                  <a href="/user/dashboard"
+                    class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-t-xl transition">
+                    Dashboard
+                  </a>
+                  <a href="/user/bookings"
+                    class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">
+                    My Bookings
+                  </a>
+                  <a href="/user/profile"
+                    class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">
+                    Profile
+                  </a>
+                  <button @click="logout"
+                    class="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-b-xl transition text-left">
+                    <LogOut class="w-4 h-4" />
+                    Logout
+                  </button>
+                </div>
+              </div>
             </template>
 
-            <!-- User Dropdown (only for regular users with role='user') -->
-            <div v-else class="relative group">
-              <button class="flex items-center gap-2 rounded-xl border-2 border-slate-200 hover:border-slate-300
-                             px-4 py-2.5 text-sm font-semibold text-slate-700 transition">
-                <User class="w-4 h-4" />
-                <span class="hidden sm:inline">{{ auth.user.name }}</span>
-                <ChevronDown class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
-              </button>
-
-              <!-- Dropdown Menu -->
-              <div class="absolute right-0 top-full mt-3 w-48 rounded-xl bg-white border border-slate-200
-                       shadow-[0_20px_40px_rgba(0,0,0,0.12)]
-                       opacity-0 invisible translate-y-2
-                       group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
-                       transition-all duration-200 z-50">
-                <a href="/user/dashboard"
-                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-t-xl transition">
-                  Dashboard
-                </a>
-                <a href="/user/bookings"
-                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">
-                  My Bookings
-                </a>
-                <a href="/user/profile"
-                  class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition">
-                  Profile
-                </a>
-                <button @click="logout"
-                  class="w-full flex items-center gap-2 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-b-xl transition text-left">
-                  <LogOut class="w-4 h-4" />
-                  Logout
+            <!-- Account Dropdown (for non-logged in users) -->
+            <template v-else>
+              <div class="relative group">
+                <button class="hidden sm:inline-flex items-center gap-2 rounded-xl bg-[#D3A762] hover:bg-[#c29652]
+                         px-5 py-2.5 text-sm font-semibold text-white transition active:scale-[0.98]">
+                  <User class="w-4 h-4" />
+                  Account
+                  <ChevronDown class="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
                 </button>
+                <div class="absolute right-0 top-full mt-3 w-40 rounded-xl bg-white border border-slate-200
+                         shadow-[0_20px_40px_rgba(0,0,0,0.12)]
+                         opacity-0 invisible translate-y-2
+                         group-hover:opacity-100 group-hover:visible group-hover:translate-y-0
+                         transition-all duration-200 z-50">
+                  <Link href="/login" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-t-xl transition">
+                    Login
+                  </Link>
+                  <Link href="/register" class="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-b-xl transition">
+                    Register
+                  </Link>
+                </div>
               </div>
-            </div>
+            </template>
 
             <!-- Mobile menu button (optional) -->
             <button

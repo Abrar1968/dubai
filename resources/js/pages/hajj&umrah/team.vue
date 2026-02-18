@@ -77,7 +77,7 @@ const toggleFaq = (i: number) => {
                    overflow-hidden hover:-translate-y-1 transition-transform duration-300">
                             <!-- image -->
                             <div class="relative bg-slate-100">
-                                <img :src="m.image || '/assets/img/hajj/hajjbg.jpg'" :alt="m.name" class="w-full h-[170px] sm:h-[190px] object-cover" />
+                                <img :src="m.image || '/assets/img/hajj/hajjbg.jpg'" :alt="m.name" loading="lazy" class="w-full h-[170px] sm:h-[190px] object-cover" />
 
                                 <!-- subtle vertical label (optional like screenshot) -->
                                 <div

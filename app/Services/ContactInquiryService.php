@@ -26,15 +26,37 @@ class ContactInquiryService
     /**
      * Get paginated inquiries.
      */
-    public function paginate(int $perPage = 15, ?InquiryStatus $status = null): LengthAwarePaginator
+    public function paginate(int $perPage = 15, ?InquiryStatus $status = null, bool $daily = false, ?string $date = null): LengthAwarePaginator
     {
         $query = ContactInquiry::with('package')->orderBy('created_at', 'desc');
+
+        if ($date) {
+            $query->whereDate('created_at', $date);
+        } elseif ($daily) {
+            $query->whereDate('created_at', today());
+        }
 
         if ($status) {
             $query->status($status);
         }
 
         return $query->paginate($perPage);
+    }
+
+    /**
+     * Get today's inquiries.
+     */
+    public function listDaily(?InquiryStatus $status = null): Collection
+    {
+        $query = ContactInquiry::with('package')
+            ->whereDate('created_at', today())
+            ->orderBy('created_at', 'desc');
+
+        if ($status) {
+            $query->status($status);
+        }
+
+        return $query->get();
     }
 
     /**
@@ -138,5 +160,30 @@ class ContactInquiryService
             'responded' => ContactInquiry::status(InquiryStatus::RESPONDED)->count(),
             'closed' => ContactInquiry::status(InquiryStatus::CLOSED)->count(),
         ];
+    }
+
+    /**
+     * Get inquiry statistics by section.
+     */
+    public function getStatsBySection(string $section): array
+    {
+        return [
+            'total' => ContactInquiry::where('section', $section)->count(),
+            'new' => ContactInquiry::where('section', $section)->status(InquiryStatus::NEW)->count(),
+            'read' => ContactInquiry::where('section', $section)->status(InquiryStatus::READ)->count(),
+            'responded' => ContactInquiry::where('section', $section)->status(InquiryStatus::RESPONDED)->count(),
+            'closed' => ContactInquiry::where('section', $section)->status(InquiryStatus::CLOSED)->count(),
+        ];
+    }
+
+    /**
+     * Get recent inquiries by section.
+     */
+    public function getRecentBySection(string $section, int $limit = 5): Collection
+    {
+        return ContactInquiry::where('section', $section)
+            ->orderBy('created_at', 'desc')
+            ->limit($limit)
+            ->get();
     }
 }

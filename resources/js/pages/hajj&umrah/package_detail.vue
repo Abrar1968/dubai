@@ -28,7 +28,15 @@
                                             <p class="font-semibold text-gray-900">{{ packageData.title }}</p>
                                             <p class="text-sm text-gray-600">{{ packageData.duration_days }} Days • {{ packageData.type }}</p>
                                         </div>
-                                        <p class="text-lg font-bold text-orange-600">${{ (packageData.price || 0).toLocaleString() }}/person</p>
+                                        <div class="text-right">
+                                            <template v-if="packageData.discounted_price && packageData.discounted_price < packageData.price">
+                                                <p class="text-sm line-through text-gray-400">AED {{ (packageData.price || 0).toLocaleString() }}/person</p>
+                                                <p class="text-lg font-bold text-green-600">AED {{ (packageData.discounted_price || 0).toLocaleString() }}/person</p>
+                                            </template>
+                                            <template v-else>
+                                                <p class="text-lg font-bold text-orange-600">AED {{ (packageData.price || 0).toLocaleString() }}/person</p>
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -37,15 +45,15 @@
                                     <label class="block text-sm font-medium text-gray-700">Preferred Departure Date *</label>
                                     <input type="date" v-model="bookingForm.departure_date" required
                                         :min="minDate"
-                                        class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"/>
+                                        class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"/>
                                 </div>
 
                                 <!-- Number of Travelers -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700">Number of Travelers *</label>
                                     <select v-model="bookingForm.traveler_count" @change="updateTravelers" required
-                                        class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 bg-white text-gray-900">
-                                        <option v-for="n in 10" :key="n" :value="n" class="text-gray-900 bg-white">{{ n }} traveler{{ n > 1 ? 's' : '' }}</option>
+                                        class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500">
+                                        <option v-for="n in 10" :key="n" :value="n">{{ n }} traveler{{ n > 1 ? 's' : '' }}</option>
                                     </select>
                                 </div>
 
@@ -53,7 +61,7 @@
                                 <div class="space-y-4">
                                     <h4 class="font-medium text-gray-900">Traveler Details</h4>
                                     <div v-for="(traveler, index) in bookingForm.travelers" :key="index"
-                                        class="rounded-lg border border-gray-200 p-4">
+                                        class="rounded-lg border border-gray-200 bg-white p-4">
                                         <h5 class="mb-3 font-medium text-gray-900">
                                             Traveler {{ index + 1 }} {{ index === 0 ? '(Primary Contact)' : '' }}
                                         </h5>
@@ -62,25 +70,26 @@
                                                 <label class="block text-xs font-medium text-gray-600">Full Name *</label>
                                                 <input type="text" v-model="traveler.name" required
                                                     placeholder="As per passport"
-                                                    class="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none"/>
+                                                    class="mt-1 block w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none"/>
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-medium text-gray-600">Passport Number</label>
                                                 <input type="text" v-model="traveler.passport_number"
-                                                    class="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none"/>
+                                                    placeholder="Enter passport number"
+                                                    class="mt-1 block w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none"/>
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-medium text-gray-600">Date of Birth</label>
                                                 <input type="date" v-model="traveler.date_of_birth"
-                                                    class="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none"/>
+                                                    class="mt-1 block w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none"/>
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-medium text-gray-600">Gender</label>
                                                 <select v-model="traveler.gender"
-                                                    class="mt-1 block w-full rounded border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:outline-none bg-white text-gray-900">
-                                                    <option value="" class="text-gray-900">Select</option>
-                                                    <option value="male" class="text-gray-900">Male</option>
-                                                    <option value="female" class="text-gray-900">Female</option>
+                                                    class="mt-1 block w-full rounded border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-orange-500 focus:outline-none">
+                                                    <option value="">Select gender</option>
+                                                    <option value="male">Male</option>
+                                                    <option value="female">Female</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -92,14 +101,14 @@
                                     <label class="block text-sm font-medium text-gray-700">Special Requests</label>
                                     <textarea v-model="bookingForm.special_requests" rows="2"
                                         placeholder="Any dietary requirements, mobility assistance, etc."
-                                        class="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"></textarea>
+                                        class="mt-1 block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"></textarea>
                                 </div>
 
                                 <!-- Total -->
                                 <div class="rounded-lg bg-gray-50 p-4">
                                     <div class="flex items-center justify-between">
                                         <span class="font-medium text-gray-700">Estimated Total:</span>
-                                        <span class="text-2xl font-bold text-orange-600">${{ estimatedTotal.toLocaleString() }}</span>
+                                        <span class="text-2xl font-bold text-orange-600">AED {{ estimatedTotal.toLocaleString() }}</span>
                                     </div>
                                     <p class="mt-1 text-xs text-gray-500">Final price will be confirmed by our team</p>
                                 </div>
@@ -221,6 +230,7 @@
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                             <div v-for="(img, idx) in galleryList" :key="idx" class="relative group overflow-hidden rounded-lg aspect-square">
                                 <img :src="img.url" :alt="img.alt"
+                                    loading="lazy"
                                     @error="handleImageError"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                                 <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors"></div>
@@ -232,52 +242,66 @@
 
                 <!-- RIGHT COLUMN: BOOKING CARD -->
                 <div class="lg:col-span-1">
-                    <div class="sticky top-24 bg-white rounded-2xl shadow-lg border border-slate-100 p-6 overflow-hidden">
-                        <div class="text-center pb-6 border-b border-slate-100 mb-6">
-                            <p class="text-sm text-slate-500 uppercase font-semibold tracking-wider">Starting From</p>
-                            <div class="mt-2 flex items-baseline justify-center gap-1">
-                                <span class="text-4xl font-extrabold text-slate-900">${{ (packageData.price || 0).toLocaleString() }}</span>
-                                <span class="text-slate-500 font-medium text-lg">/ person</span>
+                    <div class="sticky top-24 space-y-6">
+                        <!-- Main Booking Card -->
+                        <div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-6 overflow-hidden">
+                            <div class="text-center pb-6 border-b border-slate-100 mb-6">
+                                <p class="text-sm text-slate-500 uppercase font-semibold tracking-wider">Starting From</p>
+                                <div class="mt-2 flex flex-col items-center justify-center gap-1">
+                                    <template v-if="packageData.discounted_price && packageData.discounted_price < packageData.price">
+                                        <span class="text-xl line-through text-slate-400">AED {{ (packageData.price || 0).toLocaleString() }}</span>
+                                        <span class="text-4xl font-extrabold text-green-600">AED {{ (packageData.discounted_price || 0).toLocaleString() }}</span>
+                                    </template>
+                                    <template v-else>
+                                        <span class="text-4xl font-extrabold text-slate-900">AED {{ (packageData.price || 0).toLocaleString() }}</span>
+                                    </template>
+                                    <span class="text-slate-500 font-medium text-lg">/ person</span>
+                                </div>
+                                <div v-if="packageData.discounted_price && packageData.discounted_price < packageData.price" class="mt-2">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Save {{ Math.round((1 - packageData.discounted_price / packageData.price) * 100) }}%
+                                    </span>
+                                </div>
                             </div>
+
+                            <div class="space-y-4 mb-6">
+                                <div class="flex justify-between text-sm py-2 border-b border-slate-50">
+                                    <span class="text-slate-500">Duration</span>
+                                    <span class="font-semibold text-slate-900">{{ packageData.duration_days }} Days</span>
+                                </div>
+                                <div class="flex justify-between text-sm py-2 border-b border-slate-50">
+                                    <span class="text-slate-500">Type</span>
+                                    <span class="font-semibold text-slate-900 capitalize">{{ packageData.type }}</span>
+                                </div>
+                                <!-- Mock Dates -->
+                                <div class="flex justify-between text-sm py-2 border-b border-slate-50">
+                                    <span class="text-slate-500">Next Departure</span>
+                                    <span class="font-semibold text-green-600">Checking...</span>
+                                </div>
+                            </div>
+
+                            <button @click="handleBookClick" class="w-full py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition shadow-lg hover:shadow-orange-500/25 flex items-center justify-center gap-2">
+                                Book This Package
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            </button>
+
+                            <p class="mt-4 text-xs text-center text-slate-400">
+                                Secure your spot today with a deposit.
+                            </p>
                         </div>
 
-                        <div class="space-y-4 mb-6">
-                            <div class="flex justify-between text-sm py-2 border-b border-slate-50">
-                                <span class="text-slate-500">Duration</span>
-                                <span class="font-semibold text-slate-900">{{ packageData.duration_days }} Days</span>
+                        <!-- Need Help Card -->
+                        <div class="bg-slate-900 rounded-2xl p-6 text-center text-white relative overflow-hidden shadow-lg">
+                            <div class="relative z-10">
+                                <h3 class="text-lg font-bold mb-2">Need Custom Plan?</h3>
+                                <p class="text-slate-300 text-sm mb-4">We can customize a spiritual journey just for you and your family.</p>
+                                <Link href="/contactus" class="inline-block px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold transition">
+                                    Contact Expert
+                                </Link>
                             </div>
-                            <div class="flex justify-between text-sm py-2 border-b border-slate-50">
-                                <span class="text-slate-500">Type</span>
-                                <span class="font-semibold text-slate-900 capitalize">{{ packageData.type }}</span>
-                            </div>
-                            <!-- Mock Dates -->
-                             <div class="flex justify-between text-sm py-2 border-b border-slate-50">
-                                <span class="text-slate-500">Next Departure</span>
-                                <span class="font-semibold text-green-600">Checking...</span>
-                            </div>
+                            <!-- Decor -->
+                            <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-orange-500/20 rounded-full blur-2xl"></div>
                         </div>
-
-                        <button @click="handleBookClick" class="w-full py-4 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl transition shadow-lg hover:shadow-orange-500/25 flex items-center justify-center gap-2">
-                            Book This Package
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                        </button>
-
-                        <p class="mt-4 text-xs text-center text-slate-400">
-                            Secure your spot today with a deposit.
-                        </p>
-                    </div>
-
-                    <!-- Need Help Card -->
-                    <div class="mt-8 bg-slate-900 rounded-2xl p-6 text-center text-white relative overflow-hidden">
-                        <div class="relative z-10">
-                            <h3 class="text-lg font-bold mb-2">Need Custom Plan?</h3>
-                            <p class="text-slate-300 text-sm mb-4">We can customize a spiritual journey just for you and your family.</p>
-                            <Link href="/contactus" class="inline-block px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-sm font-semibold transition">
-                                Contact Expert
-                            </Link>
-                        </div>
-                         <!-- Decor -->
-                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-orange-500/20 rounded-full blur-2xl"></div>
                     </div>
                 </div>
 
@@ -292,10 +316,11 @@
                     class="group block bg-white rounded-xl shadow-sm hover:shadow-md transition border border-slate-100 overflow-hidden">
                     <div class="h-48 overflow-hidden relative">
                          <img :src="related.image || '/assets/img/hajj/hajjbg.jpg'" :alt="related.title"
+                                loading="lazy"
                                 @error="handleImageError"
                                 class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                          <div class="absolute bottom-3 right-3 bg-white/90 backdrop-blur px-2 py-1 rounded-md text-xs font-bold shadow-sm">
-                            ${{ (related.price || 0).toLocaleString() }}
+                            AED {{ (related.price || 0).toLocaleString() }}
                          </div>
                     </div>
                     <div class="p-4">
@@ -326,6 +351,7 @@ interface Package {
     slug: string;
     type: string;
     price: number;
+    discounted_price?: number | null;
     currency: string;
     duration_days: number;
     image: string | null;
@@ -393,7 +419,10 @@ const minDate = computed(() => {
 
 // Compute estimated total
 const estimatedTotal = computed(() => {
-    return (props.package.price || 0) * bookingForm.value.traveler_count;
+    const unitPrice = (props.package.discounted_price && props.package.discounted_price < props.package.price)
+        ? props.package.discounted_price
+        : props.package.price;
+    return (unitPrice || 0) * bookingForm.value.traveler_count;
 });
 
 // Update travelers array when count changes

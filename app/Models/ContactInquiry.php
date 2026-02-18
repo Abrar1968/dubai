@@ -12,12 +12,14 @@ class ContactInquiry extends Model
     use HasFactory;
 
     protected $fillable = [
+        'section',
         'name',
         'email',
         'phone',
         'subject',
         'message',
         'package_id',
+        'service_interested',
         'status',
         'admin_notes',
         'responded_at',

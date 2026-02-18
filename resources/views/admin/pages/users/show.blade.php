@@ -108,7 +108,7 @@
                                         </p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-lg font-semibold text-slate-900">${{ number_format($booking->total_amount, 2) }}</p>
+                                        <p class="text-lg font-semibold text-slate-900">AED {{ number_format($booking->total_amount, 2) }}</p>
                                         <p class="text-xs text-slate-500">{{ $booking->created_at->format('M d, Y') }}</p>
                                         <a href="{{ route('admin.hajj.bookings.show', $booking) }}" class="mt-2 inline-flex text-sm text-amber-600 hover:text-amber-700">
                                             View Details →

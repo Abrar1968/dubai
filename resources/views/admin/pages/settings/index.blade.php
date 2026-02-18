@@ -70,7 +70,7 @@
                             <!-- Logo -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Company Logo</label>
-                                <div class="mt-2" x-data="{ preview: '{{ $settings['company']['company_logo'] ? Storage::url($settings['company']['company_logo']) : '' }}' }">
+                                <div class="mt-2" x-data="{ preview: '{{ $settings['company']['company_logo'] ? asset('storage/' . $settings['company']['company_logo']) : '' }}' }">
                                     <div class="flex items-center gap-4">
                                         <div class="h-20 w-40 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
                                             <template x-if="preview">
@@ -152,7 +152,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Top Banner Image</label>
                                 <p class="mt-1 text-sm text-gray-500">Upload banner image for top section (recommended: 1920x200px, max 10MB)</p>
-                                <div class="mt-2" x-data="{ preview: '{{ $settings['company']['banner_image'] ?? '' ? Storage::url($settings['company']['banner_image']) : '' }}' }">
+                                <div class="mt-2" x-data="{ preview: '{{ $settings['company']['banner_image'] ?? '' ? asset('storage/' . $settings['company']['banner_image']) : '' }}' }">
                                     <div class="space-y-4">
                                         <div class="h-24 w-full overflow-hidden rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
                                             <template x-if="preview">
@@ -181,7 +181,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Homepage Hero Background</label>
                                 <p class="mt-1 text-sm text-gray-500">Upload large hero image for homepage (recommended: 1920x1080px, max 10MB)</p>
-                                <div class="mt-2" x-data="{ preview: '{{ $settings['company']['hero_image'] ?? '' ? Storage::url($settings['company']['hero_image']) : '' }}' }">
+                                <div class="mt-2" x-data="{ preview: '{{ $settings['company']['hero_image'] ?? '' ? asset('storage/' . $settings['company']['hero_image']) : '' }}' }">
                                     <div class="space-y-4">
                                         <div class="h-48 w-full overflow-hidden rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
                                             <template x-if="preview">
@@ -261,7 +261,7 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Social Share Image (OG Image)</label>
                                 <p class="text-xs text-gray-500">Recommended size: 1200x630 pixels</p>
-                                <div class="mt-2" x-data="{ preview: '{{ $settings['seo']['og_image'] ? Storage::url($settings['seo']['og_image']) : '' }}' }">
+                                <div class="mt-2" x-data="{ preview: '{{ $settings['seo']['og_image'] ? asset('storage/' . $settings['seo']['og_image']) : '' }}' }">
                                     <div class="flex items-start gap-4">
                                         <div class="h-[105px] w-[200px] overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
                                             <template x-if="preview">

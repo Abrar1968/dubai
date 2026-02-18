@@ -68,7 +68,7 @@
 
                     <div class="flex gap-4">
                         @if($booking->package->thumbnail || $booking->package->image)
-                            <img src="{{ Storage::url($booking->package->thumbnail ?? $booking->package->image) }}" alt="{{ $booking->package->title }}" class="h-24 w-32 object-cover rounded-lg flex-shrink-0">
+                            <img src="{{ \Illuminate\Support\Facades\Storage::url($booking->package->thumbnail ?? $booking->package->image) }}" alt="{{ $booking->package->title }}" class="h-24 w-32 object-cover rounded-lg flex-shrink-0">
                         @endif
                         <div>
                             <h4 class="font-medium text-slate-900">{{ $booking->package->title }}</h4>
@@ -150,7 +150,7 @@
                                         @endif
                                         <div class="relative flex space-x-3">
                                             <div>
-                                                <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white {{ match($log->new_status) {
+                                                <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white {{ match($log->to_status) {
                                                     \App\Enums\BookingStatus::PENDING => 'bg-amber-100 text-amber-600',
                                                     \App\Enums\BookingStatus::CONFIRMED => 'bg-green-100 text-green-600',
                                                     \App\Enums\BookingStatus::PROCESSING => 'bg-blue-100 text-blue-600',
@@ -168,9 +168,9 @@
                                                 <div>
                                                     <p class="text-sm text-slate-900">
                                                         Status changed from
-                                                        <span class="font-medium">{{ ucfirst(str_replace('_', ' ', $log->old_status?->value ?? 'new')) }}</span>
+                                                        <span class="font-medium">{{ ucfirst(str_replace('_', ' ', $log->from_status?->value ?? 'new')) }}</span>
                                                         to
-                                                        <span class="font-medium">{{ ucfirst(str_replace('_', ' ', $log->new_status->value)) }}</span>
+                                                        <span class="font-medium">{{ ucfirst(str_replace('_', ' ', $log->to_status?->value ?? 'unknown')) }}</span>
                                                     </p>
                                                     @if($log->notes)
                                                         <p class="mt-1 text-sm text-slate-500">{{ $log->notes }}</p>
@@ -251,16 +251,16 @@
                 <dl class="space-y-3">
                     <div class="flex justify-between">
                         <dt class="text-sm text-slate-600">Total Amount</dt>
-                        <dd class="font-medium text-slate-900">${{ number_format($booking->total_amount, 2) }}</dd>
+                        <dd class="font-medium text-slate-900">AED {{ number_format($booking->total_amount, 2) }}</dd>
                     </div>
                     <div class="flex justify-between">
                         <dt class="text-sm text-slate-600">Paid Amount</dt>
-                        <dd class="font-medium text-green-600">${{ number_format($booking->paid_amount ?? 0, 2) }}</dd>
+                        <dd class="font-medium text-green-600">AED {{ number_format($booking->paid_amount ?? 0, 2) }}</dd>
                     </div>
                     <div class="flex justify-between border-t border-slate-200 pt-3">
                         <dt class="text-sm font-medium text-slate-900">Balance Due</dt>
                         <dd class="font-bold {{ $booking->remaining_balance > 0 ? 'text-red-600' : 'text-green-600' }}">
-                            ${{ number_format($booking->remaining_balance, 2) }}
+                            AED {{ number_format($booking->remaining_balance, 2) }}
                         </dd>
                     </div>
                     @if($booking->payment_method)

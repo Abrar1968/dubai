@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import HajjHeader from '@/components/hajj/hajjheader.vue';
 import HajjFooter from '@/components/hajj/hajjfooter.vue';
+import LazyImage from '@/components/ui/LazyImage.vue';
 import {
     MapPin, Calendar, Users, Star, ArrowRight, ShieldCheck,
     Clock, Heart, Menu, Phone, Mail, CheckCircle, ArrowUpRight, MessageCircle, ChevronDown, ChevronUp
@@ -14,6 +15,7 @@ interface Package {
     title: string;
     slug: string;
     price: number;
+    discounted_price?: number | null;
     currency: string;
     duration_days: number;
     image: string;
@@ -45,18 +47,29 @@ interface Faq {
     answer: string;
 }
 
+interface OfficeLocation {
+    id: number;
+    name: string;
+    address: string;
+    phone?: string;
+    email?: string;
+    section: string;
+}
+
 const props = withDefaults(defineProps<{
     packages?: Package[];
     articles?: Article[];
     testimonials?: Testimonial[];
     faqs?: Faq[];
     settings?: Record<string, string>;
+    offices?: OfficeLocation[];
 }>(), {
     packages: () => [],
     articles: () => [],
     testimonials: () => [],
     faqs: () => [],
     settings: () => ({}),
+    offices: () => [],
 });
 
 // Use props directly - data comes from backend
@@ -80,7 +93,7 @@ const features = [
 
 // Format price display
 const formatPrice = (price: number, currency: string) => {
-    return `Start From $${price.toLocaleString()}`;
+    return `AED ${price.toLocaleString()}`;
 };
 
 // Smooth scroll to packages
@@ -178,6 +191,33 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                 </div>
             </section>
 
+            <!-- Office Locations (Below Hero) -->
+            <section v-if="offices && offices.length > 0" class="bg-slate-900 py-8">
+                <div class="mx-auto max-w-7xl px-4 md:px-16">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div v-for="office in offices" :key="office.id" class="flex items-start gap-4 text-white">
+                            <div class="flex-shrink-0 w-10 h-10 bg-[#D3A762]/20 rounded-lg flex items-center justify-center">
+                                <MapPin class="w-5 h-5 text-[#D3A762]" />
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-white">{{ office.name }}</h4>
+                                <p class="text-gray-400 text-sm mt-1" v-html="office.address.replace(/\n/g, '<br>')"></p>
+                                <div class="mt-2 flex flex-col gap-1 text-sm">
+                                    <a v-if="office.phone" :href="`tel:${office.phone}`" class="text-gray-400 hover:text-[#D3A762] transition flex items-center gap-2">
+                                        <Phone class="w-3 h-3" />
+                                        {{ office.phone }}
+                                    </a>
+                                    <a v-if="office.email" :href="`mailto:${office.email}`" class="text-gray-400 hover:text-[#D3A762] transition flex items-center gap-2">
+                                        <Mail class="w-3 h-3" />
+                                        {{ office.email }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Choose Your Package -->
             <section id="packages" class="py-20 bg-gray-50">
                 <div class="max-w-7xl mx-auto px-4 md:px-16">
@@ -190,17 +230,28 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         <div v-for="(pkg, index) in displayPackages" :key="pkg.id"
                             class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-shadow group">
                             <div class="relative h-48 overflow-hidden">
-                                <img :src="pkg.image" :alt="pkg.title"
-                                    @error="handleImageError"
-                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <LazyImage
+                                    :src="`/storage/${pkg.image}`"
+                                    :alt="pkg.title"
+                                    :fallback="'/assets/img/hajj/hajjbg.jpg'"
+                                    img-class="group-hover:scale-110 transition-transform duration-500"
+                                />
                                 <div
-                                    class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-900">
+                                    class="absolute top-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-900 z-10">
                                     {{ pkg.duration_days }} Days
                                 </div>
                             </div>
                             <div class="p-6">
                                 <h3 class="text-xl font-bold text-slate-900 mb-2">{{ pkg.title }}</h3>
-                                <p class="text-[#D3A762] font-semibold text-lg mb-4">{{ formatPrice(pkg.price, pkg.currency) }}</p>
+                                <div class="mb-4">
+                                    <template v-if="pkg.discounted_price && pkg.discounted_price < pkg.price">
+                                        <p class="text-sm line-through text-slate-400">{{ formatPrice(pkg.price, pkg.currency) }}</p>
+                                        <p class="text-green-600 font-semibold text-lg">{{ formatPrice(pkg.discounted_price, pkg.currency) }}</p>
+                                    </template>
+                                    <template v-else>
+                                        <p class="text-[#D3A762] font-semibold text-lg">{{ formatPrice(pkg.price, pkg.currency) }}</p>
+                                    </template>
+                                </div>
                                 <ul class="space-y-2 mb-6">
                                     <li v-for="feat in pkg.features" :key="feat"
                                         class="flex items-center gap-2 text-slate-600 text-sm">
@@ -235,6 +286,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         <a href="/umrahpackage" class="block h-full">
                             <div class="relative rounded-2xl overflow-hidden group h-full">
                                 <img src="/assets/img/hajj/umrahh.jpg"
+                                    loading="lazy"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     alt="Umrah" />
 
@@ -262,6 +314,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         <a href="/hajjpackage" class="block h-full">
                             <div class="relative rounded-2xl overflow-hidden group h-full md:-mt-8">
                                 <img src="/assets/img/hajj/hajjj.jpg"
+                                    loading="lazy"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     alt="Hajj" />
 
@@ -286,40 +339,33 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         </a>
 
                         <!-- Card 3 -->
-                        <div class="relative rounded-2xl overflow-hidden group h-full">
-                            <img src="/assets/img/hajj/islamictour.png"
-                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                alt="Tour" />
+                        <a href="/tourpackage" class="block h-full">
+                            <div class="relative rounded-2xl overflow-hidden group h-full">
+                                <img src="/assets/img/hajj/islamictour.png"
+                                    loading="lazy"
+                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                    alt="Tour" />
 
-                            <!-- dark gradient -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent">
-                            </div>
+                                <!-- dark gradient -->
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent">
+                                </div>
 
-                            <!-- ✅ Coming Soon overlay (center) -->
-                            <div class="absolute inset-0 z-10 flex items-center justify-center">
-                                <span class="rounded-full bg-black/60 backdrop-blur-md
-             px-6 py-2 text-sm font-semibold tracking-widest uppercase
-             text-[#D3A762] border border-white/20
-             shadow-[0_10px_30px_rgba(0,0,0,0.35)]">
-                                    Coming Soon
-                                </span>
-                            </div>
+                                <!-- bottom content -->
+                                <div class="absolute bottom-8 left-8 text-white z-20">
+                                    <h3 class="text-2xl font-serif mb-2">Tour</h3>
 
-                            <!-- bottom content -->
-                            <div class="absolute bottom-8 left-8 text-white z-20">
-                                <h3 class="text-2xl font-serif mb-2">Islamic Tour</h3>
+                                    <p
+                                        class="text-sm text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        Explore amazing destinations around the world.
+                                    </p>
 
-                                <p
-                                    class="text-sm text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    Explore the history of Islamic civilization.
-                                </p>
-
-                                <span class="bg-white/20 backdrop-blur p-2 rounded-full inline-block
+                                    <span class="bg-white/20 backdrop-blur p-2 rounded-full inline-block
              group-hover:bg-[#D3A762] transition-colors">
-                                    <ArrowUpRight class="w-5 h-5" />
-                                </span>
+                                        <ArrowUpRight class="w-5 h-5" />
+                                    </span>
+                                </div>
                             </div>
-                        </div>
+                        </a>
 
                     </div>
                 </div>
@@ -329,7 +375,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
             <section id="features" class="py-20 bg-gray-50">
                 <div class="max-w-7xl mx-auto px-4 md:px-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div class="relative h-[600px] rounded-2xl overflow-hidden shadow-2xl">
-                        <img src="/assets/img/hajj/whyus.jpg" class="w-full h-full object-cover"
+                        <img src="/assets/img/hajj/whyus.jpg" loading="lazy" class="w-full h-full object-cover"
                             alt="Makkah Clock Tower" />
                     </div>
 
@@ -361,7 +407,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
             <section id="testimonials" v-if="displayTestimonial" class="relative py-24 bg-slate-900 overflow-hidden">
                 <div class="absolute inset-0">
                     <img src="https://images.unsplash.com/photo-1627441584288-51b660c6d9c6?q=80&w=2070&auto=format&fit=crop"
-                        class="w-full h-full object-cover opacity-20" alt="Background" />
+                        loading="lazy" class="w-full h-full object-cover opacity-20" alt="Background" />
                 </div>
                 <div class="relative z-10 max-w-7xl mx-auto px-4 md:px-16 flex items-center">
                     <div class="bg-white p-10 rounded-xl shadow-xl max-w-lg">
@@ -373,7 +419,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         </p>
                         <div class="flex items-center gap-4">
                             <img :src="displayTestimonial.avatar || '/assets/img/hajj/hajjbg.jpg'"
-                                class="w-12 h-12 rounded-full object-cover" alt="User" />
+                                loading="lazy" class="w-12 h-12 rounded-full object-cover" alt="User" />
                             <div>
                                 <h5 class="font-bold text-slate-900">{{ displayTestimonial.name }}</h5>
                                 <span class="text-sm text-slate-500">{{ displayTestimonial.location }}</span>
@@ -421,7 +467,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         </div>
                     </div>
                     <div class="relative">
-                        <img src="/assets/img/hajj/kabah.jpg" class="rounded-2xl shadow-2xl w-full" alt="Kaaba" />
+                        <img src="/assets/img/hajj/kabah.jpg" loading="lazy" class="rounded-2xl shadow-2xl w-full" alt="Kaaba" />
                     </div>
                 </div>
             </section>
@@ -444,9 +490,11 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                         <div v-for="article in displayArticles" :key="article.id"
                             class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow group">
                             <div class="h-64 overflow-hidden">
-                                <img :src="article.image || 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070'"
-                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    :alt="article.title">
+                                <LazyImage
+                                    :src="article.image || 'https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=2070'"
+                                    :alt="article.title"
+                                    img-class="group-hover:scale-105 transition-transform duration-500"
+                                />
                             </div>
                             <div class="p-8">
                                 <span class="text-xs font-bold text-[#D3A762] uppercase mb-2 block">{{ article.category || 'Travel Guide' }}</span>
@@ -500,10 +548,12 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                 <img v-if="settings.banner_image"
                      :src="`/storage/${settings.banner_image}`"
                      alt="Banner"
+                     loading="lazy"
                      class="w-full h-[200px] object-cover" />
                 <img v-else
                      src="https://images.unsplash.com/photo-1596726284620-830238e8f643?q=80&w=2684&auto=format&fit=crop"
                      alt="Kaaba"
+                     loading="lazy"
                      class="w-full h-[200px] object-cover" />
             </section>
         </main>

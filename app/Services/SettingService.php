@@ -98,6 +98,9 @@ class SettingService
                 'company_address' => $this->get('company_address', $section, ''),
                 'company_logo' => $this->get('company_logo', $section, ''),
                 'company_description' => $this->get('company_description', $section, ''),
+                'company_mission' => $this->get('company_mission', $section, ''),
+                'company_vision' => $this->get('company_vision', $section, ''),
+                'company_values' => $this->get('company_values', $section, ''),
                 'banner_image' => $this->get('banner_image', $section, ''),
                 'hero_image' => $this->get('hero_image', $section, ''),
             ],
@@ -114,6 +117,7 @@ class SettingService
                 'social_instagram' => $this->get('social_instagram', $section, ''),
                 'social_linkedin' => $this->get('social_linkedin', $section, ''),
                 'social_youtube' => $this->get('social_youtube', $section, ''),
+                'social_tiktok' => $this->get('social_tiktok', $section, ''),
                 'contact_description' => $this->get('contact_description', $section, ''),
             ],
             'booking' => [
@@ -122,6 +126,14 @@ class SettingService
                 'terms_conditions' => $this->get('terms_conditions', $section, ''),
                 'privacy_policy' => $this->get('privacy_policy', $section, ''),
                 'cancellation_policy' => $this->get('cancellation_policy', $section, ''),
+            ],
+            'contact' => [
+                'contact_email' => $this->get('contact_email', $section, ''),
+                'contact_phone' => $this->get('contact_phone', $section, ''),
+                'office_address' => $this->get('office_address', $section, ''),
+                'office_hours' => $this->get('office_hours', $section, ''),
+                'google_maps_embed' => $this->get('google_maps_embed', $section, ''),
+                'contact_description' => $this->get('contact_description', $section, ''),
             ],
         ];
     }

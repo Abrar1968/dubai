@@ -56,8 +56,24 @@ class BookingController extends Controller
             ->with(['package', 'travelers', 'statusLogs'])
             ->findOrFail($id);
 
+        // Transform booking data for Vue
+        $bookingData = $booking->toArray();
+
+        // Transform status_logs to use 'status' instead of 'to_status'
+        if (isset($bookingData['statusLogs'])) {
+            $bookingData['status_logs'] = collect($bookingData['statusLogs'])->map(function ($log) {
+                return [
+                    'id' => $log['id'],
+                    'status' => $log['to_status'] ?? 'unknown',
+                    'notes' => $log['notes'] ?? null,
+                    'created_at' => $log['created_at'],
+                ];
+            })->toArray();
+            unset($bookingData['statusLogs']);
+        }
+
         return Inertia::render('user/BookingShow', [
-            'booking' => $booking,
+            'booking' => $bookingData,
         ]);
     }
 
@@ -82,8 +98,11 @@ class BookingController extends Controller
         $user = auth()->user();
         $package = \App\Models\Package::findOrFail($validated['package_id']);
 
-        // Calculate total amount
-        $totalAmount = $package->price * count($validated['travelers']);
+        // Calculate total amount using discounted price if available
+        $effectivePrice = ($package->discounted_price && $package->discounted_price < $package->price)
+            ? $package->discounted_price
+            : $package->price;
+        $totalAmount = $effectivePrice * count($validated['travelers']);
 
         $bookingData = [
             'user_id' => $user->id,

@@ -136,6 +136,15 @@ class PackageService
      */
     public function toggleFeatured(Package $package): Package
     {
+        // If trying to feature a package, check the limit
+        if (!$package->is_featured) {
+            $featuredCount = Package::where('is_featured', true)->count();
+
+            if ($featuredCount >= 4) {
+                throw new \Exception('Maximum 4 packages can be featured at a time across all types (Hajj, Umrah, and Tour combined).');
+            }
+        }
+
         $package->is_featured = !$package->is_featured;
         $package->save();
 

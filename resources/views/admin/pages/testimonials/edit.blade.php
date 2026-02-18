@@ -24,7 +24,7 @@
                     <!-- Photo Upload -->
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Customer Photo</label>
-                        <div class="mt-2" x-data="{ preview: '{{ $testimonial->avatar ? Storage::url($testimonial->avatar) : '' }}' }">
+                        <div class="mt-2" x-data="{ preview: '{{ $testimonial->avatar ? asset('storage/' . $testimonial->avatar) : '' }}' }">
                             <div class="flex items-center gap-4">
                                 <div class="h-16 w-16 overflow-hidden rounded-full bg-gray-100">
                                     <template x-if="preview">
