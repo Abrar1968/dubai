@@ -91,6 +91,7 @@ const socialLinks = [
         <!-- Copyright -->
         <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
             <p>&copy; {{ new Date().getFullYear() }} {{ settings.company_name || 'Typing Services' }}. All rights reserved.</p>
+            <p class="mt-2">Developed by <a href="https://auxtechbd.com/" target="_blank" rel="noopener noreferrer" class="text-[#D3A762] hover:text-white transition-colors">AuxTech</a></p>
         </div>
     </footer>
 </template>

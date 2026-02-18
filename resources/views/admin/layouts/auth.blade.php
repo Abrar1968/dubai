@@ -86,7 +86,7 @@
 
                 <!-- Title -->
                 <h1 class="mt-6 text-3xl font-extrabold text-white tracking-tight">
-                    Dubai <span class="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">Travel</span>
+                    SS <span class="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">Group</span>
                 </h1>
                 <p class="mt-2 text-sm text-slate-400">
                     Admin Control Center
@@ -161,7 +161,10 @@
             <!-- Footer -->
             <div class="mt-8 text-center">
                 <p class="text-xs text-slate-500">
-                    &copy; {{ date('Y') }} Dubai Travel. All rights reserved.
+                    &copy; {{ date('Y') }} SS Group Typing & Travels. All rights reserved.
+                </p>
+                <p class="text-xs text-slate-500 mt-1">
+                    Developed by <a href="https://auxtechbd.com/" target="_blank" rel="noopener noreferrer" class="text-[#D3A762] hover:text-slate-700 transition-colors">AuxTech</a>
                 </p>
             </div>
         </div>

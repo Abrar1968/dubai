@@ -33,10 +33,10 @@ const isActive = (href: string) => {
                             <img
                                 v-if="settings.company_logo"
                                 :src="`/storage/${settings.company_logo}`"
-                                :alt="`${settings.company_name || 'Dubai Tourism'} Logo`"
+                                :alt="`${settings.company_name || 'SS Group'} Logo`"
                                 class="h-12 w-auto object-contain"
                             />
-                            <div v-else class="text-xl font-bold text-amber-600">Dubai Tourism</div>
+                            <div v-else class="text-xl font-bold text-amber-600">SS Group</div>
                         </Link>
                     </div>
 
@@ -186,7 +186,8 @@ const isActive = (href: string) => {
             <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
                 <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
                     <p class="text-sm text-gray-500">
-                        © {{ new Date().getFullYear() }} Dubai Tourism & Travel. All rights reserved.
+                        © {{ new Date().getFullYear() }} SS Group Typing & Travels. All rights reserved. |
+                        Developed by <a href="https://auxtechbd.com/" target="_blank" rel="noopener noreferrer" class="text-[#D3A762] hover:underline">AuxTech</a>
                     </p>
                     <div class="flex items-center gap-4 text-sm text-gray-500">
                         <Link href="/hajj-umrah" class="hover:text-gray-900">Browse Packages</Link>

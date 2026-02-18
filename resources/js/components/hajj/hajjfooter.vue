@@ -43,7 +43,7 @@ const socialLinks = [
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M12 2v20M8 10v4M16 10v4M4 14h16M12 2l-2 4h4l-2-4z"/></svg>
                         </span>
                     </div>
-                    <span class="text-xl font-serif">{{ settings.company_name || 'Dubai Hajj & Umrah' }}</span>
+                    <span class="text-xl font-serif">{{ settings.company_name || 'SS Group Typing & Travels' }}</span>
                 </div>
 
                 <p v-if="settings.company_tagline" class="text-sm text-gray-400">
@@ -99,6 +99,12 @@ const socialLinks = [
                     </a>
                 </div>
             </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
+            <p>&copy; {{ new Date().getFullYear() }} {{ settings.company_name || 'SS Group Typing & Travels' }}. All rights reserved.</p>
+            <p class="mt-2">Developed by <a href="https://auxtechbd.com/" target="_blank" rel="noopener noreferrer" class="text-[#D3A762] hover:text-white transition-colors">AuxTech</a></p>
         </div>
     </footer>
 </template>

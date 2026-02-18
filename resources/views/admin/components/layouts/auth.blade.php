@@ -24,7 +24,7 @@
         <!-- Logo -->
         <div class="sm:mx-auto sm:w-full sm:max-w-md">
             <div class="flex justify-center">
-                <span class="text-3xl font-bold text-amber-600">Dubai Travel</span>
+                <span class="text-3xl font-bold text-amber-600">SS Group</span>
             </div>
             <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                 Admin Panel Login

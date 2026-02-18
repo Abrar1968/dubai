@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Admin Panel') - Dubai Tourism & Travel</title>
+    <title>@yield('title', 'Admin Panel') - SS Group Typing & Travels</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -226,7 +226,9 @@
             <footer class="border-t border-slate-200 bg-white/50 backdrop-blur-sm px-4 py-4 sm:px-6 lg:px-8 mt-auto">
                 <div class="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p class="text-sm text-slate-500">
-                        &copy; {{ date('Y') }} Dubai Tourism & Travel. All rights reserved.
+                        &copy; {{ date('Y') }} SS Group Typing & Travels. All rights reserved.
+                        <span class="mx-2">|</span>
+                        Developed by <a href="https://auxtechbd.com/" target="_blank" rel="noopener noreferrer" class="text-[#D3A762] hover:text-slate-700 transition-colors">AuxTech</a>
                     </p>
                     <div class="flex items-center gap-4 text-sm text-slate-500">
                         <span class="flex items-center gap-1.5">

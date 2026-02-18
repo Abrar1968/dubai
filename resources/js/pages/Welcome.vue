@@ -9,14 +9,22 @@
     <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
 
     <!-- Content -->
-    <div class="relative z-10 min-h-screen flex items-center justify-center px-6 py-12">
-      <div class="w-full max-w-4xl text-center space-y-12">
-        <!-- Header Section -->
-        <div class="space-y-6">
-          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
-            Dubai Tourism <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">& Travel</span>
+    <div class="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
+      <div class="w-full max-w-4xl text-center space-y-8 sm:space-y-12">
+        <!-- Header Section with Dynamic Logo -->
+        <div class="space-y-4 sm:space-y-6">
+          <!-- Dynamic Logo -->
+          <div v-if="companyLogo" class="flex justify-center mb-4">
+            <img
+              :src="`/storage/${companyLogo}`"
+              :alt="companyName"
+              class="h-20 sm:h-28 md:h-36 w-auto object-contain drop-shadow-2xl"
+            />
+          </div>
+          <h1 class="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+            SS Group <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Typing & Travels</span>
           </h1>
-          <p class="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed">
+          <p class="text-lg sm:text-xl md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed px-2">
             Your trusted partner for spiritual journeys and professional typing services in the UAE
           </p>
         </div>
@@ -134,23 +142,23 @@
 
         <!-- Bottom CTA -->
         <div class="text-center space-y-4">
-          <p class="text-white/60 text-lg">
+          <p class="text-white/60 text-base sm:text-lg">
             Trusted by thousands of customers across the UAE
           </p>
-          <div class="flex items-center justify-center space-x-8 text-white/40">
-            <div class="flex items-center space-x-2">
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-white/40 text-sm sm:text-base">
+            <div class="flex items-center gap-2">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
               </svg>
               <span>Licensed & Certified</span>
             </div>
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center gap-2">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
               </svg>
               <span>24/7 Support</span>
             </div>
-            <div class="flex items-center space-x-2">
+            <div class="flex items-center gap-2">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
               </svg>
@@ -169,9 +177,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
+
+defineProps<{
+  canRegister?: boolean
+  companyLogo?: string | null
+  companyName?: string
+}>()
 
 const mounted = ref(false)
 

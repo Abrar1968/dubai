@@ -27,7 +27,7 @@
                     </svg>
                 </div>
                 <div>
-                    <span class="text-lg font-bold text-white">Dubai Travel</span>
+                    <span class="text-lg font-bold text-white">SS Group</span>
                     <span class="ml-2 inline-flex items-center rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-semibold text-amber-400">Admin</span>
                 </div>
             </a>
@@ -55,7 +55,7 @@
                     </svg>
                 </div>
                 <div>
-                    <span class="text-lg font-bold text-white">Dubai Travel</span>
+                    <span class="text-lg font-bold text-white">SS Group</span>
                     <span class="ml-2 inline-flex items-center rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-semibold text-amber-400">Admin</span>
                 </div>
             </a>
