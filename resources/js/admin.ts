@@ -1,5 +1,5 @@
 /**
- * Dubai Tourism & Travel - Admin Panel JavaScript
+ * SS Group Typing & Travels - Admin Panel JavaScript
  * Alpine.js powered interactions
  */
 

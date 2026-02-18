@@ -2,13 +2,21 @@
 
 use App\Http\Controllers\Public\HajjController;
 use App\Http\Controllers\Public\TypingController;
+use App\Models\SiteSetting;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::get('/', function () {
+    $settings = SiteSetting::where('section', 'hajj')
+        ->whereIn('key', ['company_logo', 'company_name'])
+        ->pluck('value', 'key')
+        ->toArray();
+
     return Inertia::render('Welcome', [
         'canRegister' => Features::enabled(Features::registration()),
+        'companyLogo' => $settings['company_logo'] ?? null,
+        'companyName' => $settings['company_name'] ?? 'SS Group Typing & Travels',
     ]);
 })->name('home');
 

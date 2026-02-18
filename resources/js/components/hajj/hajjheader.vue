@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { Mail, Phone, Facebook, Twitter, Instagram, Linkedin, ChevronDown, User, LogOut } from 'lucide-vue-next'
+import { ref } from 'vue'
+import { Mail, Phone, Facebook, Twitter, Instagram, Linkedin, ChevronDown, User, LogOut, Menu, X } from 'lucide-vue-next'
 import { router, Link } from '@inertiajs/vue3'
+
+const mobileMenuOpen = ref(false)
+const mobilePackageOpen = ref(false)
+const mobileAboutOpen = ref(false)
 
 interface Settings {
     company_email?: string;
@@ -52,19 +57,19 @@ const logout = () => {
 
 <template>
   <header class="w-full">
-    <!-- Top Info Bar -->
-    <div class="bg-teal-900 text-white">
-      <div class="max-w-7xl mx-auto px-4 md:px-16">
+    <!-- Top Info Bar - Hidden on mobile -->
+    <div class="hidden md:block bg-teal-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
         <div class="h-10 flex items-center justify-between">
           <!-- Left: Email + Phone -->
-          <div class="flex items-center gap-6 text-sm">
+          <div class="flex items-center gap-2 sm:gap-4 lg:gap-6 text-xs sm:text-sm">
             <a :href="`mailto:${settings.company_email || 'info@dubaihajj.ae'}`" class="flex items-center gap-2 hover:text-white/80 transition">
-              <Mail class="w-4 h-4" />
-              <span>{{ settings.company_email || 'info@dubaihajj.ae' }}</span>
+              <Mail class="w-4 h-4 shrink-0" />
+              <span class="truncate max-w-[150px] lg:max-w-none">{{ settings.company_email || 'info@dubaihajj.ae' }}</span>
             </a>
 
             <a :href="`tel:${settings.company_phone || '+971 4 123 4567'}`" class="flex items-center gap-2 hover:text-white/80 transition">
-              <Phone class="w-4 h-4" />
+              <Phone class="w-4 h-4 shrink-0" />
               <span>{{ settings.company_phone || '+971 4 123 4567' }}</span>
             </a>
           </div>
@@ -94,13 +99,13 @@ const logout = () => {
 
     <!-- Main Navbar -->
     <div class="bg-white border-b border-slate-200">
-      <div class="max-w-7xl mx-auto px-4 md:px-16">
-        <div class="h-28 flex items-center justify-between">
+      <div class="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
+        <div class="h-16 sm:h-20 md:h-24 lg:h-28 flex items-center justify-between">
           <!-- Logo -->
           <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <!-- Logo Image -->
-            <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-28 w-auto object-contain" />
-            <img v-else src="/assets/img/tour/logo/ss.png" alt="Company Logo" class="h-28 w-auto object-contain" />
+            <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-12 sm:h-16 md:h-20 lg:h-24 w-auto object-contain" />
+            <img v-else src="/assets/img/tour/logo/ss.png" alt="Company Logo" class="h-12 sm:h-16 md:h-20 lg:h-24 w-auto object-contain" />
           </a>
 
           <!-- Menu -->
@@ -165,7 +170,7 @@ const logout = () => {
           <!-- CTA / Auth Section -->
           <div class="flex items-center gap-3">
             <!-- Contact Us Button (always visible) -->
-            <a href="/contactus" class="hidden md:inline-flex items-center justify-center rounded-xl bg-yellow-500 hover:bg-yellow-400
+            <a href="/contactus" class="hidden md:inline-flex items-center justify-center rounded-xl bg-[#D3A762] hover:bg-[#c29652]
                      px-6 py-3 text-sm font-extrabold tracking-widest text-white transition active:scale-[0.98]">
               Contact Us
             </a>
@@ -232,14 +237,72 @@ const logout = () => {
               </div>
             </template>
 
-            <!-- Mobile menu button (optional) -->
+            <!-- Mobile menu button -->
             <button
-              class="lg:hidden h-11 w-11 rounded-xl border border-slate-200 grid place-items-center hover:bg-slate-50 transition"
-              aria-label="Open menu">
-              ☰
+              @click="mobileMenuOpen = !mobileMenuOpen"
+              class="lg:hidden h-10 w-10 sm:h-11 sm:w-11 rounded-xl border border-slate-200 grid place-items-center hover:bg-slate-50 transition"
+              aria-label="Toggle menu">
+              <Menu v-if="!mobileMenuOpen" class="w-5 h-5" />
+              <X v-else class="w-5 h-5" />
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Drawer -->
+    <div v-if="mobileMenuOpen" class="lg:hidden fixed inset-0 z-50 bg-black/50" @click="mobileMenuOpen = false">
+      <div class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-xl overflow-y-auto" @click.stop>
+        <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+          <span class="font-bold text-lg">Menu</span>
+          <button @click="mobileMenuOpen = false" class="p-2 hover:bg-slate-100 rounded-lg">
+            <X class="w-5 h-5" />
+          </button>
+        </div>
+        <nav class="p-4 space-y-1">
+          <a href="/hajjhome" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Home</a>
+
+          <!-- About Us Accordion -->
+          <div>
+            <button @click="mobileAboutOpen = !mobileAboutOpen" class="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">
+              About Us
+              <ChevronDown :class="['w-4 h-4 transition-transform', mobileAboutOpen ? 'rotate-180' : '']" />
+            </button>
+            <div v-if="mobileAboutOpen" class="pl-4 space-y-1">
+              <a href="/hajj-umrah/team" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600">Team</a>
+            </div>
+          </div>
+
+          <!-- Package Accordion -->
+          <div>
+            <button @click="mobilePackageOpen = !mobilePackageOpen" class="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">
+              Package
+              <ChevronDown :class="['w-4 h-4 transition-transform', mobilePackageOpen ? 'rotate-180' : '']" />
+            </button>
+            <div v-if="mobilePackageOpen" class="pl-4 space-y-1">
+              <a href="/hajjpackage" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600">Hajj Package</a>
+              <a href="/umrahpackage" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600">Umrah Package</a>
+              <a href="/tourpackage" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600">Tour Package</a>
+            </div>
+          </div>
+
+          <a href="/articles" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Articles</a>
+          <a href="/contactus" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Contact Us</a>
+
+          <!-- Auth Links -->
+          <div class="border-t border-slate-200 mt-4 pt-4">
+            <template v-if="isRegularUser()">
+              <a href="/user/dashboard" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Dashboard</a>
+              <a href="/user/bookings" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">My Bookings</a>
+              <a href="/user/profile" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Profile</a>
+              <button @click="logout" class="w-full text-left px-4 py-3 rounded-lg hover:bg-red-50 font-medium text-red-600">Logout</button>
+            </template>
+            <template v-else>
+              <Link href="/login" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Login</Link>
+              <Link href="/register" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Register</Link>
+            </template>
+          </div>
+        </nav>
       </div>
     </div>
   </header>

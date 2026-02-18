@@ -96,7 +96,7 @@
                                 name="company_name"
                                 label="Company Name"
                                 :value="$settings['company']['company_name']"
-                                placeholder="Dubai Hajj & Umrah Services"
+                                placeholder="SS Group Typing & Travels"
                             />
 
                             <x-admin.ui.input
@@ -229,7 +229,7 @@
                                 name="meta_title"
                                 label="Default Meta Title"
                                 :value="$settings['seo']['meta_title']"
-                                placeholder="Dubai Hajj & Umrah Services - Trusted Pilgrimage Packages"
+                                placeholder="SS Group Typing & Travels - Trusted Pilgrimage Packages"
                                 hint="Used when pages don't have their own title"
                             />
 

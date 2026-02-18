@@ -1,10 +1,6 @@
 @extends('admin.layouts.app')
 
-@section('header')
-    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        {{ __('Typing Services Dashboard') }}
-    </h2>
-@endsection
+@section('title', 'Typing Services Dashboard')
 
 @section('content')
     <div class="py-6">

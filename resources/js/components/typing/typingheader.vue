@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Mail, Phone, Facebook, Twitter, Instagram, Linkedin, ChevronDown, User, LogOut } from 'lucide-vue-next'
+import { Mail, Phone, Facebook, Twitter, Instagram, Linkedin, ChevronDown, User, LogOut, Menu, X } from 'lucide-vue-next'
 import { router, Link } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
 
@@ -73,19 +73,19 @@ const logout = () => {
 
 <template>
   <header class="w-full">
-    <!-- Top Info Bar -->
-    <div class="bg-teal-900 text-white">
-      <div class="max-w-7xl mx-auto px-4 md:px-16">
+    <!-- Top Info Bar - Hidden on mobile -->
+    <div class="hidden md:block bg-teal-900 text-white">
+      <div class="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
         <div class="h-10 flex items-center justify-between">
           <!-- Left: Email + Phone -->
-          <div class="flex items-center gap-6 text-sm">
+          <div class="flex items-center gap-2 sm:gap-4 lg:gap-6 text-xs sm:text-sm">
             <a :href="`mailto:${settings.company_email || 'info@typing.ae'}`" class="flex items-center gap-2 hover:text-white/80 transition">
-              <Mail class="w-4 h-4" />
-              <span>{{ settings.company_email || 'info@typing.ae' }}</span>
+              <Mail class="w-4 h-4 shrink-0" />
+              <span class="truncate max-w-[150px] lg:max-w-none">{{ settings.company_email || 'info@typing.ae' }}</span>
             </a>
 
             <a :href="`tel:${settings.company_phone || '+971 4 123 4567'}`" class="flex items-center gap-2 hover:text-white/80 transition">
-              <Phone class="w-4 h-4" />
+              <Phone class="w-4 h-4 shrink-0" />
               <span>{{ settings.company_phone || '+971 4 123 4567' }}</span>
             </a>
           </div>
@@ -115,12 +115,12 @@ const logout = () => {
 
     <!-- Main Navbar -->
     <div class="bg-white border-b border-slate-200">
-      <div class="max-w-7xl mx-auto px-4 md:px-16">
-        <div class="h-28 flex items-center justify-between">
+      <div class="max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
+        <div class="h-16 sm:h-20 md:h-24 lg:h-28 flex items-center justify-between">
           <!-- Logo -->
           <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-28 w-auto object-contain" />
-            <img v-else src="/assets/img/typing/logo.png" alt="Company Logo" class="h-28 w-auto object-contain" />
+            <img v-if="settings.company_logo" :src="`/storage/${settings.company_logo}`" :alt="`${settings.company_name || 'Company'} Logo`" class="h-12 sm:h-16 md:h-20 lg:h-24 w-auto object-contain" />
+            <img v-else src="/assets/img/typing/logo.png" alt="Company Logo" class="h-12 sm:h-16 md:h-20 lg:h-24 w-auto object-contain" />
           </a>
 
           <!-- Menu -->
@@ -157,7 +157,7 @@ const logout = () => {
 
           <!-- CTA / Auth Section -->
           <div class="flex items-center gap-3">
-            <a href="/typing/contact" class="hidden md:inline-flex items-center justify-center rounded-xl bg-yellow-500 hover:bg-yellow-400
+            <a href="/typing/contact" class="hidden md:inline-flex items-center justify-center rounded-xl bg-[#D3A762] hover:bg-[#c29652]
                      px-6 py-3 text-sm font-extrabold tracking-widest text-white transition active:scale-[0.98]">
               Contact Us
             </a>
@@ -223,54 +223,70 @@ const logout = () => {
               </div>
             </template>
 
-            <!-- Mobile menu button (optional) -->
+            <!-- Mobile menu button -->
             <button
               @click="mobileOpen = !mobileOpen"
-              class="lg:hidden h-11 w-11 rounded-xl border border-slate-200 grid place-items-center hover:bg-slate-50 transition"
-              aria-label="Open menu">
-              ☰
+              class="lg:hidden h-10 w-10 sm:h-11 sm:w-11 rounded-xl border border-slate-200 grid place-items-center hover:bg-slate-50 transition"
+              aria-label="Toggle menu">
+              <Menu v-if="!mobileOpen" class="w-5 h-5" />
+              <X v-else class="w-5 h-5" />
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <transition enter-active-class="transition ease-out duration-200"
-        enter-from-class="opacity-0 -translate-y-2" enter-to-class="opacity-100 translate-y-0"
-        leave-active-class="transition ease-in duration-150" leave-from-class="opacity-100 translate-y-0"
-        leave-to-class="opacity-0 -translate-y-2">
-        <div v-show="mobileOpen" class="md:hidden pb-4">
-            <div class="mt-2 rounded-xl border border-slate-200 bg-white overflow-hidden">
-                <a href="/" class="block px-4 py-3 text-sm text-slate-800 hover:bg-slate-50">Home</a>
-
-                <!-- Mobile Services Accordion -->
-                <button type="button"
-                    class="w-full flex items-center justify-between px-4 py-3 text-sm text-slate-800 hover:bg-slate-50"
-                    @click="mobileServicesOpen = !mobileServicesOpen">
-                    Our Services
-                    <span class="text-slate-500">{{ mobileServicesOpen ? '−' : '+' }}</span>
-                </button>
-
-                <div v-show="mobileServicesOpen" class="border-t border-slate-200">
-                    <a href="/typing/services/immigration" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Immigration</a>
-                    <a href="/typing/services/labour-ministry" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Labour Ministry</a>
-                    <a href="/typing/services/tasheel-services" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Tasheel Services</a>
-                    <a href="/typing/services/domestic-workers-visa" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Domestic Workers Visa Apply</a>
-                    <a href="/typing/services/family-visa-process" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Family Visa Process</a>
-                    <a href="/typing/services/health-insurance" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Health Insurance</a>
-                    <a href="/typing/services/ministry-of-interior" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Ministry of Interior</a>
-                    <a href="/typing/services/certificate-attestation" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Certificate Attestation</a>
-                    <a href="/typing/services/vat-registration" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">VAT Registration</a>
-                    <a href="/typing/services/ct-registration" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">CT Registration</a>
-                    <a href="/typing/services/passport-renewal" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Passport Renewal</a>
-                    <a href="/typing/services/immigration-card" class="block px-6 py-3 text-sm text-slate-700 hover:bg-slate-50">Immigration Card</a>
-                </div>
-
-                <a href="/typing/contact" class="block px-4 py-3 text-sm text-slate-800 hover:bg-slate-50">Contact
-                    Us</a>
-            </div>
+    <!-- Mobile Menu Drawer -->
+    <div v-if="mobileOpen" class="lg:hidden fixed inset-0 z-50 bg-black/50" @click="mobileOpen = false">
+      <div class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-xl overflow-y-auto" @click.stop>
+        <div class="p-4 border-b border-slate-200 flex items-center justify-between">
+          <span class="font-bold text-lg">Menu</span>
+          <button @click="mobileOpen = false" class="p-2 hover:bg-slate-100 rounded-lg">
+            <X class="w-5 h-5" />
+          </button>
         </div>
-    </transition>
+        <nav class="p-4 space-y-1">
+          <a href="/" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Home</a>
+
+          <!-- Services Accordion -->
+          <div>
+            <button @click="mobileServicesOpen = !mobileServicesOpen" class="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">
+              Services
+              <ChevronDown :class="['w-4 h-4 transition-transform', mobileServicesOpen ? 'rotate-180' : '']" />
+            </button>
+            <div v-if="mobileServicesOpen" class="pl-4 space-y-1 max-h-64 overflow-y-auto">
+              <a href="/typing/services/immigration" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">Immigration</a>
+              <a href="/typing/services/labour-ministry" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">Labour Ministry</a>
+              <a href="/typing/services/tasheel-services" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">Tasheel Services</a>
+              <a href="/typing/services/domestic-workers-visa" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">Domestic Workers Visa</a>
+              <a href="/typing/services/family-visa-process" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">Family Visa Process</a>
+              <a href="/typing/services/health-insurance" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">Health Insurance</a>
+              <a href="/typing/services/ministry-of-interior" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">Ministry of Interior</a>
+              <a href="/typing/services/certificate-attestation" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">Certificate Attestation</a>
+              <a href="/typing/services/vat-registration" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">VAT Registration</a>
+              <a href="/typing/services/ct-registration" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">CT Registration</a>
+              <a href="/typing/services/passport-renewal" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">Passport Renewal</a>
+              <a href="/typing/services/immigration-card" class="block px-4 py-2 rounded-lg hover:bg-slate-50 text-slate-600 text-sm">Immigration Card</a>
+            </div>
+          </div>
+
+          <a href="/typing/contact" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Contact Us</a>
+
+          <!-- Auth Links -->
+          <div class="border-t border-slate-200 mt-4 pt-4">
+            <template v-if="isRegularUser()">
+              <a href="/user/dashboard" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Dashboard</a>
+              <a href="/user/bookings" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">My Bookings</a>
+              <a href="/user/profile" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Profile</a>
+              <button @click="logout" class="w-full text-left px-4 py-3 rounded-lg hover:bg-red-50 font-medium text-red-600">Logout</button>
+            </template>
+            <template v-else>
+              <Link href="/login" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Login</Link>
+              <Link href="/register" class="block px-4 py-3 rounded-lg hover:bg-slate-50 font-medium">Register</Link>
+            </template>
+          </div>
+        </nav>
+      </div>
+    </div>
   </header>
 </template>

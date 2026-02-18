@@ -117,7 +117,7 @@ const handleImageError = (event: Event) => {
 const heroImage = props.settings.hero_image ? `/storage/${props.settings.hero_image}` : '/assets/img/hajj/hajjbg.jpg';
 
 // Get SEO meta tags
-const pageTitle = props.settings.meta_title || 'Dubai Hajj & Umrah Services | Premium Pilgrimage Packages';
+const pageTitle = props.settings.meta_title || 'SS Group Typing & Travels | Premium Pilgrimage Packages';
 const pageDescription = props.settings.meta_description || 'Book premium Hajj and Umrah packages from Dubai. 5-star hotels, expert guides, all-inclusive services.';
 
 // WhatsApp link
@@ -140,7 +140,7 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
 
         <main>
             <!-- Hero Section -->
-            <section class="relative h-[85vh] w-full bg-slate-900 group overflow-hidden">
+            <section class="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] lg:min-h-[85vh] w-full bg-slate-900 group overflow-hidden">
                 <!-- Background Image -->
                 <div class="absolute inset-0">
                     <img :src="heroImage" alt="Makkah" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform
@@ -150,42 +150,42 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                 </div>
 
                 <!-- Content -->
-                <div class="relative z-10 h-full flex flex-col justify-center items-center text-center px-4">
+                <div class="relative z-10 h-full flex flex-col justify-center items-center text-center px-4 py-16 sm:py-20 md:py-24">
                     <span
-                        class="text-[#D3A762] text-lg font-medium tracking-widest uppercase mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">Call
+                        class="text-[#D3A762] text-sm sm:text-lg font-medium tracking-widest uppercase mb-3 sm:mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">Call
                         of Allah</span>
                     <h1
-                        class="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-8 leading-tight max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
+                        class="text-2xl sm:text-4xl md:text-5xl lg:text-7xl font-serif text-white mb-6 sm:mb-8 leading-tight max-w-4xl animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
                         {{ settings.company_tagline || 'Hajj & Umrah with Ease, Faith with Peace' }}
                     </h1>
                     <button @click="scrollToPackages"
-                        class="bg-[#D3A762] hover:bg-[#c29652] text-white px-8 py-4 rounded-md font-semibold tracking-wide transition-all transform hover:scale-105 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+                        class="bg-[#D3A762] hover:bg-[#c29652] text-white px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base rounded-md font-semibold tracking-wide transition-all transform hover:scale-105 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
                         DISCOVER MORE
                     </button>
                 </div>
 
-                <!-- Bottom Feature Strip -->
+                <!-- Bottom Feature Strip - Hidden on mobile, shown on md+ -->
                 <div
-                    class="absolute bottom-10 left-0 right-0 max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-white/90 border-t border-white/20 pt-8">
-                    <div class="flex items-start gap-4">
-                        <ShieldCheck class="w-8 h-8 text-[#D3A762]" />
+                    class="hidden md:grid absolute bottom-4 lg:bottom-10 left-0 right-0 max-w-6xl mx-auto px-4 grid-cols-3 gap-4 lg:gap-8 text-white/90 border-t border-white/20 pt-4 lg:pt-8">
+                    <div class="flex items-start gap-3 lg:gap-4">
+                        <ShieldCheck class="w-6 h-6 lg:w-8 lg:h-8 text-[#D3A762] shrink-0" />
                         <div>
-                            <h4 class="font-bold text-lg">Safety First</h4>
-                            <p class="text-sm text-gray-300">Comprehensive insurance and medical support.</p>
+                            <h4 class="font-bold text-sm lg:text-lg">Safety First</h4>
+                            <p class="text-xs lg:text-sm text-gray-300">Comprehensive insurance and medical support.</p>
                         </div>
                     </div>
-                    <div class="flex items-start gap-4">
-                        <Star class="w-8 h-8 text-[#D3A762]" />
+                    <div class="flex items-start gap-3 lg:gap-4">
+                        <Star class="w-6 h-6 lg:w-8 lg:h-8 text-[#D3A762] shrink-0" />
                         <div>
-                            <h4 class="font-bold text-lg">Premium Service</h4>
-                            <p class="text-sm text-gray-300">Luxury accommodation and VIP transport.</p>
+                            <h4 class="font-bold text-sm lg:text-lg">Premium Service</h4>
+                            <p class="text-xs lg:text-sm text-gray-300">Luxury accommodation and VIP transport.</p>
                         </div>
                     </div>
-                    <div class="flex items-start gap-4">
-                        <Clock class="w-8 h-8 text-[#D3A762]" />
+                    <div class="flex items-start gap-3 lg:gap-4">
+                        <Clock class="w-6 h-6 lg:w-8 lg:h-8 text-[#D3A762] shrink-0" />
                         <div>
-                            <h4 class="font-bold text-lg">24/7 Support</h4>
-                            <p class="text-sm text-gray-300">Always here to guide you through your journey.</p>
+                            <h4 class="font-bold text-sm lg:text-lg">24/7 Support</h4>
+                            <p class="text-xs lg:text-sm text-gray-300">Always here to guide you through your journey.</p>
                         </div>
                     </div>
                 </div>
@@ -219,11 +219,11 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
             </section>
 
             <!-- Choose Your Package -->
-            <section id="packages" class="py-20 bg-gray-50">
-                <div class="max-w-7xl mx-auto px-4 md:px-16">
-                    <div class="text-center mb-16">
-                        <span class="text-[#D3A762] uppercase tracking-wider text-sm font-semibold">Packages</span>
-                        <h2 class="text-4xl font-serif mt-2 text-slate-900">Choose Your Package</h2>
+            <section id="packages" class="py-12 sm:py-16 md:py-20 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-8 md:px-16">
+                    <div class="text-center mb-10 sm:mb-16">
+                        <span class="text-[#D3A762] uppercase tracking-wider text-xs sm:text-sm font-semibold">Packages</span>
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl font-serif mt-2 text-slate-900">Choose Your Package</h2>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -269,21 +269,21 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
             </section>
 
             <!-- Your Spiritual Voyage -->
-            <section id="services" class="py-20 bg-white">
-                <div class="max-w-7xl mx-auto px-4 md:px-16">
-                    <div class="mb-12 flex items-end justify-between">
+            <section id="services" class="py-12 sm:py-16 md:py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-8 md:px-16">
+                    <div class="mb-8 sm:mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                         <div>
-                            <span class="text-[#D3A762] uppercase tracking-wider text-sm font-semibold">Services</span>
-                            <h2 class="text-4xl font-serif mt-2 text-slate-900">Your Spiritual Voyage</h2>
+                            <span class="text-[#D3A762] uppercase tracking-wider text-xs sm:text-sm font-semibold">Services</span>
+                            <h2 class="text-2xl sm:text-3xl md:text-4xl font-serif mt-2 text-slate-900">Your Spiritual Voyage</h2>
                         </div>
                         <!-- <a href="#" class="text-[#D3A762] font-medium hidden md:flex items-center gap-2 hover:gap-4 transition-all">
                             View All <ArrowRight class="w-4 h-4" />
                         </a> -->
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-96">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                         <!-- Card 1 -->
-                        <a href="/umrahpackage" class="block h-full">
+                        <a href="/umrahpackage" class="block h-64 sm:h-72 md:h-80 lg:h-96">
                             <div class="relative rounded-2xl overflow-hidden group h-full">
                                 <img src="/assets/img/hajj/umrahh.jpg"
                                     loading="lazy"
@@ -294,25 +294,25 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                                     class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent">
                                 </div>
 
-                                <div class="absolute bottom-8 left-8 text-white">
-                                    <h3 class="text-2xl font-serif mb-2">Umrah</h3>
+                                <div class="absolute bottom-6 sm:bottom-8 left-6 sm:left-8 text-white">
+                                    <h3 class="text-xl sm:text-2xl font-serif mb-2">Umrah</h3>
 
                                     <p
-                                        class="text-sm text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        class="text-xs sm:text-sm text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         Spiritual journey available throughout the year.
                                     </p>
 
                                     <span class="bg-white/20 backdrop-blur p-2 rounded-full inline-block
                group-hover:bg-[#D3A762] transition-colors">
-                                        <ArrowUpRight class="w-5 h-5" />
+                                        <ArrowUpRight class="w-4 h-4 sm:w-5 sm:h-5" />
                                     </span>
                                 </div>
                             </div>
                         </a>
 
                         <!-- Card 2 -->
-                        <a href="/hajjpackage" class="block h-full">
-                            <div class="relative rounded-2xl overflow-hidden group h-full md:-mt-8">
+                        <a href="/hajjpackage" class="block h-64 sm:h-72 md:h-80 lg:h-96">
+                            <div class="relative rounded-2xl overflow-hidden group h-full md:-mt-4 lg:-mt-8">
                                 <img src="/assets/img/hajj/hajjj.jpg"
                                     loading="lazy"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
@@ -322,22 +322,21 @@ const whatsappUrl = props.settings.company_whatsapp ? `https://wa.me/${props.set
                                     class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent">
                                 </div>
 
-                                <div class="absolute bottom-8 left-8 text-white">
-                                    <h3 class="text-2xl font-serif mb-2">Hajj</h3>
+                                <div class="absolute bottom-6 sm:bottom-8 left-6 sm:left-8 text-white">
+                                    <h3 class="text-xl sm:text-2xl font-serif mb-2">Hajj</h3>
 
                                     <p
-                                        class="text-sm text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        class="text-xs sm:text-sm text-gray-300 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                         The obligatory pilgrimage for every Muslim.
                                     </p>
 
                                     <span class="bg-white/20 backdrop-blur p-2 rounded-full inline-block
                group-hover:bg-[#D3A762] transition-colors">
-                                        <ArrowUpRight class="w-5 h-5" />
+                                        <ArrowUpRight class="w-4 h-4 sm:w-5 sm:h-5" />
                                     </span>
                                 </div>
                             </div>
                         </a>
-
                         <!-- Card 3 -->
                         <a href="/tourpackage" class="block h-full">
                             <div class="relative rounded-2xl overflow-hidden group h-full">

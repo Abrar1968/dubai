@@ -126,6 +126,14 @@
                 </div>
             </section>
         </div>
+
+        <!-- WhatsApp Floating Button -->
+        <a v-if="whatsappUrl" :href="whatsappUrl" target="_blank" rel="noopener noreferrer"
+           class="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl transition-all hover:scale-110 z-50 flex items-center gap-2 group"
+           aria-label="Chat on WhatsApp">
+            <MessageCircle class="w-6 h-6" />
+            <span class="hidden group-hover:inline-block text-sm font-semibold pr-2">Chat with us</span>
+        </a>
     </TypingLayout>
 </template>
 
@@ -133,7 +141,7 @@
 import { computed } from 'vue';
 import TypingLayout from '@/layouts/TypingLayout.vue';
 import LazyImage from '@/components/ui/LazyImage.vue';
-import { MapPin, Phone, Mail, Star } from 'lucide-vue-next';
+import { MapPin, Phone, Mail, Star, MessageCircle } from 'lucide-vue-next';
 
 // Define interfaces for proper typing
 interface TypingService {
@@ -168,6 +176,7 @@ interface Settings {
         company_mission?: string;
         company_vision?: string;
         company_values?: string;
+        company_whatsapp?: string;
         hero_image?: string;
         banner_image?: string;
     };
@@ -205,6 +214,12 @@ const companyDescription = computed(() => companySettings.value.company_descript
 const companyMission = computed(() => companySettings.value.company_mission || '');
 const companyVision = computed(() => companySettings.value.company_vision || '');
 const companyValues = computed(() => companySettings.value.company_values || '');
+
+// WhatsApp link
+const whatsappUrl = computed(() => {
+    const phone = companySettings.value.company_whatsapp;
+    return phone ? `https://wa.me/${phone.replace(/[^0-9]/g, '')}` : null;
+});
 
 // Use services from props, fallback to featured if available
 const displayServices = computed(() => {
