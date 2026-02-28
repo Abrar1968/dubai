@@ -1,0 +1,74 @@
+# <IfModule mod_rewrite.c>
+#     <IfModule mod_negotiation.c>
+#         Options -MultiViews -Indexes
+#     </IfModule>
+
+#     RewriteEngine On
+
+#     # Handle Authorization Header
+#     RewriteCond %{HTTP:Authorization} .
+#     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+#     # Handle X-XSRF-Token Header
+#     RewriteCond %{HTTP:x-xsrf-token} .
+#     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+#     # Redirect Trailing Slashes If Not A Folder...
+#     RewriteCond %{REQUEST_FILENAME} !-d
+#     RewriteCond %{REQUEST_URI} (.+)/$
+#     RewriteRule ^ %1 [L,R=301]
+
+#     # Handle Storage Symlink - Rewrite /storage to actual storage location
+#     RewriteCond %{REQUEST_URI} ^/storage/(.*)$
+#     RewriteCond %{REQUEST_FILENAME} !-f
+#     RewriteCond %{REQUEST_FILENAME} !-d
+#     RewriteRule ^storage/(.*)$ ../storage/app/public/$1 [L]
+
+#     # Send Requests To Front Controller...
+#     RewriteCond %{REQUEST_FILENAME} !-d
+#     RewriteCond %{REQUEST_FILENAME} !-f
+#     RewriteRule ^ index.php [L]
+# </IfModule>
+
+# # Enable FollowSymLinks for storage directory
+# <IfModule mod_rewrite.c>
+#     Options +FollowSymLinks
+# </IfModule>
+
+# # Set proper MIME types for common file extensions
+# <IfModule mod_mime.c>
+#     AddType image/webp .webp
+#     AddType image/svg+xml .svg
+#     AddType image/jpeg .jpg .jpeg
+#     AddType image/png .png
+#     AddType image/gif .gif
+# </IfModule>
+
+# # Allow access to storage files
+# <FilesMatch "\.(jpg|jpeg|png|gif|webp|svg|ico|pdf|doc|docx)$">
+#     Require all granted
+# </FilesMatch>
+
+
+
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>

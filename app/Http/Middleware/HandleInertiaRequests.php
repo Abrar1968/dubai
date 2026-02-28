@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use App\Services\SiteSettingService;
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Http\Request;
+use Inertia\Middleware;
+use Tighten\Ziggy\Ziggy;
+
+class HandleInertiaRequests extends Middleware
+{
+    /**
+     * The root template that's loaded on the first page visit.
+     *
+     * @see https://inertiajs.com/server-side-setup#root-template
+     *
+     * @var string
+     */
+    protected $rootView = 'app';
+
+    /**
+     * Determines the current asset version.
+     *
+     * @see https://inertiajs.com/asset-versioning
+     */
+    public function version(Request $request): ?string
+    {
+        return parent::version($request);
+    }
+
+    /**
+     * Define the props that are shared by default.
+     *
+     * @see https://inertiajs.com/shared-data
+     *
+     * @return array<string, mixed>
+     */
+    public function share(Request $request): array
+    {
+        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+
+        // Get site settings for hajj section (used for logo and company info)
+        $settingService = app(SiteSettingService::class);
+        $settings = $settingService->getForSection('hajj');
+
+        // Get global settings (includes app name, etc.)
+        $globalSettings = $settingService->getGlobalSettings();
+
+        // Use Hajj company_logo as favicon (when logo is updated, favicon auto-updates)
+        $faviconPath = $settings['company_logo'] ?? null;
+        $faviconUrl = $faviconPath ? \Illuminate\Support\Facades\Storage::url($faviconPath) : null;
+
+        // Use Hajj company_name for app name display
+        $appName = $settings['company_name'] ?? config('app.name');
+
+        return [
+            ...parent::share($request),
+            'name' => config('app.name'),
+            'appName' => $appName,
+            'faviconUrl' => $faviconUrl,
+            'globalSettings' => $globalSettings,
+            'hajjSettings' => $settings,
+            'quote' => ['message' => trim($message), 'author' => trim($author)],
+            'auth' => [
+                'user' => $request->user(),
+            ],
+            'settings' => $settings,
+            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
+            'ziggy' => fn () => [
+                ...(new Ziggy)->toArray(),
+                'location' => $request->url(),
+            ],
+            // Flash messages for notifications
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'warning' => fn () => $request->session()->get('warning'),
+                'info' => fn () => $request->session()->get('info'),
+            ],
+        ];
+    }
+}
